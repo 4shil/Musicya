@@ -238,6 +238,10 @@ fun AlbumArtSection(imageUrl: String, isPlaying: Boolean, onPlayPause: () -> Uni
         // SVG Data: M 53,109 A 155,155 0 0,0 307,109 (approx coordinates need scaling)
         // We will draw relative to the box size
         
+        val isDark = isSystemInDarkTheme()
+        val backgroundColor = if(isDark) Color.Gray else Color.LightGray
+        val knobInnerColor = MaterialTheme.colorScheme.background
+
         Canvas(modifier = Modifier
             .fillMaxWidth()
             .height(200.dp)
@@ -268,18 +272,18 @@ fun AlbumArtSection(imageUrl: String, isPlaying: Boolean, onPlayPause: () -> Uni
             
             val trackPath = Path()
             trackPath.moveTo(size.width * 0.15f, size.height * 0.6f)
-            trackPath.quadTo(size.width * 0.5f, size.height * 1.0f, size.width * 0.85f, size.height * 0.6f)
+            trackPath.quadraticBezierTo(size.width * 0.5f, size.height * 1.0f, size.width * 0.85f, size.height * 0.6f)
             
             drawPath(
-                path = trackPath.asComposePath(),
-                color = if(isSystemInDarkTheme()) Color.Gray else Color.LightGray,
+                path = trackPath,
+                color = backgroundColor,
                 style = Stroke(width = 3.dp.toPx(), cap = StrokeCap.Round)
             )
             
             // Progress (Green) - partial
              val progressPath = Path()
             progressPath.moveTo(size.width * 0.15f, size.height * 0.6f)
-            progressPath.quadTo(
+            progressPath.quadraticBezierTo(
                 size.width * 0.35f, 
                 size.height * 0.83f, // Control point interpolated
                 size.width * 0.45f, 
@@ -287,7 +291,7 @@ fun AlbumArtSection(imageUrl: String, isPlaying: Boolean, onPlayPause: () -> Uni
             )
 
             drawPath(
-                path = progressPath.asComposePath(),
+                path = progressPath,
                 color = Green400,
                 style = Stroke(width = 5.dp.toPx(), cap = StrokeCap.Round)
             )
@@ -299,7 +303,7 @@ fun AlbumArtSection(imageUrl: String, isPlaying: Boolean, onPlayPause: () -> Uni
                 center = Offset(size.width * 0.45f, size.height * 0.85f)
             )
             drawCircle(
-                color = MaterialTheme.colorScheme.background,
+                color = knobInnerColor,
                 radius = 3.dp.toPx(),
                 center = Offset(size.width * 0.45f, size.height * 0.85f)
             )
@@ -467,12 +471,7 @@ fun BottomActions() {
     }
 }
 
-// Extensions
-fun Path.asComposePath(): androidx.compose.ui.graphics.Path {
-    return androidx.compose.ui.graphics.Path().apply {
-        addPath(this@asComposePath)
-    }
-}
+
 
 @Composable
 fun LyricsView(
