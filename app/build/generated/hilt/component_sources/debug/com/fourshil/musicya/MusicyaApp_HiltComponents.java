@@ -1,13 +1,8 @@
 package com.fourshil.musicya;
 
-import com.fourshil.musicya.di.AudioModule;
-import com.fourshil.musicya.di.DatabaseModule;
-import com.fourshil.musicya.lyrics.LyricsViewModel_HiltModules;
-import com.fourshil.musicya.player.AudioService_GeneratedInjector;
-import com.fourshil.musicya.ui.dsp.DspViewModel_HiltModules;
-import com.fourshil.musicya.ui.editor.TagEditorViewModel_HiltModules;
+import com.fourshil.musicya.player.MusicService_GeneratedInjector;
 import com.fourshil.musicya.ui.library.LibraryViewModel_HiltModules;
-import com.fourshil.musicya.ui.player.PlayerViewModel_HiltModules;
+import com.fourshil.musicya.ui.nowplaying.NowPlayingViewModel_HiltModules;
 import dagger.Binds;
 import dagger.Component;
 import dagger.Module;
@@ -124,8 +119,6 @@ public final class MusicyaApp_HiltComponents {
   @Component(
       modules = {
           ApplicationContextModule.class,
-          AudioModule.class,
-          DatabaseModule.class,
           HiltWrapper_FragmentGetContextFix_FragmentGetContextFixModule.class,
           ActivityRetainedCBuilderModule.class,
           ServiceCBuilderModule.class
@@ -142,7 +135,7 @@ public final class MusicyaApp_HiltComponents {
 
   @Subcomponent
   @ServiceScoped
-  public abstract static class ServiceC implements AudioService_GeneratedInjector,
+  public abstract static class ServiceC implements MusicService_GeneratedInjector,
       ServiceComponent,
       GeneratedComponent {
     @Subcomponent.Builder
@@ -152,15 +145,12 @@ public final class MusicyaApp_HiltComponents {
 
   @Subcomponent(
       modules = {
-          DspViewModel_HiltModules.KeyModule.class,
           HiltWrapper_ActivityRetainedComponentManager_LifecycleModule.class,
           HiltWrapper_SavedStateHandleModule.class,
           LibraryViewModel_HiltModules.KeyModule.class,
-          LyricsViewModel_HiltModules.KeyModule.class,
           ActivityCBuilderModule.class,
           ViewModelCBuilderModule.class,
-          PlayerViewModel_HiltModules.KeyModule.class,
-          TagEditorViewModel_HiltModules.KeyModule.class
+          NowPlayingViewModel_HiltModules.KeyModule.class
       }
   )
   @ActivityRetainedScoped
@@ -196,12 +186,9 @@ public final class MusicyaApp_HiltComponents {
 
   @Subcomponent(
       modules = {
-          DspViewModel_HiltModules.BindsModule.class,
           HiltWrapper_HiltViewModelFactory_ViewModelModule.class,
           LibraryViewModel_HiltModules.BindsModule.class,
-          LyricsViewModel_HiltModules.BindsModule.class,
-          PlayerViewModel_HiltModules.BindsModule.class,
-          TagEditorViewModel_HiltModules.BindsModule.class
+          NowPlayingViewModel_HiltModules.BindsModule.class
       }
   )
   @ViewModelScoped

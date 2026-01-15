@@ -7,35 +7,15 @@ import android.view.View;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModel;
-import androidx.media3.common.AudioAttributes;
-import androidx.media3.exoplayer.ExoPlayer;
-import com.fourshil.musicya.audiofx.AudioEffectController;
-import com.fourshil.musicya.audiofx.AudioFxRepository;
-import com.fourshil.musicya.data.local.MusicDao;
-import com.fourshil.musicya.data.local.MusicDatabase;
 import com.fourshil.musicya.data.repository.MusicRepository;
-import com.fourshil.musicya.data.repository.TagRepository;
-import com.fourshil.musicya.di.AudioModule_ProvideAudioAttributesFactory;
-import com.fourshil.musicya.di.AudioModule_ProvideExoPlayerFactory;
-import com.fourshil.musicya.di.DatabaseModule_ProvideDatabaseFactory;
-import com.fourshil.musicya.di.DatabaseModule_ProvideMusicDaoFactory;
-import com.fourshil.musicya.lyrics.LyricsRepository;
-import com.fourshil.musicya.lyrics.LyricsViewModel;
-import com.fourshil.musicya.lyrics.LyricsViewModel_HiltModules_KeyModule_ProvideFactory;
-import com.fourshil.musicya.player.AudioService;
-import com.fourshil.musicya.player.AudioService_MembersInjector;
-import com.fourshil.musicya.player.MusicServiceConnection;
-import com.fourshil.musicya.ui.dsp.DspViewModel;
-import com.fourshil.musicya.ui.dsp.DspViewModel_HiltModules_KeyModule_ProvideFactory;
-import com.fourshil.musicya.ui.editor.TagEditorViewModel;
-import com.fourshil.musicya.ui.editor.TagEditorViewModel_HiltModules_KeyModule_ProvideFactory;
+import com.fourshil.musicya.player.MusicService;
+import com.fourshil.musicya.player.PlayerController;
 import com.fourshil.musicya.ui.library.LibraryViewModel;
 import com.fourshil.musicya.ui.library.LibraryViewModel_HiltModules_KeyModule_ProvideFactory;
-import com.fourshil.musicya.ui.player.PlayerViewModel;
-import com.fourshil.musicya.ui.player.PlayerViewModel_HiltModules_KeyModule_ProvideFactory;
+import com.fourshil.musicya.ui.nowplaying.NowPlayingViewModel;
+import com.fourshil.musicya.ui.nowplaying.NowPlayingViewModel_HiltModules_KeyModule_ProvideFactory;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import dagger.hilt.android.ActivityRetainedLifecycle;
 import dagger.hilt.android.ViewModelLifecycle;
 import dagger.hilt.android.internal.builders.ActivityComponentBuilder;
@@ -385,7 +365,7 @@ public final class DaggerMusicyaApp_HiltComponents_SingletonC {
 
     @Override
     public Set<String> getViewModelKeys() {
-      return ImmutableSet.<String>of(DspViewModel_HiltModules_KeyModule_ProvideFactory.provide(), LibraryViewModel_HiltModules_KeyModule_ProvideFactory.provide(), LyricsViewModel_HiltModules_KeyModule_ProvideFactory.provide(), PlayerViewModel_HiltModules_KeyModule_ProvideFactory.provide(), TagEditorViewModel_HiltModules_KeyModule_ProvideFactory.provide());
+      return ImmutableSet.<String>of(LibraryViewModel_HiltModules_KeyModule_ProvideFactory.provide(), NowPlayingViewModel_HiltModules_KeyModule_ProvideFactory.provide());
     }
 
     @Override
@@ -411,15 +391,9 @@ public final class DaggerMusicyaApp_HiltComponents_SingletonC {
 
     private final ViewModelCImpl viewModelCImpl = this;
 
-    private Provider<DspViewModel> dspViewModelProvider;
-
     private Provider<LibraryViewModel> libraryViewModelProvider;
 
-    private Provider<LyricsViewModel> lyricsViewModelProvider;
-
-    private Provider<PlayerViewModel> playerViewModelProvider;
-
-    private Provider<TagEditorViewModel> tagEditorViewModelProvider;
+    private Provider<NowPlayingViewModel> nowPlayingViewModelProvider;
 
     private ViewModelCImpl(SingletonCImpl singletonCImpl,
         ActivityRetainedCImpl activityRetainedCImpl, SavedStateHandle savedStateHandleParam,
@@ -434,16 +408,13 @@ public final class DaggerMusicyaApp_HiltComponents_SingletonC {
     @SuppressWarnings("unchecked")
     private void initialize(final SavedStateHandle savedStateHandleParam,
         final ViewModelLifecycle viewModelLifecycleParam) {
-      this.dspViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 0);
-      this.libraryViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 1);
-      this.lyricsViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 2);
-      this.playerViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 3);
-      this.tagEditorViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 4);
+      this.libraryViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 0);
+      this.nowPlayingViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 1);
     }
 
     @Override
     public Map<String, javax.inject.Provider<ViewModel>> getHiltViewModelMap() {
-      return ImmutableMap.<String, javax.inject.Provider<ViewModel>>of("com.fourshil.musicya.ui.dsp.DspViewModel", ((Provider) dspViewModelProvider), "com.fourshil.musicya.ui.library.LibraryViewModel", ((Provider) libraryViewModelProvider), "com.fourshil.musicya.lyrics.LyricsViewModel", ((Provider) lyricsViewModelProvider), "com.fourshil.musicya.ui.player.PlayerViewModel", ((Provider) playerViewModelProvider), "com.fourshil.musicya.ui.editor.TagEditorViewModel", ((Provider) tagEditorViewModelProvider));
+      return ImmutableMap.<String, javax.inject.Provider<ViewModel>>of("com.fourshil.musicya.ui.library.LibraryViewModel", ((Provider) libraryViewModelProvider), "com.fourshil.musicya.ui.nowplaying.NowPlayingViewModel", ((Provider) nowPlayingViewModelProvider));
     }
 
     @Override
@@ -472,20 +443,11 @@ public final class DaggerMusicyaApp_HiltComponents_SingletonC {
       @Override
       public T get() {
         switch (id) {
-          case 0: // com.fourshil.musicya.ui.dsp.DspViewModel 
-          return (T) new DspViewModel(singletonCImpl.audioFxRepositoryProvider.get());
+          case 0: // com.fourshil.musicya.ui.library.LibraryViewModel 
+          return (T) new LibraryViewModel(singletonCImpl.musicRepositoryProvider.get(), singletonCImpl.playerControllerProvider.get());
 
-          case 1: // com.fourshil.musicya.ui.library.LibraryViewModel 
-          return (T) new LibraryViewModel(singletonCImpl.musicRepositoryProvider.get(), singletonCImpl.musicServiceConnectionProvider.get());
-
-          case 2: // com.fourshil.musicya.lyrics.LyricsViewModel 
-          return (T) new LyricsViewModel(singletonCImpl.lyricsRepositoryProvider.get(), singletonCImpl.musicServiceConnectionProvider.get());
-
-          case 3: // com.fourshil.musicya.ui.player.PlayerViewModel 
-          return (T) new PlayerViewModel(singletonCImpl.musicServiceConnectionProvider.get());
-
-          case 4: // com.fourshil.musicya.ui.editor.TagEditorViewModel 
-          return (T) new TagEditorViewModel(singletonCImpl.tagRepositoryProvider.get());
+          case 1: // com.fourshil.musicya.ui.nowplaying.NowPlayingViewModel 
+          return (T) new NowPlayingViewModel(singletonCImpl.playerControllerProvider.get());
 
           default: throw new AssertionError(id);
         }
@@ -561,21 +523,8 @@ public final class DaggerMusicyaApp_HiltComponents_SingletonC {
 
     }
 
-    private AudioEffectController audioEffectController() {
-      return new AudioEffectController(singletonCImpl.audioFxRepositoryProvider.get());
-    }
-
     @Override
-    public void injectAudioService(AudioService audioService) {
-      injectAudioService2(audioService);
-    }
-
-    @CanIgnoreReturnValue
-    private AudioService injectAudioService2(AudioService instance) {
-      AudioService_MembersInjector.injectPlayer(instance, singletonCImpl.exoPlayer());
-      AudioService_MembersInjector.injectAudioEffectController(instance, audioEffectController());
-      AudioService_MembersInjector.injectRepository(instance, singletonCImpl.musicRepositoryProvider.get());
-      return instance;
+    public void injectMusicService(MusicService musicService) {
     }
   }
 
@@ -584,19 +533,9 @@ public final class DaggerMusicyaApp_HiltComponents_SingletonC {
 
     private final SingletonCImpl singletonCImpl = this;
 
-    private Provider<AudioFxRepository> audioFxRepositoryProvider;
-
-    private Provider<MusicDatabase> provideDatabaseProvider;
-
     private Provider<MusicRepository> musicRepositoryProvider;
 
-    private Provider<MusicServiceConnection> musicServiceConnectionProvider;
-
-    private Provider<LyricsRepository> lyricsRepositoryProvider;
-
-    private Provider<TagRepository> tagRepositoryProvider;
-
-    private Provider<AudioAttributes> provideAudioAttributesProvider;
+    private Provider<PlayerController> playerControllerProvider;
 
     private SingletonCImpl(ApplicationContextModule applicationContextModuleParam) {
       this.applicationContextModule = applicationContextModuleParam;
@@ -604,23 +543,10 @@ public final class DaggerMusicyaApp_HiltComponents_SingletonC {
 
     }
 
-    private MusicDao musicDao() {
-      return DatabaseModule_ProvideMusicDaoFactory.provideMusicDao(provideDatabaseProvider.get());
-    }
-
-    private ExoPlayer exoPlayer() {
-      return AudioModule_ProvideExoPlayerFactory.provideExoPlayer(ApplicationContextModule_ProvideContextFactory.provideContext(applicationContextModule), provideAudioAttributesProvider.get());
-    }
-
     @SuppressWarnings("unchecked")
     private void initialize(final ApplicationContextModule applicationContextModuleParam) {
-      this.audioFxRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<AudioFxRepository>(singletonCImpl, 0));
-      this.provideDatabaseProvider = DoubleCheck.provider(new SwitchingProvider<MusicDatabase>(singletonCImpl, 2));
-      this.musicRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<MusicRepository>(singletonCImpl, 1));
-      this.musicServiceConnectionProvider = DoubleCheck.provider(new SwitchingProvider<MusicServiceConnection>(singletonCImpl, 3));
-      this.lyricsRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<LyricsRepository>(singletonCImpl, 4));
-      this.tagRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<TagRepository>(singletonCImpl, 5));
-      this.provideAudioAttributesProvider = DoubleCheck.provider(new SwitchingProvider<AudioAttributes>(singletonCImpl, 6));
+      this.musicRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<MusicRepository>(singletonCImpl, 0));
+      this.playerControllerProvider = DoubleCheck.provider(new SwitchingProvider<PlayerController>(singletonCImpl, 1));
     }
 
     @Override
@@ -656,26 +582,11 @@ public final class DaggerMusicyaApp_HiltComponents_SingletonC {
       @Override
       public T get() {
         switch (id) {
-          case 0: // com.fourshil.musicya.audiofx.AudioFxRepository 
-          return (T) new AudioFxRepository();
+          case 0: // com.fourshil.musicya.data.repository.MusicRepository 
+          return (T) new MusicRepository(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
 
-          case 1: // com.fourshil.musicya.data.repository.MusicRepository 
-          return (T) new MusicRepository(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule), singletonCImpl.musicDao());
-
-          case 2: // com.fourshil.musicya.data.local.MusicDatabase 
-          return (T) DatabaseModule_ProvideDatabaseFactory.provideDatabase(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
-
-          case 3: // com.fourshil.musicya.player.MusicServiceConnection 
-          return (T) new MusicServiceConnection(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
-
-          case 4: // com.fourshil.musicya.lyrics.LyricsRepository 
-          return (T) new LyricsRepository();
-
-          case 5: // com.fourshil.musicya.data.repository.TagRepository 
-          return (T) new TagRepository(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
-
-          case 6: // androidx.media3.common.AudioAttributes 
-          return (T) AudioModule_ProvideAudioAttributesFactory.provideAudioAttributes();
+          case 1: // com.fourshil.musicya.player.PlayerController 
+          return (T) new PlayerController(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
 
           default: throw new AssertionError(id);
         }

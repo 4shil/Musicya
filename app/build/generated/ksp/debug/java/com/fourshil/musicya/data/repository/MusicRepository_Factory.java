@@ -1,7 +1,6 @@
 package com.fourshil.musicya.data.repository;
 
 import android.content.Context;
-import com.fourshil.musicya.data.local.MusicDao;
 import dagger.internal.DaggerGenerated;
 import dagger.internal.Factory;
 import dagger.internal.QualifierMetadata;
@@ -25,25 +24,20 @@ import javax.inject.Provider;
 public final class MusicRepository_Factory implements Factory<MusicRepository> {
   private final Provider<Context> contextProvider;
 
-  private final Provider<MusicDao> musicDaoProvider;
-
-  public MusicRepository_Factory(Provider<Context> contextProvider,
-      Provider<MusicDao> musicDaoProvider) {
+  public MusicRepository_Factory(Provider<Context> contextProvider) {
     this.contextProvider = contextProvider;
-    this.musicDaoProvider = musicDaoProvider;
   }
 
   @Override
   public MusicRepository get() {
-    return newInstance(contextProvider.get(), musicDaoProvider.get());
+    return newInstance(contextProvider.get());
   }
 
-  public static MusicRepository_Factory create(Provider<Context> contextProvider,
-      Provider<MusicDao> musicDaoProvider) {
-    return new MusicRepository_Factory(contextProvider, musicDaoProvider);
+  public static MusicRepository_Factory create(Provider<Context> contextProvider) {
+    return new MusicRepository_Factory(contextProvider);
   }
 
-  public static MusicRepository newInstance(Context context, MusicDao musicDao) {
-    return new MusicRepository(context, musicDao);
+  public static MusicRepository newInstance(Context context) {
+    return new MusicRepository(context);
   }
 }
