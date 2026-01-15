@@ -18,9 +18,12 @@ navigationCompose = "2.7.7"
 hiltNavigationCompose = "1.1.0"
 accompanist = "0.34.0"
 kotlinxCoroutines = "1.7.3"
+jaudiotagger = "2.2.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+jaudiotagger = { module = "com.github.AdrienPoupa:jaudiotagger", version.ref = "jaudiotagger" }
+
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

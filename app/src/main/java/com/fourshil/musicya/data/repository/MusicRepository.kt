@@ -35,6 +35,7 @@ class MusicRepository @Inject constructor(
         // Filter out short clips (user req: Short Track Filter < 45s, but let's implement basic first)
         val selection = "${MediaStore.Audio.Media.IS_MUSIC} != 0"
 
+        try { // Prepare for Safety
         context.contentResolver.query(
             MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
             projection,
@@ -69,8 +70,13 @@ class MusicRepository @Inject constructor(
                         Song(id, title, artist, album, duration, uri, path, folderPath)
                     )
                 }
-            }
+                }
         }
+        } catch (e: Exception) {
+            // Log error or return empty list if permission denied or query fails
+            e.printStackTrace()
+        }
+
         songs
     }
 }

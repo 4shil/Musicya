@@ -5,6 +5,7 @@ import com.fourshil.musicya.di.DatabaseModule;
 import com.fourshil.musicya.lyrics.LyricsViewModel_HiltModules;
 import com.fourshil.musicya.player.AudioService_GeneratedInjector;
 import com.fourshil.musicya.ui.dsp.DspViewModel_HiltModules;
+import com.fourshil.musicya.ui.editor.TagEditorViewModel_HiltModules;
 import com.fourshil.musicya.ui.library.LibraryViewModel_HiltModules;
 import com.fourshil.musicya.ui.player.PlayerViewModel_HiltModules;
 import dagger.Binds;
@@ -158,7 +159,8 @@ public final class MusicyaApp_HiltComponents {
           LyricsViewModel_HiltModules.KeyModule.class,
           ActivityCBuilderModule.class,
           ViewModelCBuilderModule.class,
-          PlayerViewModel_HiltModules.KeyModule.class
+          PlayerViewModel_HiltModules.KeyModule.class,
+          TagEditorViewModel_HiltModules.KeyModule.class
       }
   )
   @ActivityRetainedScoped
@@ -198,7 +200,8 @@ public final class MusicyaApp_HiltComponents {
           HiltWrapper_HiltViewModelFactory_ViewModelModule.class,
           LibraryViewModel_HiltModules.BindsModule.class,
           LyricsViewModel_HiltModules.BindsModule.class,
-          PlayerViewModel_HiltModules.BindsModule.class
+          PlayerViewModel_HiltModules.BindsModule.class,
+          TagEditorViewModel_HiltModules.BindsModule.class
       }
   )
   @ViewModelScoped
