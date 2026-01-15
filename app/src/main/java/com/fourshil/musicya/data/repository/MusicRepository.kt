@@ -34,8 +34,11 @@ class MusicRepository @Inject constructor(
             MediaStore.Audio.Media.SIZE
         )
         
-        val selection = "${MediaStore.Audio.Media.IS_MUSIC} != 0 AND ${MediaStore.Audio.Media.DURATION} >= 30000"
+        // Only filter for IS_MUSIC, no duration filter
+        val selection = "${MediaStore.Audio.Media.IS_MUSIC} != 0"
         val sortOrder = "${MediaStore.Audio.Media.TITLE} ASC"
+        
+        android.util.Log.d("MusicRepository", "Starting song query...")
         
         try {
             context.contentResolver.query(
@@ -73,7 +76,9 @@ class MusicRepository @Inject constructor(
                     )
                 }
             }
+            android.util.Log.d("MusicRepository", "Found ${songs.size} songs")
         } catch (e: Exception) {
+            android.util.Log.e("MusicRepository", "Error querying songs", e)
             e.printStackTrace()
         }
         

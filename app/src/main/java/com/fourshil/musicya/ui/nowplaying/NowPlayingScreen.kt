@@ -1,8 +1,8 @@
 package com.fourshil.musicya.ui.nowplaying
 
-import androidx.compose.foundation.background
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.automirrored.filled.QueueMusic
@@ -10,14 +10,14 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
-import com.fourshil.musicya.data.model.Song
+import coil.request.ImageRequest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,6 +32,17 @@ fun NowPlayingScreen(
     val duration by viewModel.duration.collectAsState()
     val shuffleEnabled by viewModel.shuffleEnabled.collectAsState()
     val repeatMode by viewModel.repeatMode.collectAsState()
+
+    // Smooth animated progress
+    var isSeeking by remember { mutableStateOf(false) }
+    var seekValue by remember { mutableFloatStateOf(0f) }
+    
+    val progress = if (duration > 0) position.toFloat() / duration else 0f
+    val animatedProgress by animateFloatAsState(
+        targetValue = if (isSeeking) seekValue else progress,
+        animationSpec = tween(durationMillis = if (isSeeking) 0 else 200),
+        label = "progress"
+    )
 
     Scaffold(
         topBar = {
@@ -59,7 +70,7 @@ fun NowPlayingScreen(
         ) {
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Album Art
+            // Album Art - using MediaStore content URI with fallback
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -67,8 +78,14 @@ fun NowPlayingScreen(
                 shape = MaterialTheme.shapes.large,
                 elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
             ) {
+                val context = LocalContext.current
                 AsyncImage(
-                    model = currentSong?.albumArtUri,
+                    model = ImageRequest.Builder(context)
+                        .data(currentSong?.albumArtUri)
+                        .crossfade(true)
+                        .error(android.R.drawable.ic_menu_gallery)
+                        .fallback(android.R.drawable.ic_menu_gallery)
+                        .build(),
                     contentDescription = "Album Art",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
@@ -77,7 +94,7 @@ fun NowPlayingScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Song Info
+            // Song Info with animation
             Text(
                 text = currentSong?.title ?: "No song",
                 style = MaterialTheme.typography.headlineSmall,
@@ -96,11 +113,18 @@ fun NowPlayingScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Progress Bar
+            // Progress Bar - smooth seeking
             Column(modifier = Modifier.fillMaxWidth()) {
                 Slider(
-                    value = if (duration > 0) position.toFloat() / duration else 0f,
-                    onValueChange = { viewModel.seekTo((it * duration).toLong()) },
+                    value = animatedProgress,
+                    onValueChange = { 
+                        isSeeking = true
+                        seekValue = it
+                    },
+                    onValueChangeFinished = {
+                        viewModel.seekTo((seekValue * duration).toLong())
+                        isSeeking = false
+                    },
                     modifier = Modifier.fillMaxWidth()
                 )
                 Row(
@@ -108,7 +132,7 @@ fun NowPlayingScreen(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = formatTime(position),
+                        text = formatTime(if (isSeeking) (seekValue * duration).toLong() else position),
                         style = MaterialTheme.typography.labelSmall
                     )
                     Text(
@@ -120,7 +144,7 @@ fun NowPlayingScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Controls
+            // Controls with smooth taps
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly,
@@ -135,11 +159,14 @@ fun NowPlayingScreen(
                     )
                 }
 
-                IconButton(onClick = { viewModel.skipToPrevious() }) {
+                IconButton(
+                    onClick = { viewModel.skipToPrevious() },
+                    modifier = Modifier.size(56.dp)
+                ) {
                     Icon(
                         Icons.Default.SkipPrevious,
                         contentDescription = "Previous",
-                        modifier = Modifier.size(40.dp)
+                        modifier = Modifier.size(36.dp)
                     )
                 }
 
@@ -155,11 +182,14 @@ fun NowPlayingScreen(
                     )
                 }
 
-                IconButton(onClick = { viewModel.skipToNext() }) {
+                IconButton(
+                    onClick = { viewModel.skipToNext() },
+                    modifier = Modifier.size(56.dp)
+                ) {
                     Icon(
                         Icons.Default.SkipNext,
                         contentDescription = "Next",
-                        modifier = Modifier.size(40.dp)
+                        modifier = Modifier.size(36.dp)
                     )
                 }
 
@@ -182,6 +212,7 @@ fun NowPlayingScreen(
 }
 
 private fun formatTime(ms: Long): String {
+    if (ms < 0) return "0:00"
     val totalSeconds = ms / 1000
     val minutes = totalSeconds / 60
     val seconds = totalSeconds % 60

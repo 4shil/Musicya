@@ -1,5 +1,7 @@
 package com.fourshil.musicya.ui.components
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -9,9 +11,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.fourshil.musicya.data.model.Song
 
 @Composable
@@ -26,14 +30,21 @@ fun MiniPlayer(
 ) {
     if (song == null) return
 
+    // Smooth animated progress
+    val animatedProgress by animateFloatAsState(
+        targetValue = progress.coerceIn(0f, 1f),
+        animationSpec = tween(durationMillis = 300),
+        label = "miniPlayerProgress"
+    )
+
     Surface(
         modifier = modifier.fillMaxWidth(),
         tonalElevation = 3.dp
     ) {
         Column {
-            // Progress indicator
+            // Progress indicator - smooth animation
             LinearProgressIndicator(
-                progress = { progress.coerceIn(0f, 1f) },
+                progress = { animatedProgress },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(2.dp),
@@ -48,13 +59,19 @@ fun MiniPlayer(
                     .padding(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Album art
+                // Album art with proper loading
+                val context = LocalContext.current
                 Card(
                     modifier = Modifier.size(48.dp),
                     shape = MaterialTheme.shapes.small
                 ) {
                     AsyncImage(
-                        model = song.albumArtUri,
+                        model = ImageRequest.Builder(context)
+                            .data(song.albumArtUri)
+                            .crossfade(true)
+                            .error(android.R.drawable.ic_menu_gallery)
+                            .fallback(android.R.drawable.ic_menu_gallery)
+                            .build(),
                         contentDescription = "Album Art",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxSize()
