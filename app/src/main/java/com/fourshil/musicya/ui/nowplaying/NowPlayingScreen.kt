@@ -53,8 +53,7 @@ fun NowPlayingScreen(
     val repeatMode by viewModel.repeatMode.collectAsState()
     val isFavorite by viewModel.isFavorite.collectAsState()
 
-    val isDark = isSystemInDarkTheme()
-    val text = if (isDark) PureWhite else PureBlack
+    val text = MaterialTheme.colorScheme.onBackground
 
     // Disc Rotation
     val infiniteTransition = rememberInfiniteTransition()
@@ -135,18 +134,7 @@ fun NowPlayingScreen(
                     tint = text
                 )
 
-                // RAW TAG
-                Box(
-                    modifier = Modifier
-                        .offset(x = 130.dp, y = (-120).dp)
-                        .rotate(12f)
-                        .zIndex(2f)
-                        .background(MangaRed)
-                        .border(3.dp, PureBlack)
-                        .padding(horizontal = 12.dp, vertical = 4.dp)
-                ) {
-                    Text("RAW", color = PureWhite, fontWeight = FontWeight.Black)
-                }
+
 
                 // Main Capsule / Card
                 ArtisticCard(
@@ -164,14 +152,7 @@ fun NowPlayingScreen(
                             modifier = Modifier.fillMaxSize().alpha(0.9f)
                         )
                         
-                        // Manga SFX
-                        MangaFX(
-                            text = "VIBE!",
-                            color = MangaRed,
-                            modifier = Modifier
-                                .align(Alignment.BottomStart)
-                                .padding(16.dp)
-                        )
+
                     }
                 }
             }
@@ -212,10 +193,6 @@ fun NowPlayingScreen(
 
             // Seeker
             Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text("RENDERING...", style = MaterialTheme.typography.labelSmall, color = text.copy(0.6f))
-                    Text("MASTER-EDIT", style = MaterialTheme.typography.labelSmall, color = MangaRed, fontWeight = FontWeight.Black)
-                }
                 Spacer(modifier = Modifier.height(12.dp))
                 
                 // Manga Progress Bar

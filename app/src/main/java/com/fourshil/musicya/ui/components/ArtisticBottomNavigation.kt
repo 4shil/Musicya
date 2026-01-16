@@ -108,17 +108,7 @@ private fun ArtisticNavButton(
             )
             .padding(8.dp)
     ) {
-        // Red Arrow Indicator
-        if (selected) {
-            Box(
-                modifier = Modifier
-                    .size(12.dp)
-                    .rotate(45f)
-                    .border(2.dp, PureBlack)
-                    .background(MangaRed)
-                    .offset(y = 4.dp)
-            )
-        }
+
         
         Icon(
             imageVector = item.icon,

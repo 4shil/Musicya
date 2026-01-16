@@ -77,25 +77,7 @@ fun MiniPlayer(
                 .border(4.dp, PureBlack)
                 .background(cardBg)
         ) {
-            // Live Broadcast Badge
-            Box(
-                modifier = Modifier
-                    .offset(x = (-10).dp, y = (-12).dp)
-                    .rotate(-6f)
-                    .background(MangaRed)
-                    .border(2.dp, PureBlack)
-                    .padding(horizontal = 8.dp, vertical = 2.dp)
-                    .align(Alignment.TopStart)
-            ) {
-                Text(
-                    text = "LIVE BROADCAST",
-                    color = PureWhite,
-                    style = MaterialTheme.typography.labelSmall.copy(
-                        fontWeight = FontWeight.Black,
-                        letterSpacing = 1.sp
-                    )
-                )
-            }
+
             
             Row(
                 modifier = Modifier

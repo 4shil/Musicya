@@ -95,88 +95,8 @@ fun SongsScreen(
                 .padding(padding)
                 .padding(horizontal = 24.dp)
         ) {
-            if (!selectionState.isSelectionMode) {
-                Spacer(modifier = Modifier.height(24.dp))
-                
-                // Header: STUDIO FEED
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.Top
-                ) {
-                    Box {
-                         // Tag "ART-V02"
-                        Box(
-                            modifier = Modifier
-                                .offset(x = 60.dp, y = (-12).dp)
-                                .rotate(-8f)
-                                .background(PureBlack)
-                                .border(2.dp, PureWhite)
-                                .padding(horizontal = 6.dp, vertical = 2.dp)
-                        ) {
-                            Text(
-                                "ART-V02",
-                                color = PureWhite,
-                                style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp)
-                            )
-                        }
 
-                        Column {
-                            Text(
-                                text = "STUDIO",
-                                style = MaterialTheme.typography.displayMedium.copy(
-                                    fontSize = 48.sp,
-                                    lineHeight = 40.sp,
-                                    fontWeight = FontWeight.Black
-                                ),
-                                color = MaterialTheme.colorScheme.onBackground
-                            )
-                            Text(
-                                text = "FEED",
-                                style = MaterialTheme.typography.displayMedium.copy(
-                                    fontSize = 48.sp,
-                                    lineHeight = 40.sp,
-                                    fontWeight = FontWeight.Black
-                                ),
-                                color = MangaRed
-                            )
-                        }
-                    }
-
-                    // Simple Menu Logic
-                     ArtisticButton(
-                        onClick = onMenuClick,
-                        icon = { Icon(Icons.Default.Menu, null) },
-                        modifier = Modifier.size(56.dp)
-                     )
-                }
                 
-                Spacer(modifier = Modifier.height(24.dp))
-                
-                // Artistic Search Bar
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .border(4.dp, PureBlack)
-                        .background(PureWhite)
-                        .padding(horizontal = 16.dp, vertical = 14.dp)
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Default.Search, null, tint = MangaRed, modifier = Modifier.size(24.dp))
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Text(
-                            text = "SEARCH THE ARCHIVE...",
-                            style = MaterialTheme.typography.bodyLarge.copy(
-                                color = PureBlack.copy(alpha = 0.5f),
-                                fontWeight = FontWeight.Black
-                            )
-                        )
-                    }
-                }
-                
-                Spacer(modifier = Modifier.height(24.dp))
-            }
-
             when {
                 !permissionsState.allPermissionsGranted -> {
                     PermissionRequiredView { permissionsState.launchMultiplePermissionRequest() }
@@ -197,6 +117,69 @@ fun SongsScreen(
                         contentPadding = PaddingValues(bottom = 160.dp), // Space for bottom bar + mini player
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
+                        if (!selectionState.isSelectionMode) {
+                            item {
+                                Spacer(modifier = Modifier.height(24.dp))
+                                // Header: STUDIO FEED
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.Top
+                                ) {
+                                    Column {
+                                        Text(
+                                            text = "STUDIO",
+                                            style = MaterialTheme.typography.displayMedium.copy(
+                                                fontSize = 48.sp,
+                                                lineHeight = 40.sp,
+                                                fontWeight = FontWeight.Black
+                                            ),
+                                            color = MaterialTheme.colorScheme.onBackground
+                                        )
+                                        Text(
+                                            text = "FEED",
+                                            style = MaterialTheme.typography.displayMedium.copy(
+                                                fontSize = 48.sp,
+                                                lineHeight = 40.sp,
+                                                fontWeight = FontWeight.Black
+                                            ),
+                                            color = MangaRed
+                                        )
+                                    }
+
+                                    ArtisticButton(
+                                        onClick = onMenuClick,
+                                        icon = { Icon(Icons.Default.Menu, null) },
+                                        modifier = Modifier.size(56.dp)
+                                    )
+                                }
+                                
+                                Spacer(modifier = Modifier.height(24.dp))
+                                
+                                // Artistic Search Bar
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .border(4.dp, PureBlack)
+                                        .background(PureWhite)
+                                        .padding(horizontal = 16.dp, vertical = 14.dp)
+                                ) {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Icon(Icons.Default.Search, null, tint = MangaRed, modifier = Modifier.size(24.dp))
+                                        Spacer(modifier = Modifier.width(16.dp))
+                                        Text(
+                                            text = "SEARCH THE ARCHIVE...",
+                                            style = MaterialTheme.typography.bodyLarge.copy(
+                                                color = PureBlack.copy(alpha = 0.5f),
+                                                fontWeight = FontWeight.Black
+                                            )
+                                        )
+                                    }
+                                }
+                                Spacer(modifier = Modifier.height(24.dp))
+                            }
+                        }
+
                         itemsIndexed(
                             items = songs,
                             key = { _, song -> song.id },

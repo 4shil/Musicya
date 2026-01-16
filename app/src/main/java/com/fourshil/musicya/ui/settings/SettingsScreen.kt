@@ -49,7 +49,7 @@ fun SettingsScreen(
         Row(verticalAlignment = Alignment.CenterVertically) {
              ArtisticButton(
                 onClick = onBack,
-                icon = { Icon(Icons.AutoMirrored.Filled.ArrowBack, null, tint = PureBlack) },
+                icon = { Icon(Icons.AutoMirrored.Filled.ArrowBack, null, tint = MaterialTheme.colorScheme.onBackground) },
                 modifier = Modifier.size(48.dp)
             )
             Spacer(modifier = Modifier.width(16.dp))
@@ -60,7 +60,7 @@ fun SettingsScreen(
                     fontWeight = FontWeight.Black,
                     fontStyle = FontStyle.Italic
                 ),
-                color = PureBlack
+                color = MaterialTheme.colorScheme.onBackground
             )
         }
 
@@ -242,11 +242,12 @@ fun SettingsItem(
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Black),
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
                     text = subtitle,
                     style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
-                    color = PureBlack.copy(alpha = 0.6f)
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                 )
             }
             
