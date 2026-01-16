@@ -58,15 +58,7 @@ fun MiniPlayer(
             .height(90.dp) // Taller for the badge
             .clickable(onClick = onClick)
     ) {
-        // Shadow
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(72.dp)
-                .align(Alignment.BottomCenter)
-                .offset(x = 8.dp, y = 8.dp)
-                .background(PureBlack)
-        )
+
 
         // Main Card
         Box(

@@ -34,12 +34,18 @@ import com.fourshil.musicya.ui.theme.PureWhite
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 
+import com.fourshil.musicya.ui.components.TopNavItem
+import com.fourshil.musicya.ui.components.TopNavigationChips
+import com.fourshil.musicya.ui.navigation.Screen
+
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun SongsScreen(
     viewModel: LibraryViewModel = hiltViewModel(),
     onSongClick: (Int) -> Unit = {},
-    onMenuClick: () -> Unit = {}
+    onMenuClick: () -> Unit = {},
+    currentRoute: String? = null,
+    onNavigate: (String) -> Unit = {}
 ) {
     val songs by viewModel.songs.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
@@ -126,26 +132,17 @@ fun SongsScreen(
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                     verticalAlignment = Alignment.Top
                                 ) {
-                                    Column {
-                                        Text(
-                                            text = "STUDIO",
-                                            style = MaterialTheme.typography.displayMedium.copy(
-                                                fontSize = 48.sp,
-                                                lineHeight = 40.sp,
-                                                fontWeight = FontWeight.Black
-                                            ),
-                                            color = MaterialTheme.colorScheme.onBackground
-                                        )
-                                        Text(
-                                            text = "FEED",
-                                            style = MaterialTheme.typography.displayMedium.copy(
-                                                fontSize = 48.sp,
-                                                lineHeight = 40.sp,
-                                                fontWeight = FontWeight.Black
-                                            ),
-                                            color = MangaRed
-                                        )
-                                    }
+                                    Text(
+                                        text = "LYRA",
+                                        style = MaterialTheme.typography.displayLarge.copy(
+                                            fontSize = 64.sp,
+                                            fontWeight = FontWeight.Black,
+                                            fontFamily = androidx.compose.ui.text.font.FontFamily.Serif,
+                                            fontStyle = FontStyle.Italic,
+                                            letterSpacing = (-2).sp
+                                        ),
+                                        color = MaterialTheme.colorScheme.onBackground
+                                    )
 
                                     ArtisticButton(
                                         onClick = onMenuClick,
@@ -177,6 +174,20 @@ fun SongsScreen(
                                     }
                                 }
                                 Spacer(modifier = Modifier.height(24.dp))
+
+                                TopNavigationChips(
+                                    items = listOf(
+                                        TopNavItem(Screen.Songs.route, "Gallery"),
+                                        TopNavItem(Screen.Favorites.route, "Hearts"),
+                                        TopNavItem(Screen.Folders.route, "Files"),
+                                        TopNavItem(Screen.Playlists.route, "Assets"),
+                                        TopNavItem(Screen.Albums.route, "Ink"),
+                                        TopNavItem(Screen.Artists.route, "Muses")
+                                    ),
+                                    currentRoute = currentRoute,
+                                    onItemClick = onNavigate,
+                                    modifier = Modifier.padding(bottom = 24.dp)
+                                )
                             }
                         }
 

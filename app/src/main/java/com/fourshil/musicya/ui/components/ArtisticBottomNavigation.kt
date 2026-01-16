@@ -56,14 +56,7 @@ fun ArtisticBottomNavigation(
             .fillMaxWidth()
             .padding(horizontal = 24.dp, vertical = 16.dp)
     ) {
-        // Shadow
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(80.dp)
-                .offset(x = 10.dp, y = 10.dp)
-                .background(PureBlack)
-        )
+
 
         // Bar
         Row(

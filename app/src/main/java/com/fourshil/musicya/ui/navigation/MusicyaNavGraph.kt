@@ -82,7 +82,17 @@ fun MusicyaNavGraph() {
                     modifier = Modifier.fillMaxSize()
                 ) {
                     composable(Screen.Songs.route) {
-                        SongsScreen(onMenuClick = { /* Drawer? or Settings */ navController.navigate(Screen.Settings.route) })
+                        SongsScreen(
+                            onMenuClick = { navController.navigate(Screen.Settings.route) },
+                            currentRoute = currentRoute,
+                            onNavigate = { route ->
+                                navController.navigate(route) {
+                                    popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            }
+                        )
                     }
                     composable(Screen.Albums.route) {
                         AlbumsScreen(onAlbumClick = { id -> navController.navigate(Screen.PlaylistDetail.createRoute("album", id.toString())) })
@@ -145,25 +155,7 @@ fun MusicyaNavGraph() {
                         )
                     }
 
-                    if (showBottomNav) {
-                        ArtisticBottomNavigation(
-                            items = listOf(
-                                ArtisticNavItem(Screen.Songs.route, "Gallery", Icons.Default.MusicNote),
-                                ArtisticNavItem(Screen.Albums.route, "Ink", Icons.Default.Album),
-                                ArtisticNavItem(Screen.Artists.route, "Muses", Icons.Default.Mic),
-                                ArtisticNavItem(Screen.Playlists.route, "Assets", Icons.Default.Folder)
-                            ),
-                            currentRoute = currentRoute,
-                            onItemClick = { route ->
-                                navController.navigate(route) {
-                                    popUpTo(navController.graph.findStartDestination().id) { saveState = true }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            },
-                             isDark = isDark
-                        )
-                    }
+
                 }
             }
         }

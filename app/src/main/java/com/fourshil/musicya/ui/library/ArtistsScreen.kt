@@ -27,80 +27,103 @@ import com.fourshil.musicya.ui.components.PlaylistArtGrid
 import com.fourshil.musicya.ui.theme.MangaRed
 import com.fourshil.musicya.ui.theme.PureBlack
 
+import com.fourshil.musicya.ui.components.TopNavItem
+import com.fourshil.musicya.ui.components.TopNavigationChips
+import com.fourshil.musicya.ui.navigation.Screen
+
 @Composable
 fun ArtistsScreen(
     viewModel: LibraryViewModel = hiltViewModel(),
-    onArtistClick: (String) -> Unit = {}
+    onArtistClick: (String) -> Unit = {},
+    currentRoute: String? = null,
+    onNavigate: (String) -> Unit = {}
 ) {
     val artists by viewModel.artists.collectAsState()
     val songs by viewModel.songs.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
 
-    Column(
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 24.dp)
-            .statusBarsPadding()
+            .statusBarsPadding(),
+        contentPadding = PaddingValues(bottom = 160.dp)
     ) {
-        Spacer(modifier = Modifier.height(24.dp))
-        
-        // Header "MUSES"
-        Box(modifier = Modifier.fillMaxWidth()) {
-            Text(
-                text = "THE",
-                style = MaterialTheme.typography.displayMedium.copy(
-                    fontSize = 32.sp,
-                    fontWeight = FontWeight.Black
+        item {
+             Column(modifier = Modifier.padding(horizontal = 24.dp)) {
+                Spacer(modifier = Modifier.height(24.dp))
+                
+                Box(modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        text = "THE",
+                        style = MaterialTheme.typography.displayMedium.copy(
+                            fontSize = 32.sp,
+                            fontWeight = FontWeight.Black
+                        ),
+                        modifier = Modifier.align(Alignment.TopStart),
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                    Text(
+                        text = "MUSES",
+                        style = MaterialTheme.typography.displayMedium.copy(
+                            fontSize = 64.sp,
+                            fontWeight = FontWeight.Black,
+                            fontStyle = FontStyle.Italic
+                        ),
+                        color = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.padding(top = 24.dp)
+                    )
+                     Text(
+                        text = "VOICES",
+                        style = MaterialTheme.typography.displayMedium.copy(
+                            fontSize = 64.sp,
+                            fontWeight = FontWeight.Black,
+                            fontStyle = FontStyle.Italic
+                        ),
+                        color = MangaRed.copy(alpha=0.3f),
+                        modifier = Modifier.padding(top = 32.dp, start = 8.dp).zIndex(-1f)
+                    )
+                }
+                
+                Spacer(modifier = Modifier.height(32.dp))
+             }
+
+             TopNavigationChips(
+                items = listOf(
+                    TopNavItem(Screen.Songs.route, "Gallery"),
+                    TopNavItem(Screen.Favorites.route, "Hearts"),
+                    TopNavItem(Screen.Folders.route, "Files"),
+                    TopNavItem(Screen.Playlists.route, "Assets"),
+                    TopNavItem(Screen.Albums.route, "Ink"),
+                    TopNavItem(Screen.Artists.route, "Muses")
                 ),
-                modifier = Modifier.align(Alignment.TopStart)
-            )
-            Text(
-                text = "MUSES",
-                style = MaterialTheme.typography.displayMedium.copy(
-                    fontSize = 64.sp,
-                    fontWeight = FontWeight.Black,
-                    fontStyle = FontStyle.Italic,
-                    color = PureBlack
-                ),
-                modifier = Modifier.padding(top = 24.dp)
-            )
-             Text(
-                text = "VOICES",
-                style = MaterialTheme.typography.displayMedium.copy(
-                    fontSize = 64.sp,
-                    fontWeight = FontWeight.Black,
-                    fontStyle = FontStyle.Italic,
-                    color = MangaRed.copy(alpha=0.3f) // Shadow text
-                ),
-                modifier = Modifier.padding(top = 32.dp, start = 8.dp).zIndex(-1f)
+                currentRoute = currentRoute,
+                onItemClick = onNavigate,
+                modifier = Modifier.padding(bottom = 24.dp)
             )
         }
-        
-        Spacer(modifier = Modifier.height(32.dp))
 
         if (isLoading) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(color = PureBlack)
-            }
+             item {
+                Box(modifier = Modifier.fillMaxWidth().height(200.dp), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(color = MaterialTheme.colorScheme.onBackground)
+                }
+             }
         } else if (artists.isEmpty()) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("NO VOICES", style = MaterialTheme.typography.headlineLarge)
-            }
+             item {
+                Box(modifier = Modifier.fillMaxWidth().height(200.dp), contentAlignment = Alignment.Center) {
+                    Text("NO VOICES", style = MaterialTheme.typography.headlineLarge, color = MaterialTheme.colorScheme.onBackground)
+                }
+             }
         } else {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(bottom = 160.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                items(artists, key = { it.id }) { artist ->
-                    val artistSongs = songs.filter { it.artist == artist.name }
-                    
+            items(artists, key = { it.id }) { artist ->
+                 val artistSongs = songs.filter { it.artist == artist.name }
+                 Box(modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)) {
                     ArtistArtisticItem(
                         artist = artist,
                         artUris = artistSongs.map { it.albumArtUri },
                         onClick = { onArtistClick(artist.name) }
                     )
-                }
+                 }
             }
         }
     }
@@ -118,36 +141,4 @@ fun ArtistArtisticItem(
     ) {
         Row(
             modifier = Modifier.padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Art Grid
-            Box(
-                modifier = Modifier
-                    .size(64.dp)
-                    .border(3.dp, PureBlack)
-                    .background(PureBlack)
-            ) {
-                 PlaylistArtGrid(uris = artUris, size = 64.dp)
-            }
-           
-            Spacer(modifier = Modifier.width(16.dp))
-            
-            Column {
-                Text(
-                    text = artist.name.uppercase(),
-                    style = MaterialTheme.typography.headlineLarge.copy(fontSize = 24.sp),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    text = "${artist.songCount} TRKS // ${artist.albumCount} ALBS",
-                    style = MaterialTheme.typography.labelSmall.copy(
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 1.sp
-                    ),
-                    color = MangaRed
-                )
-            }
-        }
-    }
-}
+        

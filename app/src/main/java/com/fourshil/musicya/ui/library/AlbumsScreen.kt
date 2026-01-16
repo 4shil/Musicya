@@ -7,6 +7,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import com.fourshil.musicya.ui.components.TopNavItem
+import com.fourshil.musicya.ui.components.TopNavigationChips
+import com.fourshil.musicya.ui.navigation.Screen
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Album
 import androidx.compose.material3.*
@@ -36,65 +40,86 @@ import com.fourshil.musicya.ui.theme.PureWhite
 @Composable
 fun AlbumsScreen(
     viewModel: LibraryViewModel = hiltViewModel(),
-    onAlbumClick: (Long) -> Unit = {}
+    onAlbumClick: (Long) -> Unit = {},
+    currentRoute: String? = null,
+    onNavigate: (String) -> Unit = {}
 ) {
     val albums by viewModel.albums.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
 
     // Screen-level Halftone handled in Scaffold, but we can add specific flair here
     
-    Column(
+    LazyVerticalGrid(
+        columns = GridCells.Adaptive(minSize = 160.dp),
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 24.dp)
             .statusBarsPadding()
+            .padding(horizontal = 24.dp),
+        contentPadding = PaddingValues(bottom = 160.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
-        Spacer(modifier = Modifier.height(24.dp))
-        
-        // Header
-        Text(
-            text = "THE",
-            style = MaterialTheme.typography.displayMedium.copy(
-                fontSize = 42.sp,
-                fontWeight = FontWeight.Black,
-                fontStyle = FontStyle.Italic
-            ),
-            lineHeight = 40.sp
-        )
-        Text(
-            text = "COLLECTION",
-            style = MaterialTheme.typography.displayMedium.copy(
-                fontSize = 42.sp,
-                fontWeight = FontWeight.Black,
-                fontStyle = FontStyle.Italic,
-                color = MangaRed
-            ),
-             lineHeight = 40.sp,
-             modifier = Modifier.padding(bottom = 24.dp)
-        )
+        // Header & Nav (Span All)
+        item(span = { GridItemSpan(maxLineSpan) }) {
+            Column {
+                Spacer(modifier = Modifier.height(24.dp))
+                Text(
+                    text = "THE",
+                    style = MaterialTheme.typography.displayMedium.copy(
+                        fontSize = 42.sp,
+                        fontWeight = FontWeight.Black,
+                        fontStyle = FontStyle.Italic
+                    ),
+                    lineHeight = 40.sp,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+                Text(
+                    text = "COLLECTION",
+                    style = MaterialTheme.typography.displayMedium.copy(
+                        fontSize = 42.sp,
+                        fontWeight = FontWeight.Black,
+                        fontStyle = FontStyle.Italic,
+                        color = MangaRed
+                    ),
+                     lineHeight = 40.sp
+                )
+                
+                Spacer(modifier = Modifier.height(24.dp))
+
+                TopNavigationChips(
+                    items = listOf(
+                        TopNavItem(Screen.Songs.route, "Gallery"),
+                        TopNavItem(Screen.Favorites.route, "Hearts"),
+                        TopNavItem(Screen.Folders.route, "Files"),
+                        TopNavItem(Screen.Playlists.route, "Assets"),
+                        TopNavItem(Screen.Albums.route, "Ink"),
+                        TopNavItem(Screen.Artists.route, "Muses")
+                    ),
+                    currentRoute = currentRoute,
+                    onItemClick = onNavigate,
+                    modifier = Modifier.padding(bottom = 24.dp)
+                )
+            }
+        }
 
         if (isLoading) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(color = PureBlack)
-            }
-        } else if (albums.isEmpty()) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("NULL", style = MaterialTheme.typography.headlineLarge)
-            }
-        } else {
-            LazyVerticalGrid(
-                columns = GridCells.Adaptive(minSize = 160.dp),
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(bottom = 160.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalArrangement = Arrangement.spacedBy(24.dp)
-            ) {
-                items(albums, key = { it.id }) { album ->
-                    AlbumArtisticCard(
-                        album = album,
-                        onClick = { onAlbumClick(album.id) }
-                    )
+             item(span = { GridItemSpan(maxLineSpan) }) {
+                Box(modifier = Modifier.fillMaxWidth().height(200.dp), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(color = PureBlack)
                 }
+             }
+        } else if (albums.isEmpty()) {
+             item(span = { GridItemSpan(maxLineSpan) }) {
+                 Box(modifier = Modifier.fillMaxWidth().height(200.dp), contentAlignment = Alignment.Center) {
+                    Text("NULL", style = MaterialTheme.typography.headlineLarge)
+                }
+             }
+        } else {
+            items(albums, key = { it.id }) { album ->
+                AlbumArtisticCard(
+                    album = album,
+                    onClick = { onAlbumClick(album.id) }
+                )
             }
         }
     }

@@ -87,10 +87,10 @@ fun SettingsScreen(
                         onCheckedChange = { sleepTimerEnabled = it },
                          colors = SwitchDefaults.colors(
                             checkedThumbColor = MangaRed,
-                            checkedTrackColor = PureBlack,
-                            uncheckedThumbColor = PureBlack,
-                            uncheckedTrackColor = Color.LightGray,
-                            uncheckedBorderColor = PureBlack
+                            checkedTrackColor = MaterialTheme.colorScheme.onSurface,
+                            uncheckedThumbColor = MaterialTheme.colorScheme.onSurface,
+                            uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant,
+                            uncheckedBorderColor = MaterialTheme.colorScheme.onSurface
                         )
                     )
                 }
@@ -122,7 +122,7 @@ fun SettingsScreen(
     if (showSleepTimerDialog) {
         AlertDialog(
             onDismissRequest = { showSleepTimerDialog = false },
-            title = { Text("TIMER DURATION", fontWeight = FontWeight.Black) },
+            title = { Text("TIMER DURATION", fontWeight = FontWeight.Black, color = MaterialTheme.colorScheme.onSurface) },
             text = {
                 Column {
                     listOf(15, 30, 45, 60, 90).forEach { minutes ->
@@ -140,10 +140,10 @@ fun SettingsScreen(
                             RadioButton(
                                 selected = sleepTimerMinutes == minutes && sleepTimerEnabled,
                                 onClick = null,
-                                colors = RadioButtonDefaults.colors(selectedColor = MangaRed, unselectedColor = PureBlack)
+                                colors = RadioButtonDefaults.colors(selectedColor = MangaRed, unselectedColor = MaterialTheme.colorScheme.onSurface)
                             )
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("$minutes MINUTES", style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold))
+                            Text("$minutes MINUTES", style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold), color = MaterialTheme.colorScheme.onSurface)
                         }
                     }
                 }
@@ -158,10 +158,10 @@ fun SettingsScreen(
             },
             dismissButton = {
                 TextButton(onClick = { showSleepTimerDialog = false }) {
-                    Text("CANCEL", color = PureBlack)
+                    Text("CANCEL", color = MaterialTheme.colorScheme.onSurface)
                 }
             },
-            containerColor = Color.White,
+            containerColor = MaterialTheme.colorScheme.surface,
             shape = MaterialTheme.shapes.small
         )
     }
@@ -170,7 +170,7 @@ fun SettingsScreen(
     if (showThemeDialog) {
         AlertDialog(
             onDismissRequest = { showThemeDialog = false },
-            title = { Text("SELECT THEME", fontWeight = FontWeight.Black) },
+            title = { Text("SELECT THEME", fontWeight = FontWeight.Black, color = MaterialTheme.colorScheme.onSurface) },
             text = {
                 Column {
                     ThemeMode.entries.forEach { mode ->
@@ -187,24 +187,24 @@ fun SettingsScreen(
                             RadioButton(
                                 selected = currentTheme == mode,
                                 onClick = null,
-                                colors = RadioButtonDefaults.colors(selectedColor = MangaRed, unselectedColor = PureBlack)
+                                colors = RadioButtonDefaults.colors(selectedColor = MangaRed, unselectedColor = MaterialTheme.colorScheme.onSurface)
                             )
                              Spacer(modifier = Modifier.width(8.dp))
                             Text(when (mode) {
                                 ThemeMode.SYSTEM -> "SYSTEM DEFAULT"
                                 ThemeMode.LIGHT -> "LIGHT MODE"
                                 ThemeMode.DARK -> "DARK MODE"
-                            }, style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold))
+                            }, style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold), color = MaterialTheme.colorScheme.onSurface)
                         }
                     }
                 }
             },
             confirmButton = {
                 TextButton(onClick = { showThemeDialog = false }) {
-                    Text("CANCEL", color = PureBlack)
+                    Text("CANCEL", color = MaterialTheme.colorScheme.onSurface)
                 }
             },
-            containerColor = Color.White,
+            containerColor = MaterialTheme.colorScheme.surface,
              shape = MaterialTheme.shapes.small
         )
     }
@@ -229,11 +229,11 @@ fun SettingsItem(
              Box(
                 modifier = Modifier
                     .size(48.dp)
-                    .border(2.dp, PureBlack)
-                    .background(PureBlack.copy(alpha=0.05f)),
+                    .border(2.dp, MaterialTheme.colorScheme.onSurface)
+                    .background(MaterialTheme.colorScheme.onSurface.copy(alpha=0.1f)),
                 contentAlignment = Alignment.Center
             ) {
-                 Icon(icon, null, tint = PureBlack)
+                 Icon(icon, null, modifier = Modifier.size(24.dp), tint = MaterialTheme.colorScheme.onSurface)
             }
             
             Spacer(modifier = Modifier.width(16.dp))
