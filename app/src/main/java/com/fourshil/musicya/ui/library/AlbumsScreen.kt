@@ -1,6 +1,7 @@
 package com.fourshil.musicya.ui.library
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -14,14 +15,23 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.SubcomposeAsyncImage
+import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.fourshil.musicya.data.model.Album
+import com.fourshil.musicya.ui.components.ArtisticCard
+import com.fourshil.musicya.ui.components.HalftoneBackground
+import com.fourshil.musicya.ui.theme.MangaRed
+import com.fourshil.musicya.ui.theme.PureBlack
+import com.fourshil.musicya.ui.theme.PureWhite
 
 @Composable
 fun AlbumsScreen(
@@ -31,96 +41,135 @@ fun AlbumsScreen(
     val albums by viewModel.albums.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
 
-    if (isLoading) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator()
-        }
-    } else if (albums.isEmpty()) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("No albums found", style = MaterialTheme.typography.bodyLarge)
-        }
-    } else {
-        LazyVerticalGrid(
-            columns = GridCells.Adaptive(minSize = 160.dp),
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(16.dp, 16.dp, 16.dp, 96.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            items(albums, key = { it.id }) { album ->
-                AlbumCard(
-                    album = album,
-                    onClick = { onAlbumClick(album.id) }
-                )
+    // Screen-level Halftone handled in Scaffold, but we can add specific flair here
+    
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 24.dp)
+            .statusBarsPadding()
+    ) {
+        Spacer(modifier = Modifier.height(24.dp))
+        
+        // Header
+        Text(
+            text = "THE",
+            style = MaterialTheme.typography.displayMedium.copy(
+                fontSize = 42.sp,
+                fontWeight = FontWeight.Black,
+                fontStyle = FontStyle.Italic
+            ),
+            lineHeight = 40.sp
+        )
+        Text(
+            text = "COLLECTION",
+            style = MaterialTheme.typography.displayMedium.copy(
+                fontSize = 42.sp,
+                fontWeight = FontWeight.Black,
+                fontStyle = FontStyle.Italic,
+                color = MangaRed
+            ),
+             lineHeight = 40.sp,
+             modifier = Modifier.padding(bottom = 24.dp)
+        )
+
+        if (isLoading) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(color = PureBlack)
+            }
+        } else if (albums.isEmpty()) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text("NULL", style = MaterialTheme.typography.headlineLarge)
+            }
+        } else {
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(minSize = 160.dp),
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(bottom = 160.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(24.dp)
+            ) {
+                items(albums, key = { it.id }) { album ->
+                    AlbumArtisticCard(
+                        album = album,
+                        onClick = { onAlbumClick(album.id) }
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-fun AlbumCard(
+fun AlbumArtisticCard(
     album: Album,
     onClick: () -> Unit
 ) {
-    val context = LocalContext.current
-    
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick),
-        shape = MaterialTheme.shapes.medium
+    // "Ink" Card Style
+    ArtisticCard(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth().aspectRatio(0.8f) // Taller card for text
     ) {
         Column {
-            SubcomposeAsyncImage(
-                model = ImageRequest.Builder(context)
-                    .data(album.artUri)
-                    .crossfade(true)
-                    .build(),
-                contentDescription = album.name,
-                contentScale = ContentScale.Crop,
+             // Art Box
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(1f),
-                loading = {
-                    AlbumArtPlaceholder()
-                },
-                error = {
-                    AlbumArtPlaceholder()
+                    .aspectRatio(1f)
+                    .border(3.dp, PureBlack)
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
+            ) {
+                // Background Pattern
+                HalftoneBackground(modifier = Modifier.alpha(0.2f))
+                
+                AsyncImage(
+                     model = ImageRequest.Builder(LocalContext.current)
+                        .data(album.artUri)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = album.name,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+                
+                // Code Tag
+                Box(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .background(PureBlack)
+                        .padding(horizontal = 6.dp, vertical = 2.dp)
+                        .align(Alignment.TopStart)
+                ) {
+                    Text(
+                        text = "ART-${album.id % 99}",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = PureWhite
+                    )
                 }
-            )
-            Column(modifier = Modifier.padding(12.dp)) {
-                Text(
-                    text = album.name,
-                    style = MaterialTheme.typography.titleSmall,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    text = album.artist,
-                    style = MaterialTheme.typography.bodySmall,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
             }
+            
+            Spacer(modifier = Modifier.height(8.dp))
+            
+            Text(
+                text = album.name.uppercase(),
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontWeight = FontWeight.Black,
+                    letterSpacing = (-0.5).sp
+                ),
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
+            
+            Text(
+                text = album.artist.uppercase(),
+                style = MaterialTheme.typography.labelSmall.copy(
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 1.sp
+                ),
+                color = PureBlack.copy(alpha = 0.6f),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
         }
     }
 }
-
-@Composable
-private fun AlbumArtPlaceholder() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surfaceVariant),
-        contentAlignment = Alignment.Center
-    ) {
-        Icon(
-            imageVector = Icons.Default.Album,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.size(48.dp)
-        )
-    }
-}
-

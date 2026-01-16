@@ -1,22 +1,34 @@
 package com.fourshil.musicya.ui.components
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.fourshil.musicya.data.model.Song
+import com.fourshil.musicya.ui.theme.MangaRed
+import com.fourshil.musicya.ui.theme.PureBlack
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SongListItem(
     song: Song,
@@ -27,73 +39,82 @@ fun SongListItem(
     onLongClick: () -> Unit,
     onMoreClick: () -> Unit
 ) {
-    val backgroundColor = when {
-        isSelected -> MaterialTheme.colorScheme.primaryContainer
-        else -> Color.Transparent
-    }
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(backgroundColor)
-            .combinedClickable(
-                onClick = onClick,
-                onLongClick = onLongClick
-            )
-            .padding(vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
+    // We treat the "Selected" state as the "Active/Playing" style from the React model?
+    // Or just a highlight. For now, let's use the ArtisticCard style.
+    
+    val borderColor = if (isSelected) MangaRed else PureBlack
+    val shadowColor = if (isSelected) MangaRed else PureBlack
+    
+    ArtisticCard(
+        onClick = onClick,
+        borderColor = borderColor,
+        shadowColor = shadowColor,
+        modifier = Modifier.fillMaxWidth()
     ) {
-        // Selection Checkbox
-        if (isSelectionMode) {
-            Checkbox(
-                checked = isSelected,
-                onCheckedChange = { onClick() },
-                modifier = Modifier.padding(end = 8.dp)
-            )
-        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Icon / Art
+            Box(
+                modifier = Modifier
+                    .size(56.dp)
+                    .border(3.dp, PureBlack)
+                    .background(MaterialTheme.colorScheme.primaryContainer),
+                contentAlignment = Alignment.Center
+            ) {
+               if (song.albumArtUri != null) {
+                   AlbumArtImage(uri = song.albumArtUri, size = 56.dp)
+               } else {
+                   Icon(
+                       imageVector = Icons.Default.Bolt,
+                       contentDescription = null,
+                       modifier = Modifier.size(32.dp),
+                       tint = PureBlack
+                   )
+               }
+            }
 
-        // Album Art
-        AlbumArtImage(
-            uri = song.albumArtUri,
-            size = 56.dp
-        )
+            Spacer(modifier = Modifier.width(16.dp))
 
-        Spacer(modifier = Modifier.width(16.dp))
-
-        // Metadata
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = song.title,
-                style = MaterialTheme.typography.titleMedium,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
-            )
-            Text(
-                text = song.artist,
-                style = MaterialTheme.typography.bodyMedium,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-
-        // Icons
-        if (isFavorite) {
-            Icon(
-                imageVector = Icons.Default.Favorite,
-                contentDescription = null,
-                tint = Color(0xFF4ADE80), // Accent Green
-                modifier = Modifier.size(18.dp).padding(horizontal = 4.dp)
-            )
-        }
-
-        IconButton(onClick = onMoreClick) {
-            Icon(
-                imageVector = Icons.Default.MoreVert,
-                contentDescription = "Actions",
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            // Text Info
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = song.title.uppercase(),
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontSize = 20.sp,
+                        letterSpacing = (-1).sp
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = song.artist.uppercase(),
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 1.sp
+                    ),
+                     maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.alpha(0.6f)
+                )
+            }
+            
+            // Selection Check or Duration/More
+            if (isSelectionMode) {
+                 Box(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .border(2.dp, PureBlack)
+                        .background(if(isSelected) MangaRed else MaterialTheme.colorScheme.surface)
+                )
+            } else {
+                IconButton(onClick = onMoreClick) {
+                    Icon(Icons.Default.MoreVert, contentDescription = "More", tint = PureBlack)
+                }
+            }
         }
     }
 }

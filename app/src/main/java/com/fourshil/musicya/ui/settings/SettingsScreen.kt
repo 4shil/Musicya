@@ -1,5 +1,7 @@
 package com.fourshil.musicya.ui.settings
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -9,11 +11,19 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.fourshil.musicya.data.ThemeMode
+import com.fourshil.musicya.ui.components.ArtisticButton
+import com.fourshil.musicya.ui.components.ArtisticCard
+import com.fourshil.musicya.ui.theme.MangaRed
+import com.fourshil.musicya.ui.theme.PureBlack
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     viewModel: SettingsViewModel = hiltViewModel(),
@@ -27,74 +37,83 @@ fun SettingsScreen(
     
     val currentTheme by viewModel.themeMode.collectAsState()
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Settings") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .statusBarsPadding()
+            .padding(horizontal = 24.dp)
+    ) {
+         Spacer(modifier = Modifier.height(24.dp))
+        
+        // Header: SYSTEM
+        Row(verticalAlignment = Alignment.CenterVertically) {
+             ArtisticButton(
+                onClick = onBack,
+                icon = { Icon(Icons.AutoMirrored.Filled.ArrowBack, null, tint = PureBlack) },
+                modifier = Modifier.size(48.dp)
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(
+                text = "SYSTEM",
+                style = MaterialTheme.typography.displayMedium.copy(
+                    fontSize = 48.sp,
+                    fontWeight = FontWeight.Black,
+                    fontStyle = FontStyle.Italic
+                ),
+                color = PureBlack
             )
         }
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-        ) {
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
             // Equalizer
-            ListItem(
-                modifier = Modifier.clickable(onClick = onEqualizerClick),
-                headlineContent = { Text("Equalizer") },
-                supportingContent = { Text("Adjust audio effects") },
-                leadingContent = { Icon(Icons.Default.Equalizer, null) },
-                trailingContent = { Icon(Icons.Default.ChevronRight, null) }
+            SettingsItem(
+                title = "EQUALIZER",
+                subtitle = "ADJUST FREQUENCIES",
+                icon = Icons.Default.GraphicEq,
+                onClick = onEqualizerClick
             )
 
-            HorizontalDivider()
-
             // Sleep Timer
-            ListItem(
-                modifier = Modifier.clickable { showSleepTimerDialog = true },
-                headlineContent = { Text("Sleep Timer") },
-                supportingContent = { 
-                    Text(if (sleepTimerEnabled) "$sleepTimerMinutes min remaining" else "Off") 
-                },
-                leadingContent = { Icon(Icons.Default.Timer, null) },
+            SettingsItem(
+                title = "SLEEP TIMER",
+                subtitle = if (sleepTimerEnabled) "$sleepTimerMinutes MIN REMAINING" else "DISABLED",
+                icon = Icons.Default.Timer,
+                onClick = { showSleepTimerDialog = true },
                 trailingContent = {
                     Switch(
                         checked = sleepTimerEnabled,
-                        onCheckedChange = { sleepTimerEnabled = it }
+                        onCheckedChange = { sleepTimerEnabled = it },
+                         colors = SwitchDefaults.colors(
+                            checkedThumbColor = MangaRed,
+                            checkedTrackColor = PureBlack,
+                            uncheckedThumbColor = PureBlack,
+                            uncheckedTrackColor = Color.LightGray,
+                            uncheckedBorderColor = PureBlack
+                        )
                     )
                 }
             )
 
-            HorizontalDivider()
-
             // Theme
-            ListItem(
-                modifier = Modifier.clickable { showThemeDialog = true },
-                headlineContent = { Text("Theme") },
-                supportingContent = { 
-                    Text(when (currentTheme) {
-                        ThemeMode.SYSTEM -> "System default"
-                        ThemeMode.LIGHT -> "Light"
-                        ThemeMode.DARK -> "Dark"
-                    })
+            SettingsItem(
+                title = "THEME MODE",
+                subtitle = when (currentTheme) {
+                    ThemeMode.SYSTEM -> "SYSTEM DEFAULT"
+                    ThemeMode.LIGHT -> "LIGHT MODE"
+                    ThemeMode.DARK -> "DARK MODE"
                 },
-                leadingContent = { Icon(Icons.Default.Palette, null) },
-                trailingContent = { Icon(Icons.Default.ChevronRight, null) }
+                icon = Icons.Default.Palette,
+                onClick = { showThemeDialog = true }
             )
 
-            HorizontalDivider()
-
             // About
-            ListItem(
-                headlineContent = { Text("About") },
-                supportingContent = { Text("LYRA v1.0") },
-                leadingContent = { Icon(Icons.Default.Info, null) }
+            SettingsItem(
+                title = "ABOUT LYRA",
+                subtitle = "VERSION 1.0.0 // STABLE",
+                icon = Icons.Default.Info,
+                onClick = {}
             )
         }
     }
@@ -103,7 +122,7 @@ fun SettingsScreen(
     if (showSleepTimerDialog) {
         AlertDialog(
             onDismissRequest = { showSleepTimerDialog = false },
-            title = { Text("Sleep Timer") },
+            title = { Text("TIMER DURATION", fontWeight = FontWeight.Black) },
             text = {
                 Column {
                     listOf(15, 30, 45, 60, 90).forEach { minutes ->
@@ -120,10 +139,11 @@ fun SettingsScreen(
                         ) {
                             RadioButton(
                                 selected = sleepTimerMinutes == minutes && sleepTimerEnabled,
-                                onClick = null
+                                onClick = null,
+                                colors = RadioButtonDefaults.colors(selectedColor = MangaRed, unselectedColor = PureBlack)
                             )
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("$minutes minutes")
+                            Text("$minutes MINUTES", style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold))
                         }
                     }
                 }
@@ -133,14 +153,16 @@ fun SettingsScreen(
                     sleepTimerEnabled = false
                     showSleepTimerDialog = false 
                 }) {
-                    Text("Turn Off")
+                    Text("DISABLE", color = MangaRed, fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showSleepTimerDialog = false }) {
-                    Text("Cancel")
+                    Text("CANCEL", color = PureBlack)
                 }
-            }
+            },
+            containerColor = Color.White,
+            shape = MaterialTheme.shapes.small
         )
     }
     
@@ -148,7 +170,7 @@ fun SettingsScreen(
     if (showThemeDialog) {
         AlertDialog(
             onDismissRequest = { showThemeDialog = false },
-            title = { Text("Choose Theme") },
+            title = { Text("SELECT THEME", fontWeight = FontWeight.Black) },
             text = {
                 Column {
                     ThemeMode.entries.forEach { mode ->
@@ -164,24 +186,73 @@ fun SettingsScreen(
                         ) {
                             RadioButton(
                                 selected = currentTheme == mode,
-                                onClick = null
+                                onClick = null,
+                                colors = RadioButtonDefaults.colors(selectedColor = MangaRed, unselectedColor = PureBlack)
                             )
-                            Spacer(modifier = Modifier.width(8.dp))
+                             Spacer(modifier = Modifier.width(8.dp))
                             Text(when (mode) {
-                                ThemeMode.SYSTEM -> "System default"
-                                ThemeMode.LIGHT -> "Light"
-                                ThemeMode.DARK -> "Dark"
-                            })
+                                ThemeMode.SYSTEM -> "SYSTEM DEFAULT"
+                                ThemeMode.LIGHT -> "LIGHT MODE"
+                                ThemeMode.DARK -> "DARK MODE"
+                            }, style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold))
                         }
                     }
                 }
             },
             confirmButton = {
                 TextButton(onClick = { showThemeDialog = false }) {
-                    Text("Cancel")
+                    Text("CANCEL", color = PureBlack)
                 }
-            }
+            },
+            containerColor = Color.White,
+             shape = MaterialTheme.shapes.small
         )
     }
 }
 
+@Composable
+fun SettingsItem(
+    title: String,
+    subtitle: String,
+    icon: ImageVector,
+    onClick: () -> Unit,
+    trailingContent: @Composable (() -> Unit)? = null
+) {
+    ArtisticCard(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+             Box(
+                modifier = Modifier
+                    .size(48.dp)
+                    .border(2.dp, PureBlack)
+                    .background(PureBlack.copy(alpha=0.05f)),
+                contentAlignment = Alignment.Center
+            ) {
+                 Icon(icon, null, tint = PureBlack)
+            }
+            
+            Spacer(modifier = Modifier.width(16.dp))
+            
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Black),
+                )
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
+                    color = PureBlack.copy(alpha = 0.6f)
+                )
+            }
+            
+            if (trailingContent != null) {
+                trailingContent()
+            }
+        }
+    }
+}

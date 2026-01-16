@@ -20,6 +20,10 @@
         "source": "com.fourshil.musicya.app-main-71:/drawable/widget_background.xml"
     },
     {
+        "merged": "com.fourshil.musicya.app-debug-69:/drawable_widget_background_neo.xml.flat",
+        "source": "com.fourshil.musicya.app-main-71:/drawable/widget_background_neo.xml"
+    },
+    {
         "merged": "com.fourshil.musicya.app-debug-69:/xml_data_extraction_rules.xml.flat",
         "source": "com.fourshil.musicya.app-main-71:/xml/data_extraction_rules.xml"
     }

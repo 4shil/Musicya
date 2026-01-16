@@ -287,6 +287,7 @@ drawable notification_template_icon_low_bg
 drawable notification_tile_bg
 drawable notify_panel_notification_icon_bg
 drawable widget_background
+drawable widget_background_neo
 font roboto_medium_numbers
 id accessibility_action_clickable_span
 id accessibility_custom_action_0

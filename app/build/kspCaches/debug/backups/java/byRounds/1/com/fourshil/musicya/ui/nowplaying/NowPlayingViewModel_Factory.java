@@ -1,5 +1,6 @@
 package com.fourshil.musicya.ui.nowplaying;
 
+import com.fourshil.musicya.data.db.MusicDao;
 import com.fourshil.musicya.player.PlayerController;
 import dagger.internal.DaggerGenerated;
 import dagger.internal.Factory;
@@ -24,21 +25,26 @@ import javax.inject.Provider;
 public final class NowPlayingViewModel_Factory implements Factory<NowPlayingViewModel> {
   private final Provider<PlayerController> playerControllerProvider;
 
-  public NowPlayingViewModel_Factory(Provider<PlayerController> playerControllerProvider) {
+  private final Provider<MusicDao> musicDaoProvider;
+
+  public NowPlayingViewModel_Factory(Provider<PlayerController> playerControllerProvider,
+      Provider<MusicDao> musicDaoProvider) {
     this.playerControllerProvider = playerControllerProvider;
+    this.musicDaoProvider = musicDaoProvider;
   }
 
   @Override
   public NowPlayingViewModel get() {
-    return newInstance(playerControllerProvider.get());
+    return newInstance(playerControllerProvider.get(), musicDaoProvider.get());
   }
 
   public static NowPlayingViewModel_Factory create(
-      Provider<PlayerController> playerControllerProvider) {
-    return new NowPlayingViewModel_Factory(playerControllerProvider);
+      Provider<PlayerController> playerControllerProvider, Provider<MusicDao> musicDaoProvider) {
+    return new NowPlayingViewModel_Factory(playerControllerProvider, musicDaoProvider);
   }
 
-  public static NowPlayingViewModel newInstance(PlayerController playerController) {
-    return new NowPlayingViewModel(playerController);
+  public static NowPlayingViewModel newInstance(PlayerController playerController,
+      MusicDao musicDao) {
+    return new NowPlayingViewModel(playerController, musicDao);
   }
 }

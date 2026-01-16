@@ -1,6 +1,7 @@
 R_DEF: Internal format may change without notice
 local
 drawable widget_background
+drawable widget_background_neo
 id widget_album_art
 id widget_artist
 id widget_btn_next

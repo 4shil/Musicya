@@ -286,6 +286,7 @@ int drawable notification_template_icon_low_bg 0x7f070069
 int drawable notification_tile_bg 0x7f07006a
 int drawable notify_panel_notification_icon_bg 0x7f07006b
 int drawable widget_background 0x7f07006c
+int drawable widget_background_neo 0x7f07006d
 int font roboto_medium_numbers 0x7f080000
 int id accessibility_action_clickable_span 0x7f090000
 int id accessibility_custom_action_0 0x7f090001

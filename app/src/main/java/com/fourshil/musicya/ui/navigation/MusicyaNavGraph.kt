@@ -1,289 +1,169 @@
 package com.fourshil.musicya.ui.navigation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
 import androidx.navigation.compose.*
 import androidx.navigation.navArgument
-import com.fourshil.musicya.ui.components.MiniPlayer
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.fourshil.musicya.ui.components.*
 import com.fourshil.musicya.ui.library.*
 import com.fourshil.musicya.ui.nowplaying.NowPlayingScreen
 import com.fourshil.musicya.ui.nowplaying.NowPlayingViewModel
 import com.fourshil.musicya.ui.playlist.PlaylistDetailScreen
+import com.fourshil.musicya.ui.library.PlaylistsScreen
 import com.fourshil.musicya.ui.queue.QueueScreen
 import com.fourshil.musicya.ui.search.SearchScreen
 import com.fourshil.musicya.ui.settings.EqualizerScreen
 import com.fourshil.musicya.ui.settings.SettingsScreen
-import kotlinx.coroutines.launch
-
-data class BottomNavItem(
-    val route: String,
-    val label: String,
-    val icon: @Composable () -> Unit
-)
+import com.fourshil.musicya.ui.theme.PureBlack
+import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MusicyaNavGraph() {
     val navController = rememberNavController()
     val nowPlayingViewModel: NowPlayingViewModel = hiltViewModel()
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val scope = rememberCoroutineScope()
-
+    
+    // Song state
     val currentSong by nowPlayingViewModel.currentSong.collectAsState()
     val isPlaying by nowPlayingViewModel.isPlaying.collectAsState()
     val position by nowPlayingViewModel.position.collectAsState()
     val duration by nowPlayingViewModel.duration.collectAsState()
 
-    val bottomNavItems = listOf(
-        BottomNavItem(Screen.Songs.route, "Songs") { Icon(Icons.Default.MusicNote, null) },
-        BottomNavItem(Screen.Albums.route, "Albums") { Icon(Icons.Default.Album, null) },
-        BottomNavItem(Screen.Artists.route, "Artists") { Icon(Icons.Default.Person, null) },
-        BottomNavItem(Screen.Folders.route, "Folders") { Icon(Icons.Default.Folder, null) }
-    )
-
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    // Pages that are not "top-level" tabs but still part of the main library structure
-    val mainLibraryRoutes = listOf(
+    // Define Core Routes
+    val libraryRoutes = listOf(
         Screen.Songs.route,
         Screen.Albums.route,
         Screen.Artists.route,
-        Screen.Folders.route,
-        Screen.Favorites.route,
-        Screen.Playlists.route
+        Screen.Playlists.route,
+        Screen.Favorites.route
     )
 
-    // Hide bottom nav on full-screen pages
-    val fullScreenRoutes = listOf(
-        Screen.NowPlaying.route,
-        Screen.Queue.route,
-        Screen.Search.route,
-        Screen.Settings.route,
-        Screen.Equalizer.route,
-        Screen.PlaylistDetail.route
-    )
-    // Routes where mini player should be hidden
-    val hideMiniPlayerRoutes = listOf(
-        Screen.NowPlaying.route
-    )
+    // Should we show the bottom bar?
+    val showBottomNav = libraryRoutes.contains(currentRoute) || currentRoute == Screen.Folders.route
 
-    // Show bottom nav for all library routes (including favorites/playlists)
-    val showBottomNav = mainLibraryRoutes.any { currentRoute == it } || 
-                      fullScreenRoutes.none { currentRoute?.startsWith(it.substringBefore("{")) == true }
-    
-    val showMiniPlayer = hideMiniPlayerRoutes.none { currentRoute?.startsWith(it.substringBefore("{")) == true }
+    // Is Dark mode active? (Based on theme)
+    val isDark = MaterialTheme.colorScheme.background.luminance() < 0.5f
 
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        gesturesEnabled = currentRoute != Screen.NowPlaying.route,
-        drawerContent = {
-            ModalDrawerSheet {
-                Spacer(Modifier.height(12.dp))
-                
-                Text(
-                    text = "LYRA",
-                    style = MaterialTheme.typography.headlineMedium,
-                    modifier = Modifier.padding(28.dp)
-                )
-                
-                NavigationDrawerItem(
-                    label = { Text("Favorites") },
-                    icon = { Icon(Icons.Default.Favorite, null) },
-                    selected = currentRoute == Screen.Favorites.route,
-                    onClick = {
-                        scope.launch { drawerState.close() }
-                        navController.navigate(Screen.Favorites.route) {
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    },
-                    modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
-                )
-
-                NavigationDrawerItem(
-                    label = { Text("Playlists") },
-                    icon = { Icon(Icons.Default.QueueMusic, null) },
-                    selected = currentRoute == Screen.Playlists.route,
-                    onClick = {
-                        scope.launch { drawerState.close() }
-                        navController.navigate(Screen.Playlists.route) {
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    },
-                    modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
-                )
-                
-                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-                
-                NavigationDrawerItem(
-                    label = { Text("Settings") },
-                    icon = { Icon(Icons.Default.Settings, null) },
-                    selected = currentRoute == Screen.Settings.route,
-                    onClick = {
-                        scope.launch { drawerState.close() }
-                        navController.navigate(Screen.Settings.route)
-                    },
-                    modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
-                )
-            }
-        }
-    ) {
+    // Halftone Overlay for the entire app
+    Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
+        HalftoneBackground(
+            color = if (isDark) Color.White else PureBlack,
+            modifier = Modifier.matchParentSize()
+        )
+        
         Scaffold(
-            topBar = {
-                if (showBottomNav) {
-                    TopAppBar(
-                        title = { 
-                            Text(
-                                when (currentRoute) {
-                                    Screen.Favorites.route -> "Favorites"
-                                    Screen.Playlists.route -> "Playlists"
-                                    else -> "LYRA"
-                                }
-                            )
-                        },
-                        navigationIcon = {
-                            IconButton(onClick = { scope.launch { drawerState.open() } }) {
-                                Icon(Icons.Default.Menu, contentDescription = "Menu")
-                            }
-                        },
-                        actions = {
-                            IconButton(onClick = { navController.navigate(Screen.Search.route) }) {
-                                Icon(Icons.Default.Search, contentDescription = "Search")
-                            }
-                        }
-                    )
-                }
-            },
+            containerColor = Color.Transparent,
             bottomBar = {
-                Column {
-                    if (showMiniPlayer && currentSong != null) {
+                // Navigation Bar
+            }
+        ) { padding ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+            ) {
+                NavHost(
+                    navController = navController,
+                    startDestination = Screen.Songs.route,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    composable(Screen.Songs.route) {
+                        SongsScreen(onMenuClick = { /* Drawer? or Settings */ navController.navigate(Screen.Settings.route) })
+                    }
+                    composable(Screen.Albums.route) {
+                        AlbumsScreen(onAlbumClick = { id -> navController.navigate(Screen.PlaylistDetail.createRoute("album", id.toString())) })
+                    }
+                    composable(Screen.Artists.route) {
+                        ArtistsScreen(onArtistClick = { name -> navController.navigate(Screen.PlaylistDetail.createRoute("artist", name)) })
+                    }
+                    composable(Screen.Folders.route) {
+                        FoldersScreen(onFolderClick = { path -> navController.navigate(Screen.PlaylistDetail.createRoute("folder", path)) })
+                    }
+                    composable(Screen.Favorites.route) { FavoritesScreen() }
+                    
+                    composable(Screen.Playlists.route) {
+                        PlaylistsScreen(onPlaylistClick = { id -> navController.navigate(Screen.PlaylistDetail.createRoute("playlist", id.toString())) })
+                    }
+                    
+                    composable(Screen.NowPlaying.route) {
+                        NowPlayingScreen(
+                            onBack = { navController.popBackStack() },
+                            onQueueClick = { navController.navigate(Screen.Queue.route) }
+                        )
+                    }
+                    
+                    composable(Screen.Queue.route) { QueueScreen(onBack = { navController.popBackStack() }) }
+                    composable(Screen.Search.route) { SearchScreen(onBack = { navController.popBackStack() }) }
+                    composable(Screen.Settings.route) {
+                         SettingsScreen(
+                            onBack = { navController.popBackStack() }, 
+                            onEqualizerClick = { navController.navigate(Screen.Equalizer.route) }
+                         )
+                    }
+                    composable(Screen.Equalizer.route) { EqualizerScreen(onBack = { navController.popBackStack() }) }
+                    
+                    composable(
+                         route = Screen.PlaylistDetail.route,
+                         arguments = listOf(navArgument("type") { type = NavType.StringType }, navArgument("id") { type = NavType.StringType })
+                    ) { PlaylistDetailScreen(onBack = { navController.popBackStack() }) }
+                }
+
+                // Floating "Live Broadcast" MiniPlayer & Navigation
+                // We place them in a Column aligned to bottom
+                Column(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = 0.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    // Mini Player (Only if not in now playing screen and song exists)
+                    if (currentSong != null && currentRoute != Screen.NowPlaying.route) {
                         MiniPlayer(
                             song = currentSong,
                             isPlaying = isPlaying,
                             progress = if (duration > 0) position.toFloat() / duration else 0f,
                             onPlayPauseClick = { nowPlayingViewModel.togglePlayPause() },
                             onNextClick = { nowPlayingViewModel.skipToNext() },
-                            onClick = { navController.navigate(Screen.NowPlaying.route) }
+                            onClick = { navController.navigate(Screen.NowPlaying.route) },
+                            modifier = Modifier
+                                .padding(horizontal = 24.dp)
+                                .padding(bottom = if (showBottomNav) 8.dp else 24.dp)
                         )
                     }
 
                     if (showBottomNav) {
-                        NavigationBar {
-                            bottomNavItems.forEach { item ->
-                                NavigationBarItem(
-                                    icon = item.icon,
-                                    label = { Text(item.label) },
-                                    selected = currentRoute == item.route,
-                                    onClick = {
-                                        navController.navigate(item.route) {
-                                            // Pop up to the start destination to avoid building up a large stack
-                                            // when switching between library tabs/pages
-                                            popUpTo(navController.graph.findStartDestination().id) {
-                                                saveState = true
-                                            }
-                                            launchSingleTop = true
-                                            restoreState = true
-                                        }
-                                    }
-                                )
-                            }
-                        }
+                        ArtisticBottomNavigation(
+                            items = listOf(
+                                ArtisticNavItem(Screen.Songs.route, "Gallery", Icons.Default.MusicNote),
+                                ArtisticNavItem(Screen.Albums.route, "Ink", Icons.Default.Album),
+                                ArtisticNavItem(Screen.Artists.route, "Muses", Icons.Default.Mic),
+                                ArtisticNavItem(Screen.Playlists.route, "Assets", Icons.Default.Folder)
+                            ),
+                            currentRoute = currentRoute,
+                            onItemClick = { route ->
+                                navController.navigate(route) {
+                                    popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            },
+                             isDark = isDark
+                        )
                     }
-                }
-            }
-        ) { padding ->
-            NavHost(
-                navController = navController,
-                startDestination = Screen.Songs.route,
-                modifier = Modifier.padding(padding)
-            ) {
-                composable(Screen.Songs.route) {
-                    SongsScreen()
-                }
-                composable(Screen.Albums.route) {
-                    AlbumsScreen(
-                        onAlbumClick = { albumId ->
-                            navController.navigate(Screen.PlaylistDetail.createRoute("album", albumId.toString()))
-                        }
-                    )
-                }
-                composable(Screen.Artists.route) {
-                    ArtistsScreen(
-                        onArtistClick = { artistName ->
-                            navController.navigate(Screen.PlaylistDetail.createRoute("artist", artistName))
-                        }
-                    )
-                }
-                composable(Screen.Folders.route) {
-                    FoldersScreen(
-                        onFolderClick = { folderPath ->
-                            navController.navigate(Screen.PlaylistDetail.createRoute("folder", folderPath))
-                        }
-                    )
-                }
-                composable(Screen.Favorites.route) {
-                    FavoritesScreen()
-                }
-                composable(Screen.Playlists.route) {
-                    PlaylistsScreen(
-                        onPlaylistClick = { playlistId ->
-                            navController.navigate(Screen.PlaylistDetail.createRoute("playlist", playlistId.toString()))
-                        }
-                    )
-                }
-                composable(Screen.NowPlaying.route) {
-                    NowPlayingScreen(
-                        onBack = { navController.popBackStack() },
-                        onQueueClick = { navController.navigate(Screen.Queue.route) }
-                    )
-                }
-                composable(Screen.Queue.route) {
-                    QueueScreen(
-                        onBack = { navController.popBackStack() }
-                    )
-                }
-                composable(Screen.Search.route) {
-                    SearchScreen(
-                        onBack = { navController.popBackStack() }
-                    )
-                }
-                composable(Screen.Settings.route) {
-                    SettingsScreen(
-                        onBack = { navController.popBackStack() },
-                        onEqualizerClick = { navController.navigate(Screen.Equalizer.route) }
-                    )
-                }
-                composable(Screen.Equalizer.route) {
-                    EqualizerScreen(
-                        onBack = { navController.popBackStack() }
-                    )
-                }
-                composable(
-                    route = Screen.PlaylistDetail.route,
-                    arguments = listOf(
-                        navArgument("type") { type = NavType.StringType },
-                        navArgument("id") { type = NavType.StringType }
-                    )
-                ) {
-                    PlaylistDetailScreen(
-                        onBack = { navController.popBackStack() }
-                    )
                 }
             }
         }
