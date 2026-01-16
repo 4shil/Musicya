@@ -64,21 +64,14 @@ fun QueueScreen(
         }
         
         Text(
-            text = "NEXT IN",
-            style = MaterialTheme.typography.displayMedium.copy(
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Black
-            ),
-             modifier = Modifier.padding(top = 24.dp)
-        )
-        Text(
-            text = "LINE",
+            text = "QUEUE",
             style = MaterialTheme.typography.displayMedium.copy(
                 fontSize = 64.sp,
                 fontWeight = FontWeight.Black,
                 fontStyle = FontStyle.Italic,
                 color = MangaYellow
-            )
+            ),
+             modifier = Modifier.padding(top = 24.dp)
         )
         
         Spacer(modifier = Modifier.height(24.dp))

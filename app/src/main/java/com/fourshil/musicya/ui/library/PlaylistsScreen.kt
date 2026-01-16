@@ -28,10 +28,16 @@ import com.fourshil.musicya.ui.theme.MangaRed
 import com.fourshil.musicya.ui.theme.MangaYellow
 import com.fourshil.musicya.ui.theme.PureBlack
 
+import com.fourshil.musicya.ui.components.TopNavItem
+import com.fourshil.musicya.ui.components.TopNavigationChips
+import com.fourshil.musicya.ui.navigation.Screen
+
 @Composable
 fun PlaylistsScreen(
     viewModel: PlaylistsViewModel = hiltViewModel(),
-    onPlaylistClick: (Long) -> Unit = {}
+    onPlaylistClick: (Long) -> Unit = {},
+    currentRoute: String? = null,
+    onNavigate: (String) -> Unit = {}
 ) {
     val playlists by viewModel.playlists.collectAsState()
     
@@ -49,14 +55,14 @@ fun PlaylistsScreen(
              Column(modifier = Modifier.padding(horizontal = 24.dp)) {
                 Spacer(modifier = Modifier.height(24.dp))
                 
-                // Header: ASSETS
+                // Header: PLAYLISTS
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                      Text(
-                        text = "ASSETS",
+                        text = "PLAYLISTS",
                         style = MaterialTheme.typography.displayMedium.copy(
                             fontSize = 48.sp,
                             fontWeight = FontWeight.Black,
@@ -80,12 +86,12 @@ fun PlaylistsScreen(
 
              TopNavigationChips(
                 items = listOf(
-                    TopNavItem(Screen.Songs.route, "Gallery"),
-                    TopNavItem(Screen.Favorites.route, "Hearts"),
-                    TopNavItem(Screen.Folders.route, "Files"),
-                    TopNavItem(Screen.Playlists.route, "Assets"),
-                    TopNavItem(Screen.Albums.route, "Ink"),
-                    TopNavItem(Screen.Artists.route, "Muses")
+                    TopNavItem(Screen.Songs.route, "Songs"),
+                    TopNavItem(Screen.Favorites.route, "Favorites"),
+                    TopNavItem(Screen.Folders.route, "Folders"),
+                    TopNavItem(Screen.Playlists.route, "Playlists"),
+                    TopNavItem(Screen.Albums.route, "Albums"),
+                    TopNavItem(Screen.Artists.route, "Artists")
                 ),
                 currentRoute = currentRoute,
                 onItemClick = onNavigate,
@@ -135,8 +141,8 @@ fun PlaylistsScreen(
     showDeleteDialog?.let { playlist ->
         AlertDialog(
             onDismissRequest = { showDeleteDialog = null },
-            title = { Text("DELETE ASSET?", fontWeight = FontWeight.Black) },
-            text = { Text("This will permanently remove '${playlist.name}' from the archive.") },
+            title = { Text("DELETE ASSET?", fontWeight = FontWeight.Black, color = MaterialTheme.colorScheme.onSurface) },
+            text = { Text("This will permanently remove '${playlist.name}' from the archive.", color = MaterialTheme.colorScheme.onSurface) },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -146,9 +152,9 @@ fun PlaylistsScreen(
                 ) { Text("CONFIRM", color = MangaRed, fontWeight = FontWeight.Bold) }
             },
             dismissButton = {
-                 TextButton(onClick = { showDeleteDialog = null }) { Text("CANCEL", color = PureBlack) }
+                 TextButton(onClick = { showDeleteDialog = null }) { Text("CANCEL", color = MaterialTheme.colorScheme.onSurface) }
             },
-            containerColor = Color.White,
+            containerColor = MaterialTheme.colorScheme.surface,
             shape = MaterialTheme.shapes.small
         )
     }
@@ -158,15 +164,17 @@ fun PlaylistsScreen(
         var newName by remember { mutableStateOf(playlist.name) }
         AlertDialog(
             onDismissRequest = { showRenameDialog = null },
-            title = { Text("RENAME ASSET", fontWeight = FontWeight.Black) },
+            title = { Text("RENAME ASSET", fontWeight = FontWeight.Black, color = MaterialTheme.colorScheme.onSurface) },
             text = {
                 OutlinedTextField(
                     value = newName,
                     onValueChange = { newName = it },
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = PureBlack,
-                        unfocusedBorderColor = PureBlack.copy(alpha=0.5f),
-                        cursorColor = MangaRed
+                        focusedBorderColor = MaterialTheme.colorScheme.onSurface,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha=0.5f),
+                        cursorColor = MangaRed,
+                        focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                        unfocusedTextColor = MaterialTheme.colorScheme.onSurface
                     )
                 )
             },
@@ -176,12 +184,12 @@ fun PlaylistsScreen(
                         viewModel.renamePlaylist(playlist.id, newName)
                         showRenameDialog = null
                     }
-                ) { Text("SAVE", color = PureBlack, fontWeight = FontWeight.Bold) }
+                ) { Text("SAVE", color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold) }
             },
              dismissButton = {
-                 TextButton(onClick = { showRenameDialog = null }) { Text("CANCEL", color = PureBlack) }
+                  TextButton(onClick = { showRenameDialog = null }) { Text("CANCEL", color = MaterialTheme.colorScheme.onSurface) }
             },
-            containerColor = Color.White,
+            containerColor = MaterialTheme.colorScheme.surface,
             shape = MaterialTheme.shapes.small
         )
     }

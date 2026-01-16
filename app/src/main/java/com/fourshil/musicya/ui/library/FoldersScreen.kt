@@ -51,32 +51,24 @@ fun FoldersScreen(
                 Spacer(modifier = Modifier.height(24.dp))
                  // Header
                 Text(
-                    text = "FILE",
+                    text = "FOLDERS",
                     style = MaterialTheme.typography.displayMedium.copy(
-                        fontSize = 32.sp,
-                        fontWeight = FontWeight.Black
-                    ),
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-                Text(
-                    text = "SYSTEM",
-                     style = MaterialTheme.typography.displayMedium.copy(
                         fontSize = 64.sp,
                         fontWeight = FontWeight.Black,
-                        fontStyle = FontStyle.Italic,
-                        color = MangaRed
+                        fontStyle = FontStyle.Italic
                     ),
-                     modifier = Modifier.padding(bottom = 32.dp)
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.padding(bottom = 32.dp)
                 )
 
                 TopNavigationChips(
                     items = listOf(
-                        TopNavItem(Screen.Songs.route, "Gallery"),
-                        TopNavItem(Screen.Favorites.route, "Hearts"),
-                        TopNavItem(Screen.Folders.route, "Files"),
-                        TopNavItem(Screen.Playlists.route, "Assets"),
-                        TopNavItem(Screen.Albums.route, "Ink"),
-                        TopNavItem(Screen.Artists.route, "Muses")
+                        TopNavItem(Screen.Songs.route, "Songs"),
+                        TopNavItem(Screen.Favorites.route, "Favorites"),
+                        TopNavItem(Screen.Folders.route, "Folders"),
+                        TopNavItem(Screen.Playlists.route, "Playlists"),
+                        TopNavItem(Screen.Albums.route, "Albums"),
+                        TopNavItem(Screen.Artists.route, "Artists")
                     ),
                     currentRoute = currentRoute,
                     onItemClick = onNavigate,

@@ -63,7 +63,7 @@ fun ArtistsScreen(
                         color = MaterialTheme.colorScheme.onBackground
                     )
                     Text(
-                        text = "MUSES",
+                        text = "ARTISTS",
                         style = MaterialTheme.typography.displayMedium.copy(
                             fontSize = 64.sp,
                             fontWeight = FontWeight.Black,
@@ -72,16 +72,6 @@ fun ArtistsScreen(
                         color = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier.padding(top = 24.dp)
                     )
-                     Text(
-                        text = "VOICES",
-                        style = MaterialTheme.typography.displayMedium.copy(
-                            fontSize = 64.sp,
-                            fontWeight = FontWeight.Black,
-                            fontStyle = FontStyle.Italic
-                        ),
-                        color = MangaRed.copy(alpha=0.3f),
-                        modifier = Modifier.padding(top = 32.dp, start = 8.dp).zIndex(-1f)
-                    )
                 }
                 
                 Spacer(modifier = Modifier.height(32.dp))
@@ -89,12 +79,12 @@ fun ArtistsScreen(
 
              TopNavigationChips(
                 items = listOf(
-                    TopNavItem(Screen.Songs.route, "Gallery"),
-                    TopNavItem(Screen.Favorites.route, "Hearts"),
-                    TopNavItem(Screen.Folders.route, "Files"),
-                    TopNavItem(Screen.Playlists.route, "Assets"),
-                    TopNavItem(Screen.Albums.route, "Ink"),
-                    TopNavItem(Screen.Artists.route, "Muses")
+                    TopNavItem(Screen.Songs.route, "Songs"),
+                    TopNavItem(Screen.Favorites.route, "Favorites"),
+                    TopNavItem(Screen.Folders.route, "Folders"),
+                    TopNavItem(Screen.Playlists.route, "Playlists"),
+                    TopNavItem(Screen.Albums.route, "Albums"),
+                    TopNavItem(Screen.Artists.route, "Artists")
                 ),
                 currentRoute = currentRoute,
                 onItemClick = onNavigate,

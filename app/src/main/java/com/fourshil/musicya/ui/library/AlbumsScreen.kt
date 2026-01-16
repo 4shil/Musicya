@@ -74,7 +74,7 @@ fun AlbumsScreen(
                     color = MaterialTheme.colorScheme.onBackground
                 )
                 Text(
-                    text = "COLLECTION",
+                    text = "ALBUMS",
                     style = MaterialTheme.typography.displayMedium.copy(
                         fontSize = 42.sp,
                         fontWeight = FontWeight.Black,
@@ -88,12 +88,12 @@ fun AlbumsScreen(
 
                 TopNavigationChips(
                     items = listOf(
-                        TopNavItem(Screen.Songs.route, "Gallery"),
-                        TopNavItem(Screen.Favorites.route, "Hearts"),
-                        TopNavItem(Screen.Folders.route, "Files"),
-                        TopNavItem(Screen.Playlists.route, "Assets"),
-                        TopNavItem(Screen.Albums.route, "Ink"),
-                        TopNavItem(Screen.Artists.route, "Muses")
+                        TopNavItem(Screen.Songs.route, "Songs"),
+                        TopNavItem(Screen.Favorites.route, "Favorites"),
+                        TopNavItem(Screen.Folders.route, "Folders"),
+                        TopNavItem(Screen.Playlists.route, "Playlists"),
+                        TopNavItem(Screen.Albums.route, "Albums"),
+                        TopNavItem(Screen.Artists.route, "Artists")
                     ),
                     currentRoute = currentRoute,
                     onItemClick = onNavigate,

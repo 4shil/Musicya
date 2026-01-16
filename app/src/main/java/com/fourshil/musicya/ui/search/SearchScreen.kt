@@ -54,7 +54,7 @@ fun SearchScreen(
     ) {
         Spacer(modifier = Modifier.height(24.dp))
         
-        // Header: SCANNER
+        // Header: SEARCH
         Row(verticalAlignment = Alignment.CenterVertically) {
              ArtisticButton(
                 onClick = onBack,
@@ -64,12 +64,12 @@ fun SearchScreen(
             Spacer(modifier = Modifier.width(16.dp))
             Column {
                 Text(
-                    text = "ARCHIVE",
+                    text = "LIBRARY",
                     style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
                     color = PureBlack.copy(alpha=0.6f)
                 )
                 Text(
-                    text = "SCANNER",
+                    text = "SEARCH",
                     style = MaterialTheme.typography.displayMedium.copy(
                         fontSize = 42.sp,
                         fontWeight = FontWeight.Black,
