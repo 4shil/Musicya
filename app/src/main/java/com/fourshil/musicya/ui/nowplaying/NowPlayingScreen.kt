@@ -27,6 +27,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.zIndex
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -247,7 +248,7 @@ fun NowPlayingScreen(
                                 .width(12.dp)
                                 .fillMaxHeight()
                                 .background(MangaRed)
-                                .border(start = 3.dp, color = PureBlack)
+                                .border(3.dp, PureBlack)
                         )
                     }
                 }
