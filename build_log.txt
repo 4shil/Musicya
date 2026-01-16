@@ -36,12 +36,6 @@
 > Task :app:writeDebugSigningConfigVersions UP-TO-DATE
 
 > Task :app:compileDebugKotlin FAILED
-e: file:///D:/Editing/Musicya/app/src/main/java/com/fourshil/musicya/ui/nowplaying/NowPlayingScreen.kt:141:26 Unresolved reference: zIndex
-e: file:///D:/Editing/Musicya/app/src/main/java/com/fourshil/musicya/ui/nowplaying/NowPlayingScreen.kt:250:41 Cannot find a parameter with this name: start
-e: file:///D:/Editing/Musicya/app/src/main/java/com/fourshil/musicya/ui/nowplaying/NowPlayingScreen.kt:250:55 Cannot find a parameter with this name: color
-e: file:///D:/Editing/Musicya/app/src/main/java/com/fourshil/musicya/ui/nowplaying/NowPlayingScreen.kt:250:55 No value passed for parameter 'width'
-e: file:///D:/Editing/Musicya/app/src/main/java/com/fourshil/musicya/ui/nowplaying/NowPlayingScreen.kt:250:55 No value passed for parameter 'brush'
-e: file:///D:/Editing/Musicya/app/src/main/java/com/fourshil/musicya/ui/nowplaying/NowPlayingScreen.kt:250:55 No value passed for parameter 'shape'
 e: file:///D:/Editing/Musicya/app/src/main/java/com/fourshil/musicya/ui/playlist/PlaylistDetailScreen.kt:86:58 Null can not be a value of a non-null type String
 
 FAILURE: Build failed with an exception.
@@ -57,5 +51,5 @@ Execution failed for task ':app:compileDebugKotlin'.
 > Run with --scan to get full insights.
 > Get more help at https://help.gradle.org.
 
-BUILD FAILED in 16s
+BUILD FAILED in 17s
 30 actionable tasks: 2 executed, 28 up-to-date
