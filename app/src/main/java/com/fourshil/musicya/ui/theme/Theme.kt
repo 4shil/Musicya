@@ -16,31 +16,51 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val LightColorScheme = lightColorScheme(
-    primary = PureBlack,
+    primary = Slate900,
     onPrimary = PureWhite,
-    primaryContainer = Zinc200,
-    onPrimaryContainer = PureBlack,
-    secondary = MangaRed,
+    primaryContainer = Slate200,
+    onPrimaryContainer = Slate900,
+    secondary = NeoCoral,
     onSecondary = PureWhite,
+    secondaryContainer = NeoCoralLight,
+    onSecondaryContainer = Slate900,
+    tertiary = NeoTeal,
+    onTertiary = Slate900,
+    tertiaryContainer = NeoSage,
+    onTertiaryContainer = Slate900,
     background = LightBackground,
-    onBackground = PureBlack,
+    onBackground = Slate900,
     surface = LightSurface,
-    onSurface = PureBlack,
-    error = MangaRed
+    onSurface = Slate900,
+    surfaceVariant = Slate100,
+    onSurfaceVariant = Slate600,
+    outline = Slate300,
+    outlineVariant = Slate200,
+    error = NeoCoralDark
 )
 
 private val DarkColorScheme = darkColorScheme(
-    primary = PureWhite,
-    onPrimary = PureBlack,
-    primaryContainer = Zinc800,
-    onPrimaryContainer = PureWhite,
-    secondary = MangaYellow,
-    onSecondary = PureBlack,
+    primary = Slate50,
+    onPrimary = Slate900,
+    primaryContainer = Slate700,
+    onPrimaryContainer = Slate50,
+    secondary = NeoCoralLight,
+    onSecondary = Slate900,
+    secondaryContainer = NeoCoralDark,
+    onSecondaryContainer = Slate50,
+    tertiary = NeoTeal,
+    onTertiary = Slate900,
+    tertiaryContainer = NeoTealDark,
+    onTertiaryContainer = Slate50,
     background = DarkBackground,
-    onBackground = PureWhite,
+    onBackground = Slate50,
     surface = DarkSurface,
-    onSurface = PureWhite,
-    error = MangaRed
+    onSurface = Slate50,
+    surfaceVariant = Slate800,
+    onSurfaceVariant = Slate300,
+    outline = Slate600,
+    outlineVariant = Slate700,
+    error = NeoCoralLight
 )
 
 @Composable

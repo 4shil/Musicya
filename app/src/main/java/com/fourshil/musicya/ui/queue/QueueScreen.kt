@@ -24,9 +24,12 @@ import com.fourshil.musicya.data.model.Song
 import com.fourshil.musicya.ui.components.ArtisticButton
 import com.fourshil.musicya.ui.components.ArtisticCard
 import com.fourshil.musicya.ui.components.PlaylistArtGrid
-import com.fourshil.musicya.ui.theme.MangaRed
-import com.fourshil.musicya.ui.theme.MangaYellow
-import com.fourshil.musicya.ui.theme.PureBlack
+import com.fourshil.musicya.ui.theme.NeoCoral
+import com.fourshil.musicya.ui.theme.NeoDimens
+import com.fourshil.musicya.ui.theme.NeoShadowLight
+import com.fourshil.musicya.ui.theme.Slate50
+import com.fourshil.musicya.ui.theme.Slate700
+import com.fourshil.musicya.ui.theme.Slate900
 
 @Composable
 fun QueueScreen(
@@ -40,7 +43,7 @@ fun QueueScreen(
         modifier = Modifier
             .fillMaxSize()
             .statusBarsPadding()
-            .padding(horizontal = 24.dp)
+            .padding(horizontal = NeoDimens.ScreenPadding)
     ) {
         Spacer(modifier = Modifier.height(24.dp))
         
@@ -50,48 +53,47 @@ fun QueueScreen(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-             ArtisticButton(
+            ArtisticButton(
                 onClick = onBack,
-                icon = { Icon(Icons.AutoMirrored.Filled.ArrowBack, null, tint = PureBlack) },
-                modifier = Modifier.size(56.dp)
+                icon = { Icon(Icons.AutoMirrored.Filled.ArrowBack, null, tint = MaterialTheme.colorScheme.onSurface) },
+                modifier = Modifier.size(52.dp)
             )
-             ArtisticButton(
+            ArtisticButton(
                 onClick = { viewModel.clearQueue() },
-                icon = { Icon(Icons.Default.ClearAll, null, tint = PureBlack) },
-                modifier = Modifier.size(56.dp),
-                backgroundColor = MangaRed
+                icon = { Icon(Icons.Default.ClearAll, null, tint = Slate50) },
+                modifier = Modifier.size(52.dp),
+                backgroundColor = NeoCoral
             )
         }
         
+        Spacer(modifier = Modifier.height(24.dp))
+        
         Text(
-            text = "QUEUE",
-            style = MaterialTheme.typography.displayMedium.copy(
-                fontSize = 64.sp,
-                fontWeight = FontWeight.Black,
-                fontStyle = FontStyle.Italic,
-                color = MangaYellow
+            text = "Queue",
+            style = MaterialTheme.typography.displaySmall.copy(
+                fontWeight = FontWeight.Bold
             ),
-             modifier = Modifier.padding(top = 24.dp)
+            color = MaterialTheme.colorScheme.onBackground
         )
         
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(16.dp))
         
         if (queue.isEmpty()) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                 Text(
-                     "STANDBY...", 
-                     style = MaterialTheme.typography.headlineLarge,
-                     color = PureBlack.copy(0.3f)
-                 )
+                Text(
+                    "No songs in queue",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
         } else {
-             LazyColumn(
+            LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(bottom = 160.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 itemsIndexed(
                     items = queue,
@@ -117,19 +119,27 @@ fun QueueArtisticItem(
     onPlay: () -> Unit,
     onRemove: () -> Unit
 ) {
+    val borderColor = if (isPlaying) NeoCoral else MaterialTheme.colorScheme.outline
+    val backgroundColor = if (isPlaying) NeoCoral.copy(alpha = 0.1f) else MaterialTheme.colorScheme.surface
+    
     ArtisticCard(
         onClick = if (!isPlaying) onPlay else null,
-        modifier = Modifier.fillMaxWidth(),
-        borderColor = if (isPlaying) MangaRed else PureBlack,
-        backgroundColor = if (isPlaying) MangaRed.copy(alpha = 0.1f) else Color.White,
-        showHalftone = false // Performance optimization
+        modifier = Modifier
+            .fillMaxWidth()
+            .alpha(if (!isPlaying) 1f else 1f),
+        borderColor = borderColor,
+        backgroundColor = backgroundColor,
+        showHalftone = false
     ) {
         Row(
             modifier = Modifier.padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
-                modifier = Modifier.size(48.dp).border(2.dp, PureBlack).background(PureBlack)
+                modifier = Modifier
+                    .size(48.dp)
+                    .border(NeoDimens.BorderThin, MaterialTheme.colorScheme.outline)
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
             ) {
                 PlaylistArtGrid(uris = listOf(song.albumArtUri), size = 48.dp)
             }
@@ -137,23 +147,35 @@ fun QueueArtisticItem(
             Spacer(modifier = Modifier.width(12.dp))
             
             Column(modifier = Modifier.weight(1f)) {
-                 if (isPlaying) {
-                     Text("NOW PLAYING", style = MaterialTheme.typography.labelSmall, color = MangaRed, fontWeight = FontWeight.Bold)
-                 }
-                 Text(
-                    text = song.title.uppercase(),
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Black),
-                    maxLines = 1
-                 )
-                 Text(
-                    text = song.artist.uppercase(),
-                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                    color = PureBlack.copy(alpha=0.6f)
-                 )
+                if (isPlaying) {
+                    Text(
+                        "Now Playing",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = NeoCoral,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                Text(
+                    text = song.title,
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = song.artist,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
             }
             
             IconButton(onClick = onRemove) {
-                Icon(Icons.Default.Close, null, tint = PureBlack)
+                Icon(
+                    Icons.Default.Close,
+                    contentDescription = "Remove from queue",
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
         }
     }

@@ -15,27 +15,31 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.fourshil.musicya.data.model.Song
-import com.fourshil.musicya.ui.theme.MangaRed
-import com.fourshil.musicya.ui.theme.PureBlack
-import com.fourshil.musicya.ui.theme.PureWhite
+import com.fourshil.musicya.ui.theme.NeoCoral
+import com.fourshil.musicya.ui.theme.NeoDimens
+import com.fourshil.musicya.ui.theme.NeoShadowLight
+import com.fourshil.musicya.ui.theme.Slate700
+import com.fourshil.musicya.ui.theme.Slate900
+import com.fourshil.musicya.ui.theme.Slate50
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.SkipNext
 
+/**
+ * Neo-Brutalism Mini Player
+ * Compact playback controls with clean design and progress indicator
+ */
 @Composable
 fun MiniPlayer(
     song: Song?,
@@ -48,47 +52,56 @@ fun MiniPlayer(
 ) {
     if (song == null) return
 
-    val isDark = MaterialTheme.colorScheme.background.run { red < 0.5 }
-    val cardBg = if (isDark) MaterialTheme.colorScheme.surface else PureWhite
-    val contentColor = if (isDark) PureWhite else PureBlack
+    // Fixed dark mode detection - using luminance() instead of checking red component
+    val isDark = MaterialTheme.colorScheme.background.luminance() < 0.5f
+    val cardBg = MaterialTheme.colorScheme.surface
+    val contentColor = MaterialTheme.colorScheme.onSurface
+    val borderColor = if (isDark) Slate700 else Slate700
+    val shadowColor = NeoShadowLight
 
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(90.dp) // Taller for the badge
+            .height(NeoDimens.MiniPlayerHeight + NeoDimens.ShadowMedium)
             .clickable(onClick = onClick)
     ) {
-
+        // Shadow layer
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(NeoDimens.MiniPlayerHeight)
+                .align(Alignment.BottomCenter)
+                .offset(x = NeoDimens.ShadowMedium, y = NeoDimens.ShadowMedium)
+                .background(shadowColor)
+        )
 
         // Main Card
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(72.dp)
+                .height(NeoDimens.MiniPlayerHeight)
                 .align(Alignment.BottomCenter)
-                .border(4.dp, PureBlack)
+                .border(NeoDimens.BorderThin, borderColor)
                 .background(cardBg)
         ) {
-
-            
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 16.dp, end = 8.dp, top = 8.dp, bottom = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                 // Album Art Box
+                // Album Art Box
                 Box(
                     modifier = Modifier
-                        .size(48.dp)
-                        .border(3.dp, PureBlack)
+                        .size(NeoDimens.AlbumArtSmall)
+                        .border(NeoDimens.BorderThin, borderColor)
                         .background(MaterialTheme.colorScheme.surfaceVariant),
                     contentAlignment = Alignment.Center
                 ) {
-                   AlbumArtImage(
-                       uri = song.albumArtUri,
-                       size = 48.dp
-                   )
+                    AlbumArtImage(
+                        uri = song.albumArtUri,
+                        size = NeoDimens.AlbumArtSmall
+                    )
                 }
 
                 Spacer(modifier = Modifier.width(16.dp))
@@ -96,20 +109,19 @@ fun MiniPlayer(
                 // Track Info
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = song.title.uppercase(),
+                        text = song.title,
                         style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.Black,
-                            letterSpacing = (-0.5).sp
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = (-0.25).sp
                         ),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         color = contentColor
                     )
                     Text(
-                        text = song.artist.uppercase(),
-                        style = MaterialTheme.typography.labelSmall.copy(
-                            fontWeight = FontWeight.Bold,
-                            letterSpacing = 1.sp
+                        text = song.artist,
+                        style = MaterialTheme.typography.labelMedium.copy(
+                            fontWeight = FontWeight.Medium
                         ),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -117,38 +129,40 @@ fun MiniPlayer(
                     )
                 }
                 
-                // Controls
-                 Box(
+                // Play/Pause Button
+                Box(
                     modifier = Modifier
-                        .size(40.dp)
-                        .border(3.dp, PureBlack)
-                        .background(PureBlack)
+                        .size(44.dp)
+                        .border(NeoDimens.BorderThin, borderColor)
+                        .background(Slate900)
                         .clickable { onPlayPauseClick() },
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
-                        contentDescription = "Play/Pause",
-                        tint = PureWhite,
-                        modifier = Modifier.size(24.dp)
+                        contentDescription = if (isPlaying) "Pause" else "Play",
+                        tint = Slate50,
+                        modifier = Modifier.size(NeoDimens.IconMedium)
                     )
                 }
             }
-            // Progress Bar at bottom (Optional, maybe overlay?)
-             Box(
+            
+            // Progress Bar at bottom
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(4.dp)
+                    .height(3.dp)
                     .align(Alignment.BottomCenter)
-                    .background(PureBlack.copy(alpha = 0.1f))
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
             ) {
                 Box(
                     modifier = Modifier
                         .fillMaxHeight()
                         .fillMaxWidth(fraction = progress.coerceIn(0f, 1f))
-                        .background(MangaRed)
+                        .background(NeoCoral)
                 )
             }
         }
     }
 }
+

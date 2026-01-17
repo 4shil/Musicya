@@ -16,15 +16,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.fourshil.musicya.ui.theme.MangaRed
-import com.fourshil.musicya.ui.theme.PureBlack
-import com.fourshil.musicya.ui.theme.PureWhite
+import com.fourshil.musicya.ui.theme.NeoCoral
+import com.fourshil.musicya.ui.theme.Slate50
+import com.fourshil.musicya.ui.theme.Slate700
+import com.fourshil.musicya.ui.theme.Slate900
+import com.fourshil.musicya.ui.theme.NeoDimens
 
 data class TopNavItem(
     val route: String,
     val label: String
 )
 
+/**
+ * Neo-Brutalism Navigation Chips
+ * Horizontal scrollable navigation with clean pill design
+ */
 @Composable
 fun TopNavigationChips(
     items: List<TopNavItem>,
@@ -34,8 +40,8 @@ fun TopNavigationChips(
 ) {
     LazyRow(
         modifier = modifier.fillMaxWidth(),
-        contentPadding = PaddingValues(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
+        contentPadding = PaddingValues(horizontal = 0.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         items(items) { item ->
             val isSelected = currentRoute == item.route
@@ -54,25 +60,26 @@ private fun TopNavChip(
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
-    val backgroundColor = if (isSelected) MangaRed else PureWhite
-    val contentColor = if (isSelected) PureWhite else PureBlack
-    val borderColor = PureBlack
+    val backgroundColor = if (isSelected) Slate900 else MaterialTheme.colorScheme.surface
+    val contentColor = if (isSelected) Slate50 else MaterialTheme.colorScheme.onSurface
+    val borderColor = if (isSelected) Slate900 else MaterialTheme.colorScheme.outline
 
     Box(
         modifier = Modifier
             .clickable(onClick = onClick)
-            .border(2.dp, borderColor, RoundedCornerShape(50))
+            .border(NeoDimens.BorderThin, borderColor, RoundedCornerShape(50))
             .background(backgroundColor, RoundedCornerShape(50))
-            .padding(horizontal = 20.dp, vertical = 10.dp),
+            .padding(horizontal = 18.dp, vertical = 10.dp),
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = label.uppercase(),
+            text = label,
             style = MaterialTheme.typography.labelMedium.copy(
-                fontWeight = FontWeight.Black,
-                letterSpacing = 1.sp
+                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                letterSpacing = 0.5.sp
             ),
             color = contentColor
         )
     }
 }
+

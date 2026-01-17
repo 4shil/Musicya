@@ -1,7 +1,9 @@
 package com.fourshil.musicya.ui.components
 
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.Canvas
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -19,130 +21,157 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.Spring
-import com.fourshil.musicya.ui.theme.MangaRed
-import com.fourshil.musicya.ui.theme.PureBlack
 import androidx.compose.material.ripple.rememberRipple
-import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.graphics.Canvas
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.Paint
-import androidx.compose.ui.graphics.ShaderBrush
-import androidx.compose.ui.graphics.TileMode
-import androidx.compose.ui.graphics.TileMode.Companion.Repeated
+import com.fourshil.musicya.ui.theme.NeoCoral
+import com.fourshil.musicya.ui.theme.NeoShadowLight
+import com.fourshil.musicya.ui.theme.Slate700
+import com.fourshil.musicya.ui.theme.Slate900
+import com.fourshil.musicya.ui.theme.NeoDimens
 
-
-
+/**
+ * Neo-Brutalism Card Component
+ * Features small shadows (3dp), clean borders, and smooth 60fps animations
+ */
 @Composable
 fun ArtisticCard(
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
     backgroundColor: Color = MaterialTheme.colorScheme.surface,
-    borderColor: Color = PureBlack,
-    shadowColor: Color = PureBlack,
-    showHalftone: Boolean = true,
+    borderColor: Color = MaterialTheme.colorScheme.outline,
+    shadowColor: Color = NeoShadowLight,
+    shadowSize: Dp = NeoDimens.ShadowMedium,
+    borderWidth: Dp = NeoDimens.BorderThin,
+    showHalftone: Boolean = false, // Disabled by default for cleaner look
     content: @Composable BoxScope.() -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
     
-    val offset by animateFloatAsState(
-        targetValue = if (isPressed) 2f else 6f, 
-        label = "offset",
-        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow)
-    )
-    val shadowOffset by animateFloatAsState(
-        targetValue = if (isPressed) 0f else 6f, 
+    // Smooth spring animation for press feedback
+    val shadowOffset by animateDpAsState(
+        targetValue = if (isPressed) 1.dp else shadowSize,
         label = "shadow",
-        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow)
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioLowBouncy,
+            stiffness = Spring.StiffnessMedium
+        )
+    )
+    val pressOffset by animateDpAsState(
+        targetValue = if (isPressed) (shadowSize - 1.dp) else 0.dp,
+        label = "offset",
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioLowBouncy,
+            stiffness = Spring.StiffnessMedium
+        )
     )
     
     val currentModifier = if (onClick != null) {
         Modifier.clickable(
             interactionSource = interactionSource,
-            indication = androidx.compose.material.ripple.rememberRipple(bounded = true),
+            indication = rememberRipple(bounded = true),
             onClick = onClick
         )
     } else Modifier
 
     Box(
         modifier = modifier
-            .padding(bottom = 6.dp, end = 6.dp) // Space for shadow
+            .padding(bottom = shadowSize, end = shadowSize)
             .then(currentModifier)
     ) {
-        // Shadow (Static or Animated)
+        // Shadow Layer - Small and clean
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .offset(x = shadowOffset.dp, y = shadowOffset.dp)
+                .offset(x = shadowOffset, y = shadowOffset)
                 .background(shadowColor)
         )
         
-        // Main Content
+        // Main Content Layer
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .offset(x = if(isPressed) 4.dp else 0.dp, y = if(isPressed) 4.dp else 0.dp)
-                .border(4.dp, borderColor)
+                .offset(x = pressOffset, y = pressOffset)
+                .border(borderWidth, borderColor)
                 .background(backgroundColor)
-                .padding(4.dp)
         ) {
-           content() 
-           if (showHalftone) {
-               HalftoneBackground(modifier = Modifier.matchParentSize())
-           }
+            content()
+            if (showHalftone) {
+                HalftoneBackground(
+                    modifier = Modifier.matchParentSize(),
+                    color = borderColor.copy(alpha = 0.03f)
+                )
+            }
         }
     }
 }
 
+/**
+ * Neo-Brutalism Button Component
+ * Features small shadows (3dp), smooth press animation, and clean typography
+ */
 @Composable
 fun ArtisticButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     isActive: Boolean = false,
+    enabled: Boolean = true,
     text: String? = null,
     icon: @Composable (() -> Unit)? = null,
     backgroundColor: Color = MaterialTheme.colorScheme.surface,
-    activeColor: Color = PureBlack,
+    activeColor: Color = Slate900,
     contentColor: Color = MaterialTheme.colorScheme.onSurface,
-    activeContentColor: Color = Color.White
+    activeContentColor: Color = Color.White,
+    shadowSize: Dp = NeoDimens.ShadowMedium,
+    borderWidth: Dp = NeoDimens.BorderThin
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
     
-    val currentBg = if (isActive || isPressed) activeColor else backgroundColor
-    val currentContent = if (isActive || isPressed) activeContentColor else contentColor
+    val currentBg = when {
+        !enabled -> MaterialTheme.colorScheme.surfaceVariant
+        isActive || isPressed -> activeColor
+        else -> backgroundColor
+    }
+    val currentContent = when {
+        !enabled -> MaterialTheme.colorScheme.onSurfaceVariant
+        isActive || isPressed -> activeContentColor
+        else -> contentColor
+    }
     
-    val shadowSize by androidx.compose.animation.core.animateDpAsState(
-        targetValue = if (isPressed) 0.dp else 4.dp,
+    // Smooth animation for shadow
+    val animatedShadow by animateDpAsState(
+        targetValue = if (isPressed || !enabled) 0.dp else shadowSize,
         label = "shadow",
-        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow)
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioLowBouncy,
+            stiffness = Spring.StiffnessMedium
+        )
     )
-    val pressOffset by androidx.compose.animation.core.animateDpAsState(
-        targetValue = if (isPressed) 4.dp else 0.dp,
+    val animatedOffset by animateDpAsState(
+        targetValue = if (isPressed) shadowSize else 0.dp,
         label = "offset",
-        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow)
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioLowBouncy,
+            stiffness = Spring.StiffnessMedium
+        )
     )
 
     Box(
         modifier = modifier
-            .padding(bottom = 4.dp, end = 4.dp)
+            .padding(bottom = shadowSize, end = shadowSize)
+            .alpha(if (enabled) 1f else 0.6f)
             .clickable(
                 interactionSource = interactionSource,
-                indication = androidx.compose.material.ripple.rememberRipple(bounded = true),
+                indication = rememberRipple(bounded = true),
+                enabled = enabled,
                 onClick = onClick
             )
     ) {
@@ -150,15 +179,15 @@ fun ArtisticButton(
         Box(
             modifier = Modifier
                 .matchParentSize()
-                .offset(x = shadowSize, y = shadowSize)
-                .background(PureBlack)
+                .offset(x = animatedShadow, y = animatedShadow)
+                .background(NeoShadowLight)
         )
         
         // Content
         Box(
             modifier = Modifier
-                .offset(x = pressOffset, y = pressOffset)
-                .border(3.dp, PureBlack)
+                .offset(x = animatedOffset, y = animatedOffset)
+                .border(borderWidth, if (enabled) Slate700 else MaterialTheme.colorScheme.outline)
                 .background(currentBg)
                 .padding(horizontal = 16.dp, vertical = 12.dp),
             contentAlignment = Alignment.Center
@@ -167,14 +196,14 @@ fun ArtisticButton(
                 Text(
                     text = text.uppercase(),
                     style = MaterialTheme.typography.labelMedium.copy(
-                        fontWeight = FontWeight.Black,
-                        letterSpacing = 2.sp
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 1.5.sp
                     ),
                     color = currentContent
                 )
             }
             if (icon != null) {
-                Box(modifier = Modifier.padding(if(text!=null) 4.dp else 0.dp)) {
+                Box(modifier = Modifier.padding(if (text != null) 4.dp else 0.dp)) {
                     icon()
                 }
             }
@@ -182,21 +211,24 @@ fun ArtisticButton(
     }
 }
 
+/**
+ * Manga-style FX text - decorative accent element
+ */
 @Composable
 fun MangaFX(
     text: String,
     modifier: Modifier = Modifier,
-    color: Color = PureBlack,
+    color: Color = NeoCoral,
     rotation: Float = -12f
 ) {
     Text(
         text = text,
         style = MaterialTheme.typography.displayMedium.copy(
-             fontStyle = FontStyle.Italic,
-             fontWeight = FontWeight.Black
+            fontStyle = FontStyle.Italic,
+            fontWeight = FontWeight.Black
         ),
         color = color,
-        modifier = modifier
-            .rotate(rotation)
+        modifier = modifier.rotate(rotation)
     )
 }
+

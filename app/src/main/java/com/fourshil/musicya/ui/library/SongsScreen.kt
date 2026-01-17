@@ -28,12 +28,13 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.fourshil.musicya.data.model.Song
 import com.fourshil.musicya.ui.components.*
-import com.fourshil.musicya.ui.theme.MangaRed
-import com.fourshil.musicya.ui.theme.PureBlack
-import com.fourshil.musicya.ui.theme.PureWhite
+import com.fourshil.musicya.ui.theme.NeoCoral
+import com.fourshil.musicya.ui.theme.NeoDimens
+import com.fourshil.musicya.ui.theme.Slate50
+import com.fourshil.musicya.ui.theme.Slate700
+import com.fourshil.musicya.ui.theme.Slate900
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-
 import com.fourshil.musicya.ui.components.TopNavItem
 import com.fourshil.musicya.ui.components.TopNavigationChips
 import com.fourshil.musicya.ui.navigation.Screen
@@ -116,7 +117,7 @@ fun SongsScreen(
                 }
                 isLoading -> {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator(color = PureBlack)
+                        CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
                     }
                 }
                 songs.isEmpty() -> {
@@ -140,42 +141,45 @@ fun SongsScreen(
                                     verticalAlignment = Alignment.Top
                                 ) {
                                     Text(
-                                        text = "LYRA",
-                                        style = MaterialTheme.typography.displayLarge.copy(
-                                            fontSize = 64.sp,
-                                            fontWeight = FontWeight.Black,
-                                            fontFamily = androidx.compose.ui.text.font.FontFamily.Serif,
-                                            fontStyle = FontStyle.Italic,
-                                            letterSpacing = (-2).sp
+                                        text = "Musicya",
+                                        style = MaterialTheme.typography.displayMedium.copy(
+                                            fontSize = 48.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            letterSpacing = (-1).sp
                                         ),
                                         color = MaterialTheme.colorScheme.onBackground
                                     )
 
                                     ArtisticButton(
                                         onClick = onMenuClick,
-                                        icon = { Icon(Icons.Default.Menu, null) },
-                                        modifier = Modifier.size(56.dp)
+                                        icon = { Icon(Icons.Default.Menu, null, tint = MaterialTheme.colorScheme.onSurface) },
+                                        modifier = Modifier.size(52.dp)
                                     )
                                 }
                                 
                                 Spacer(modifier = Modifier.height(24.dp))
                                 
-                                // Artistic Search Bar
+                                // Search Bar
                                 Box(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .border(4.dp, PureBlack)
-                                        .background(PureWhite)
+                                        .border(NeoDimens.BorderThin, MaterialTheme.colorScheme.outline)
+                                        .background(MaterialTheme.colorScheme.surface)
                                         .padding(horizontal = 16.dp, vertical = 14.dp)
                                 ) {
                                     Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Icon(Icons.Default.Search, null, tint = MangaRed, modifier = Modifier.size(24.dp))
-                                        Spacer(modifier = Modifier.width(16.dp))
+                                        Icon(
+                                            Icons.Default.Search,
+                                            contentDescription = "Search",
+                                            tint = NeoCoral,
+                                            modifier = Modifier.size(22.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(12.dp))
                                         Text(
-                                            text = "SEARCH THE ARCHIVE...",
+                                            text = "Search songs...",
                                             style = MaterialTheme.typography.bodyLarge.copy(
-                                                color = PureBlack.copy(alpha = 0.5f),
-                                                fontWeight = FontWeight.Black
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                                fontWeight = FontWeight.Medium
                                             )
                                         )
                                     }
@@ -351,7 +355,7 @@ private fun SelectionTopBar(
     onSelectAll: () -> Unit,
     onActions: () -> Unit
 ) {
-    // Floating style top bar
+    // Selection mode top bar
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -359,32 +363,34 @@ private fun SelectionTopBar(
     ) {
         ArtisticCard(
             modifier = Modifier.fillMaxWidth(),
-            backgroundColor = MangaRed,
-            borderColor = PureBlack
+            backgroundColor = Slate900,
+            borderColor = Slate700
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp),
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 IconButton(onClick = onClose) {
-                    Icon(Icons.Default.Close, null, tint = PureWhite)
+                    Icon(Icons.Default.Close, null, tint = Slate50)
                 }
                 Text(
-                    text = "$selectedCount CHOSEN",
-                    style = MaterialTheme.typography.titleLarge,
-                    color = PureWhite
+                    text = "$selectedCount selected",
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.SemiBold
+                    ),
+                    color = Slate50
                 )
-                 Row {
+                Row {
                     IconButton(onClick = onSelectAll) {
-                        Icon(Icons.Default.SelectAll, null, tint = PureWhite)
+                        Icon(Icons.Default.SelectAll, null, tint = Slate50)
                     }
                     IconButton(onClick = onActions) {
-                        Icon(Icons.Default.MoreVert, null, tint = PureWhite)
+                        Icon(Icons.Default.MoreVert, null, tint = Slate50)
                     }
-                 }
+                }
             }
         }
     }

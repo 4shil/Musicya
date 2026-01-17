@@ -14,21 +14,28 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.TileMode
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
+import com.fourshil.musicya.ui.theme.Slate400
 
+/**
+ * Neo-Brutalism halftone/dot pattern background
+ * Creates a subtle tiled dot pattern for visual interest
+ * Kept very light (0.05 alpha) for professional appearance
+ */
 @Composable
 fun HalftoneBackground(
-    color: Color = MaterialTheme.colorScheme.onBackground,
-    dotSize: Float = 2f,
-    spacing: Float = 12f,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    color: Color = Slate400,
+    dotSize: Float = 1.5f,  // Smaller dots for subtlety
+    spacing: Float = 10f,
+    alpha: Float = 0.05f    // Very subtle by default
 ) {
-    val paintColor = color.copy(alpha = 0.15f)
-    val density = androidx.compose.ui.platform.LocalDensity.current
+    val paintColor = color.copy(alpha = alpha)
+    val density = LocalDensity.current
 
-    // Cache the brush so we don't recreate the bitmap on every recomposition unless parameters change
-    val brush = remember(color, dotSize, spacing, density) {
-        // Create a small pattern bitmap (e.g. 12x12)
+    // Cache the brush to avoid recreation on every recomposition
+    val brush = remember(color, dotSize, spacing, density, alpha) {
         val sizePx = with(density) { spacing.dp.toPx() }.toInt().coerceAtLeast(1)
         val dotPx = with(density) { dotSize.dp.toPx() }
         
@@ -39,7 +46,7 @@ fun HalftoneBackground(
             isAntiAlias = true
         }
         
-        // Draw one dot in the center or corner to be tiled
+        // Draw centered dot to be tiled
         canvas.drawCircle(Offset(sizePx / 2f, sizePx / 2f), dotPx / 2f, paint)
         
         ShaderBrush(
@@ -57,3 +64,4 @@ fun HalftoneBackground(
             .background(brush)
     )
 }
+
