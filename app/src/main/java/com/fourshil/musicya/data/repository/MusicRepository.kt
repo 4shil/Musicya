@@ -17,11 +17,18 @@ import javax.inject.Singleton
 @Singleton
 class MusicRepository @Inject constructor(
     @ApplicationContext private val context: Context
-) {
+) : IMusicRepository {
     
     private var cachedSongs: List<Song>? = null
+    
+    /**
+     * Clear the song cache to force refresh on next load.
+     */
+    override fun clearCache() {
+        cachedSongs = null
+    }
 
-    suspend fun getAllSongs(): List<Song> = withContext(Dispatchers.IO) {
+    override suspend fun getAllSongs(): List<Song> = withContext(Dispatchers.IO) {
         if (cachedSongs != null) return@withContext cachedSongs!!
 
         val songs = mutableListOf<Song>()
@@ -90,7 +97,7 @@ class MusicRepository @Inject constructor(
         songs
     }
     
-    suspend fun getAllAlbums(): List<Album> = withContext(Dispatchers.IO) {
+    override suspend fun getAllAlbums(): List<Album> = withContext(Dispatchers.IO) {
         val albums = mutableListOf<Album>()
         
         val projection = arrayOf(
@@ -134,7 +141,7 @@ class MusicRepository @Inject constructor(
         albums
     }
     
-    suspend fun getAllArtists(): List<Artist> = withContext(Dispatchers.IO) {
+    override suspend fun getAllArtists(): List<Artist> = withContext(Dispatchers.IO) {
         val artists = mutableListOf<Artist>()
         
         val projection = arrayOf(
@@ -175,7 +182,7 @@ class MusicRepository @Inject constructor(
         artists
     }
     
-    suspend fun getFolders(): List<Folder> = withContext(Dispatchers.IO) {
+    override suspend fun getFolders(): List<Folder> = withContext(Dispatchers.IO) {
         val songs = getAllSongs()
         songs.groupBy { File(it.path).parent ?: "" }
             .filter { it.key.isNotEmpty() }
@@ -189,19 +196,19 @@ class MusicRepository @Inject constructor(
             .sortedBy { it.name }
     }
     
-    suspend fun getSongsByAlbum(albumId: Long): List<Song> = withContext(Dispatchers.IO) {
+    override suspend fun getSongsByAlbum(albumId: Long): List<Song> = withContext(Dispatchers.IO) {
         getAllSongs().filter { it.albumId == albumId }
     }
     
-    suspend fun getSongsByArtist(artistName: String): List<Song> = withContext(Dispatchers.IO) {
+    override suspend fun getSongsByArtist(artistName: String): List<Song> = withContext(Dispatchers.IO) {
         getAllSongs().filter { it.artist.equals(artistName, ignoreCase = true) }
     }
     
-    suspend fun getSongsByFolder(folderPath: String): List<Song> = withContext(Dispatchers.IO) {
+    override suspend fun getSongsByFolder(folderPath: String): List<Song> = withContext(Dispatchers.IO) {
         getAllSongs().filter { File(it.path).parent == folderPath }
     }
     
-    suspend fun getSongsByIds(songIds: List<Long>): List<Song> = withContext(Dispatchers.IO) {
+    override suspend fun getSongsByIds(songIds: List<Long>): List<Song> = withContext(Dispatchers.IO) {
         val allSongs = getAllSongs().associateBy { it.id }
         songIds.mapNotNull { allSongs[it] }
     }
