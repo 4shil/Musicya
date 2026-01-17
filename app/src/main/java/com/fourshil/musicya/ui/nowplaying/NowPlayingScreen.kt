@@ -56,7 +56,7 @@ fun NowPlayingScreen(
     val repeatMode by viewModel.repeatMode.collectAsState()
     val isFavorite by viewModel.isFavorite.collectAsState()
 
-    val isDark = isSystemInDarkTheme()
+    val isDark = androidx.compose.foundation.isSystemInDarkTheme()
     val bg = if (isDark) Color(0xFF100D21) else Color(0xFFfaf9fb)
     val text = if (isDark) Color.White else Color.Black
 
@@ -282,7 +282,7 @@ fun NowPlayingScreen(
                         .background(Color.White)
                         .pointerInput(Unit) {
                             detectTapGestures { offset ->
-                                val p = (offset.x / size.width).coerceIn(0f, 1f)
+                                val p = (offset.x / size.width.toFloat()).coerceIn(0f, 1f)
                                 viewModel.seekTo((p * duration).toLong())
                             }
                         }
@@ -296,7 +296,7 @@ fun NowPlayingScreen(
                                 .width(12.dp)
                                 .fillMaxHeight()
                                 .background(MangaRed)
-                                .border(4.dp, Color.Black)
+                                .border(width = 4.dp, color = Color.Black)
                         )
                     }
                 }
