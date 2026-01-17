@@ -17,8 +17,8 @@ import com.fourshil.musicya.data.model.Song
 import com.fourshil.musicya.ui.components.SongActionsBottomSheet
 import com.fourshil.musicya.ui.components.SongDetailsDialog
 import com.fourshil.musicya.ui.components.SongListItem
-import com.fourshil.musicya.ui.theme.MangaRed
-import com.fourshil.musicya.ui.theme.PureBlack
+import com.fourshil.musicya.ui.theme.NeoCoral
+import com.fourshil.musicya.ui.theme.NeoDimens
 
 import com.fourshil.musicya.ui.components.TopNavItem
 import com.fourshil.musicya.ui.components.TopNavigationChips
@@ -45,27 +45,18 @@ fun FavoritesScreen(
         contentPadding = PaddingValues(bottom = 160.dp)
     ) {
         item {
-             Column(modifier = Modifier.padding(horizontal = 24.dp)) {
+             Column(modifier = Modifier.padding(horizontal = NeoDimens.ScreenPadding)) {
                 Spacer(modifier = Modifier.height(24.dp))
                 
-                // Header: FAVORITES
+                // Header
                 Text(
-                    text = "YOUR",
-                     style = MaterialTheme.typography.displayMedium.copy(
-                        fontSize = 32.sp,
-                        fontWeight = FontWeight.Black
+                    text = "Favorites",
+                    style = MaterialTheme.typography.displaySmall.copy(
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = (-0.5).sp
                     ),
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-                Text(
-                    text = "FAVORITES",
-                     style = MaterialTheme.typography.displayMedium.copy(
-                        fontSize = 64.sp,
-                        fontWeight = FontWeight.Black,
-                        fontStyle = FontStyle.Italic,
-                        color = MangaRed
-                    ),
-                     modifier = Modifier.padding(bottom = 32.dp)
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.padding(bottom = 24.dp)
                 )
 
                 TopNavigationChips(
@@ -91,21 +82,23 @@ fun FavoritesScreen(
                 }
              }
         } else if (songs.isEmpty()) {
-             item {
+            item {
                 Box(modifier = Modifier.fillMaxWidth().height(200.dp), contentAlignment = Alignment.Center) {
-                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text("NO LOVE YET", style = MaterialTheme.typography.headlineLarge, color = MaterialTheme.colorScheme.onBackground)
-                     }
+                    Text(
+                        "No favorites yet", 
+                        style = MaterialTheme.typography.bodyLarge, 
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
-             }
+            }
         } else {
-             itemsIndexed(
-                 items = songs,
-                 key = { _, song -> song.id },
-                 contentType = { _, _ -> "favorite_item" }
-             ) { index, song ->
-                Box(modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)) {
-                     SongListItem(
+            itemsIndexed(
+                items = songs,
+                key = { _, song -> song.id },
+                contentType = { _, _ -> "favorite_item" }
+            ) { index, song ->
+                Box(modifier = Modifier.padding(horizontal = NeoDimens.ScreenPadding, vertical = 6.dp)) {
+                    SongListItem(
                         song = song,
                         isFavorite = true,
                         isSelected = false,

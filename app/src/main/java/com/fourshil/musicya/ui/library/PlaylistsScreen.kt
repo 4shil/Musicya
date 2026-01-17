@@ -24,9 +24,11 @@ import com.fourshil.musicya.ui.components.ArtisticButton
 import com.fourshil.musicya.ui.components.ArtisticCard
 import com.fourshil.musicya.ui.components.CreatePlaylistDialog
 import com.fourshil.musicya.ui.components.PlaylistArtGrid
-import com.fourshil.musicya.ui.theme.MangaRed
-import com.fourshil.musicya.ui.theme.MangaYellow
-import com.fourshil.musicya.ui.theme.PureBlack
+import com.fourshil.musicya.ui.theme.NeoCoral
+import com.fourshil.musicya.ui.theme.NeoAmber
+import com.fourshil.musicya.ui.theme.NeoDimens
+import com.fourshil.musicya.ui.theme.Slate50
+import com.fourshil.musicya.ui.theme.Slate900
 
 import com.fourshil.musicya.ui.components.TopNavItem
 import com.fourshil.musicya.ui.components.TopNavigationChips
@@ -52,22 +54,20 @@ fun PlaylistsScreen(
         contentPadding = PaddingValues(bottom = 160.dp)
     ) {
         item {
-             Column(modifier = Modifier.padding(horizontal = 24.dp)) {
+             Column(modifier = Modifier.padding(horizontal = NeoDimens.ScreenPadding)) {
                 Spacer(modifier = Modifier.height(24.dp))
                 
-                // Header: PLAYLISTS
+                // Header
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                     Text(
-                        text = "PLAYLISTS",
-                        style = MaterialTheme.typography.displayMedium.copy(
-                            fontSize = 48.sp,
-                            fontWeight = FontWeight.Black,
-                            fontStyle = FontStyle.Italic,
-                            letterSpacing = (-2).sp
+                    Text(
+                        text = "Playlists",
+                        style = MaterialTheme.typography.displaySmall.copy(
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = (-0.5).sp
                         ),
                         color = MaterialTheme.colorScheme.onBackground
                     )
@@ -75,13 +75,13 @@ fun PlaylistsScreen(
                     // Add Button
                     ArtisticButton(
                         onClick = { showCreateDialog = true },
-                        icon = { Icon(Icons.Default.Add, null, tint = PureBlack) },
-                        modifier = Modifier.size(56.dp),
-                        backgroundColor = MangaYellow
+                        icon = { Icon(Icons.Default.Add, null, tint = Slate50) },
+                        modifier = Modifier.size(52.dp),
+                        backgroundColor = NeoCoral
                     )
                 }
                 
-                Spacer(modifier = Modifier.height(32.dp))
+                Spacer(modifier = Modifier.height(24.dp))
              }
 
              TopNavigationChips(
@@ -100,23 +100,23 @@ fun PlaylistsScreen(
         }
 
         if (playlists.isEmpty()) {
-             item {
+            item {
                 Box(modifier = Modifier.fillMaxWidth().height(200.dp), contentAlignment = Alignment.Center) {
-                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text("EMPTY ARCHIVE", style = MaterialTheme.typography.headlineLarge, color = MaterialTheme.colorScheme.onBackground)
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text("create new asset +", style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onBackground)
-                     }
+                    Text(
+                        "No playlists yet", 
+                        style = MaterialTheme.typography.bodyLarge, 
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
-             }
+            }
         } else {
-             items(
-                 items = playlists,
-                 key = { it.id },
-                 contentType = { "playlist_item" }
-             ) { playlist ->
-                 Box(modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)) {
-                     val playlistSongs by viewModel.getPlaylistSongs(playlist.id)
+            items(
+                items = playlists,
+                key = { it.id },
+                contentType = { "playlist_item" }
+            ) { playlist ->
+                Box(modifier = Modifier.padding(horizontal = NeoDimens.ScreenPadding, vertical = 6.dp)) {
+                    val playlistSongs by viewModel.getPlaylistSongs(playlist.id)
                         .collectAsState(initial = emptyList())
                     
                     PlaylistArtisticItem(
@@ -127,7 +127,7 @@ fun PlaylistsScreen(
                         onLongClick = { showDeleteDialog = playlist },
                         onRename = { showRenameDialog = playlist }
                     )
-                 }
+                }
             }
         }
     }
@@ -153,7 +153,7 @@ fun PlaylistsScreen(
                         viewModel.deletePlaylist(playlist.id)
                         showDeleteDialog = null
                     }
-                ) { Text("CONFIRM", color = MangaRed, fontWeight = FontWeight.Bold) }
+                ) { Text("Delete", color = NeoCoral, fontWeight = FontWeight.SemiBold) }
             },
             dismissButton = {
                  TextButton(onClick = { showDeleteDialog = null }) { Text("CANCEL", color = MaterialTheme.colorScheme.onSurface) }
@@ -175,8 +175,8 @@ fun PlaylistsScreen(
                     onValueChange = { newName = it },
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = MaterialTheme.colorScheme.onSurface,
-                        unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha=0.5f),
-                        cursorColor = MangaRed,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                        cursorColor = NeoCoral,
                         focusedTextColor = MaterialTheme.colorScheme.onSurface,
                         unfocusedTextColor = MaterialTheme.colorScheme.onSurface
                     )
@@ -217,38 +217,37 @@ fun PlaylistArtisticItem(
             modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Folder Icon or Art
             Box(
                 modifier = Modifier
                     .size(56.dp)
-                    .border(3.dp, PureBlack)
-                    .background(Color.White),
+                    .border(NeoDimens.BorderThin, MaterialTheme.colorScheme.outline)
+                    .background(MaterialTheme.colorScheme.surfaceVariant),
                 contentAlignment = Alignment.Center
             ) {
-                 if (artUris.isNotEmpty()) {
-                     PlaylistArtGrid(uris = artUris, size = 56.dp)
-                 } else {
-                     Icon(Icons.Default.Folder, null, tint = PureBlack)
-                 }
+                if (artUris.isNotEmpty()) {
+                    PlaylistArtGrid(uris = artUris, size = 56.dp)
+                } else {
+                    Icon(Icons.Default.Folder, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
             }
             
             Spacer(modifier = Modifier.width(16.dp))
             
             Column(modifier = Modifier.weight(1f)) {
-                 Text(
-                    text = playlist.name.uppercase(),
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Black),
+                Text(
+                    text = playlist.name,
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
                     maxLines = 1
-                 )
-                 Text(
-                    text = "$songCount ITEMS",
-                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                    color = PureBlack.copy(alpha=0.6f)
-                 )
+                )
+                Text(
+                    text = "$songCount songs",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
             
             IconButton(onClick = onRename) {
-                Icon(Icons.Default.Edit, null, tint = PureBlack)
+                Icon(Icons.Default.Edit, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
     }

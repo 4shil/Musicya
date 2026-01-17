@@ -25,7 +25,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.fourshil.musicya.data.ThemeMode
 import com.fourshil.musicya.ui.components.ArtisticButton
 import com.fourshil.musicya.ui.components.ArtisticCard
-import com.fourshil.musicya.ui.theme.PureBlack
+import com.fourshil.musicya.ui.theme.NeoCoral
+import com.fourshil.musicya.ui.theme.NeoDimens
+import com.fourshil.musicya.ui.theme.Slate50
+import com.fourshil.musicya.ui.theme.Slate700
+import com.fourshil.musicya.ui.theme.Slate900
+import com.fourshil.musicya.ui.theme.NeoShadowLight
 
 @Composable
 fun SettingsScreen(
@@ -47,8 +52,8 @@ fun SettingsScreen(
         ThemeMode.LIGHT -> false
         ThemeMode.DARK -> true
     }
-    val contentColor = if (isDark) Color.White else PureBlack
-    val surfaceColor = if (isDark) PureBlack else Color.White
+    val contentColor = if (isDark) Slate50 else Slate900
+    val surfaceColor = if (isDark) Slate900 else Color.White
 
     Box(modifier = Modifier.fillMaxSize().background(surfaceColor)) {
         Column(
@@ -71,12 +76,10 @@ fun SettingsScreen(
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
-                    text = "SETTINGS",
-                    style = MaterialTheme.typography.displayMedium.copy(
-                        fontSize = 48.sp,
-                        fontWeight = FontWeight.Black,
-                        fontStyle = FontStyle.Italic,
-                         letterSpacing = (-2).sp
+                    text = "Settings",
+                    style = MaterialTheme.typography.headlineLarge.copy(
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = (-0.5).sp
                     ),
                     color = contentColor
                 )
@@ -85,10 +88,10 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(32.dp))
 
             // --- AUDIO SECTION ---
-            SettingsSectionHeader("AUDIO CONTROL", contentColor)
+            SettingsSectionHeader("Audio", contentColor)
             SettingsItem(
-                title = "EQUALIZER",
-                subtitle = "ADJUST FREQUENCIES",
+                title = "Equalizer",
+                subtitle = "Adjust audio frequencies",
                 icon = Icons.Default.GraphicEq,
                 onClick = onEqualizerClick,
                 contentColor = contentColor,
@@ -98,12 +101,12 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             // --- PREFERENCES SECTION ---
-            SettingsSectionHeader("PREFERENCES", contentColor)
+            SettingsSectionHeader("Preferences", contentColor)
             
             // Sleep Timer
-             SettingsItem(
-                title = "SLEEP TIMER",
-                subtitle = if (sleepTimerEnabled) "$sleepTimerMinutes MIN REMAINING" else "DISABLED",
+            SettingsItem(
+                title = "Sleep Timer",
+                subtitle = if (sleepTimerEnabled) "$sleepTimerMinutes min remaining" else "Disabled",
                 icon = Icons.Default.Timer,
                 onClick = { showSleepTimerDialog = true },
                 contentColor = contentColor,
@@ -127,11 +130,11 @@ fun SettingsScreen(
 
             // Theme
             SettingsItem(
-                title = "THEME MODE",
+                title = "Theme",
                 subtitle = when (currentTheme) {
-                    ThemeMode.SYSTEM -> "SYSTEM DEFAULT"
-                    ThemeMode.LIGHT -> "LIGHT MODE"
-                    ThemeMode.DARK -> "DARK MODE"
+                    ThemeMode.SYSTEM -> "System default"
+                    ThemeMode.LIGHT -> "Light mode"
+                    ThemeMode.DARK -> "Dark mode"
                 },
                 icon = Icons.Default.Palette,
                 onClick = { showThemeDialog = true },
@@ -139,13 +142,13 @@ fun SettingsScreen(
                 borderColor = contentColor
             )
 
-             Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
             // --- INFO SECTION ---
-            SettingsSectionHeader("SYSTEM INFO", contentColor)
+            SettingsSectionHeader("Info", contentColor)
             SettingsItem(
-                title = "ABOUT LYRA",
-                subtitle = "VERSION 1.0.0 // BETA",
+                title = "About Musicya",
+                subtitle = "Version 1.0.0",
                 icon = Icons.Default.Info,
                 onClick = {},
                 contentColor = contentColor,
@@ -242,8 +245,8 @@ fun SettingsItem(
     subtitle: String,
     icon: ImageVector,
     onClick: () -> Unit,
-    contentColor: Color = PureBlack,
-    borderColor: Color = PureBlack,
+    contentColor: Color = Slate900,
+    borderColor: Color = Slate700,
     trailingContent: @Composable (() -> Unit)? = null
 ) {
     // Invert the colors for the icon box to make it pop
@@ -295,16 +298,16 @@ fun SettingsItem(
 fun NeoDialogWrapper(
     title: String,
     onDismiss: () -> Unit,
-    contentColor: Color = PureBlack,
+    contentColor: Color = Slate900,
     surfaceColor: Color = Color.White,
     content: @Composable () -> Unit
 ) {
     Dialog(onDismissRequest = onDismiss) {
-         Box(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                 .border(4.dp, contentColor)
-                 .background(surfaceColor)
+                .border(NeoDimens.BorderMedium, contentColor)
+                .background(surfaceColor)
                 .padding(24.dp)
         ) {
             Column {

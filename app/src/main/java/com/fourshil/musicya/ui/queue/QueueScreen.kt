@@ -124,9 +124,7 @@ fun QueueArtisticItem(
     
     ArtisticCard(
         onClick = if (!isPlaying) onPlay else null,
-        modifier = Modifier
-            .fillMaxWidth()
-            .alpha(if (!isPlaying) 1f else 1f),
+        modifier = Modifier.fillMaxWidth(),
         borderColor = borderColor,
         backgroundColor = backgroundColor,
         showHalftone = false
