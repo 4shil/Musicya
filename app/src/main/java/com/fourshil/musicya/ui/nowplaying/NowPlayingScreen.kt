@@ -40,7 +40,7 @@ import coil.compose.AsyncImage
 import com.fourshil.musicya.ui.components.HalftoneBackground
 import com.fourshil.musicya.ui.components.MarqueeText
 import com.fourshil.musicya.ui.theme.*
-import kotlin.math.coerceIn
+import androidx.compose.foundation.isSystemInDarkTheme
 
 @Composable
 fun NowPlayingScreen(
@@ -296,7 +296,7 @@ fun NowPlayingScreen(
                                 .width(12.dp)
                                 .fillMaxHeight()
                                 .background(MangaRed)
-                                .border(start = 4.dp, color = Color.Black)
+                                .border(4.dp, Color.Black)
                         )
                     }
                 }
