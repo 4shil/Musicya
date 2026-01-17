@@ -1,6 +1,7 @@
 package com.fourshil.musicya;
 
 import com.fourshil.musicya.di.DatabaseModule;
+import com.fourshil.musicya.di.RepositoryModule;
 import com.fourshil.musicya.player.MusicService_GeneratedInjector;
 import com.fourshil.musicya.ui.library.FavoritesViewModel_HiltModules;
 import com.fourshil.musicya.ui.library.LibraryViewModel_HiltModules;
@@ -130,7 +131,8 @@ public final class MusicyaApp_HiltComponents {
           DatabaseModule.class,
           HiltWrapper_FragmentGetContextFix_FragmentGetContextFixModule.class,
           ActivityRetainedCBuilderModule.class,
-          ServiceCBuilderModule.class
+          ServiceCBuilderModule.class,
+          RepositoryModule.class
       }
   )
   @Singleton
