@@ -89,4 +89,57 @@ interface MusicDao {
             updatePlaylist(it.copy(updatedAt = System.currentTimeMillis()))
         }
     }
+    
+    // ============ PLAY HISTORY ============
+    
+    /**
+     * Record that a song was played. Increments play count and updates last played time.
+     */
+    @Transaction
+    suspend fun recordPlay(songId: Long) {
+        val existing = getPlayHistory(songId)
+        if (existing != null) {
+            updatePlayHistory(SongPlayHistory(
+                songId = songId,
+                playCount = existing.playCount + 1,
+                lastPlayedAt = System.currentTimeMillis()
+            ))
+        } else {
+            insertPlayHistory(SongPlayHistory(
+                songId = songId,
+                playCount = 1,
+                lastPlayedAt = System.currentTimeMillis()
+            ))
+        }
+    }
+    
+    @Query("SELECT * FROM song_play_history WHERE songId = :songId")
+    suspend fun getPlayHistory(songId: Long): SongPlayHistory?
+    
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertPlayHistory(history: SongPlayHistory)
+    
+    @Update
+    suspend fun updatePlayHistory(history: SongPlayHistory)
+    
+    /**
+     * Get song IDs ordered by play count (most played first).
+     * @param limit Maximum number of results
+     */
+    @Query("SELECT songId FROM song_play_history WHERE playCount > 0 ORDER BY playCount DESC LIMIT :limit")
+    fun getMostPlayedSongIds(limit: Int = 50): Flow<List<Long>>
+    
+    /**
+     * Get song IDs ordered by last played time (most recent first).
+     * @param limit Maximum number of results
+     */
+    @Query("SELECT songId FROM song_play_history WHERE lastPlayedAt > 0 ORDER BY lastPlayedAt DESC LIMIT :limit")
+    fun getRecentlyPlayedSongIds(limit: Int = 50): Flow<List<Long>>
+    
+    /**
+     * Get play count for a specific song.
+     */
+    @Query("SELECT playCount FROM song_play_history WHERE songId = :songId")
+    fun getPlayCount(songId: Long): Flow<Int?>
 }
+

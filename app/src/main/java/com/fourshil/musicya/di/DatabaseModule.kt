@@ -25,7 +25,9 @@ object DatabaseModule {
             context,
             AppDatabase::class.java,
             "lyra_database"
-        ).build()
+        )
+        .fallbackToDestructiveMigration() // For development - handles schema changes
+        .build()
     }
     
     @Provides
