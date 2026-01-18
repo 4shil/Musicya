@@ -11,7 +11,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.isSystemInDarkTheme
 import com.fourshil.musicya.data.db.Playlist
+import com.fourshil.musicya.ui.theme.Slate50
+import com.fourshil.musicya.ui.theme.Slate900
 
 /**
  * Bottom sheet for adding song(s) to a playlist.
@@ -101,38 +106,62 @@ fun CreatePlaylistDialog(
     onCreate: (String) -> Unit
 ) {
     var playlistName by remember { mutableStateOf("") }
+    val contentColor = if (isSystemInDarkTheme()) Slate50 else Slate900
+    val surfaceColor = if (isSystemInDarkTheme()) Slate900 else Color.White
     
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text("Create Playlist") },
-        text = {
+    NeoDialogWrapper(
+        title = "NEW PLAYLIST",
+        onDismiss = onDismiss,
+        contentColor = contentColor,
+        surfaceColor = surfaceColor
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
             OutlinedTextField(
                 value = playlistName,
                 onValueChange = { playlistName = it },
                 label = { Text("Playlist Name") },
                 singleLine = true,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = contentColor,
+                    unfocusedTextColor = contentColor,
+                    focusedBorderColor = contentColor,
+                    unfocusedBorderColor = contentColor.copy(alpha = 0.5f),
+                    focusedLabelColor = contentColor,
+                    unfocusedLabelColor = contentColor.copy(alpha = 0.5f),
+                    cursorColor = contentColor
+                )
             )
-        },
-        confirmButton = {
-            TextButton(
-                onClick = { 
-                    if (playlistName.isNotBlank()) {
-                        onCreate(playlistName.trim())
-                        onDismiss()
-                    }
-                },
-                enabled = playlistName.isNotBlank()
+            
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Create")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                ArtisticButton(
+                    onClick = onDismiss,
+                    text = "CANCEL",
+                    backgroundColor = surfaceColor,
+                    contentColor = contentColor,
+                    modifier = Modifier.weight(1f)
+                )
+                
+                ArtisticButton(
+                    onClick = { 
+                        if (playlistName.isNotBlank()) {
+                            onCreate(playlistName.trim())
+                            onDismiss()
+                        }
+                    },
+                    text = "CREATE",
+                    backgroundColor = contentColor,
+                    contentColor = surfaceColor,
+                    enabled = playlistName.isNotBlank(),
+                    modifier = Modifier.weight(1f)
+                )
             }
         }
-    )
+    }
 }
 
 /**
@@ -144,32 +173,47 @@ fun DeleteConfirmDialog(
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        icon = { Icon(Icons.Default.Warning, null, tint = MaterialTheme.colorScheme.error) },
-        title = { Text("Delete ${if (songCount == 1) "Song" else "$songCount Songs"}?") },
-        text = {
+    val contentColor = if (isSystemInDarkTheme()) Slate50 else Slate900
+    val surfaceColor = if (isSystemInDarkTheme()) Slate900 else Color.White
+    
+    NeoDialogWrapper(
+        title = "DELETE SONGS?",
+        onDismiss = onDismiss,
+        contentColor = contentColor,
+        surfaceColor = surfaceColor
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
             Text(
-                "This will permanently delete ${if (songCount == 1) "this song" else "these songs"} from your device. This action cannot be undone."
+                "This will permanently delete ${if (songCount == 1) "this song" else "these songs"} from your device. This action cannot be undone.",
+                style = MaterialTheme.typography.bodyLarge,
+                color = contentColor
             )
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    onConfirm()
-                    onDismiss()
-                },
-                colors = ButtonDefaults.textButtonColors(
-                    contentColor = MaterialTheme.colorScheme.error
-                )
+            
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Delete")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                ArtisticButton(
+                    onClick = onDismiss,
+                    text = "CANCEL",
+                    backgroundColor = surfaceColor,
+                    contentColor = contentColor,
+                    modifier = Modifier.weight(1f)
+                )
+                
+                ArtisticButton(
+                    onClick = {
+                        onConfirm()
+                        onDismiss()
+                    },
+                    text = "DELETE",
+                    backgroundColor = MaterialTheme.colorScheme.error,
+                    contentColor = Color.White,
+                    activeColor = MaterialTheme.colorScheme.error.copy(alpha = 0.8f),
+                    modifier = Modifier.weight(1f)
+                )
             }
         }
-    )
+    }
 }

@@ -20,89 +20,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.fourshil.musicya.data.ThemeMode
 import com.fourshil.musicya.ui.components.ArtisticButton
+import com.fourshil.musicya.ui.components.NeoDialogWrapper
+import com.fourshil.musicya.ui.components.NeoSelectionItem
 import com.fourshil.musicya.ui.theme.NeoDimens
 import com.fourshil.musicya.ui.theme.Slate900
 
-@Composable
-fun NeoDialogWrapper(
-    title: String,
-    onDismiss: () -> Unit,
-    contentColor: Color = Slate900,
-    surfaceColor: Color = Color.White,
-    content: @Composable () -> Unit
-) {
-    Dialog(onDismissRequest = onDismiss) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(NeoDimens.BorderMedium, contentColor)
-                .background(surfaceColor)
-                .padding(24.dp)
-        ) {
-            Column {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = title,
-                        style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Black),
-                        color = contentColor
-                    )
-                    Icon(
-                        Icons.Default.Close, 
-                        null, 
-                        modifier = Modifier
-                            .clickable(onClick = onDismiss)
-                            .size(24.dp),
-                        tint = contentColor
-                    )
-                }
-                HorizontalDivider(
-                    thickness = 4.dp, 
-                    color = contentColor,
-                    modifier = Modifier.padding(vertical = 16.dp)
-                )
-                content()
-            }
-        }
-    }
-}
 
-@Composable
-fun NeoSelectionItem(
-    text: String,
-    selected: Boolean,
-    contentColor: Color,
-    surfaceColor: Color,
-    onClick: () -> Unit
-) {
-    // If selected, we INVERT the colors (Background = ContentColor, Text = SurfaceColor)
-    val bgColor = if (selected) contentColor else Color.Transparent
-    val textColor = if (selected) surfaceColor else contentColor
-    val borderW = if (selected) 2.dp else 0.dp
-    
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .border(borderW, contentColor)
-            .background(bgColor)
-            .clickable(onClick = onClick)
-            .padding(12.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        if (selected) {
-             Icon(Icons.Default.Check, null, tint = textColor, modifier = Modifier.size(20.dp))
-             Spacer(modifier = Modifier.width(8.dp))
-        }
-        Text(
-            text = text,
-            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
-             color = textColor
-        )
-    }
-}
+
+
 
 @Composable
 fun SleepTimerDialog(

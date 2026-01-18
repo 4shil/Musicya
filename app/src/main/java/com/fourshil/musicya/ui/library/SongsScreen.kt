@@ -134,71 +134,13 @@ fun SongsScreen(
                         if (!selectionState.isSelectionMode) {
                             item {
                                 Spacer(modifier = Modifier.height(24.dp))
-                                // Header: STUDIO FEED
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.Top
-                                ) {
-                                    Text(
-                                        text = "Musicya",
-                                        style = MaterialTheme.typography.displayMedium.copy(
-                                            fontSize = 48.sp,
-                                            fontWeight = FontWeight.Bold,
-                                            letterSpacing = (-1).sp
-                                        ),
-                                        color = MaterialTheme.colorScheme.onBackground
-                                    )
-
-                                    ArtisticButton(
-                                        onClick = onMenuClick,
-                                        icon = { Icon(Icons.Default.Menu, null, tint = MaterialTheme.colorScheme.onSurface) },
-                                        modifier = Modifier.size(52.dp)
-                                    )
-                                }
-                                
-                                Spacer(modifier = Modifier.height(24.dp))
-                                
-                                // Search Bar
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .border(NeoDimens.BorderThin, MaterialTheme.colorScheme.outline)
-                                        .background(MaterialTheme.colorScheme.surface)
-                                        .padding(horizontal = 16.dp, vertical = 14.dp)
-                                ) {
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Icon(
-                                            Icons.Default.Search,
-                                            contentDescription = "Search",
-                                            tint = NeoCoral,
-                                            modifier = Modifier.size(22.dp)
-                                        )
-                                        Spacer(modifier = Modifier.width(12.dp))
-                                        Text(
-                                            text = "Search songs...",
-                                            style = MaterialTheme.typography.bodyLarge.copy(
-                                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                                fontWeight = FontWeight.Medium
-                                            )
-                                        )
-                                    }
-                                }
-                                Spacer(modifier = Modifier.height(24.dp))
-
-                                TopNavigationChips(
-                                    items = listOf(
-                                        TopNavItem(Screen.Songs.route, "Songs"),
-                                        TopNavItem(Screen.RecentlyPlayed.route, "Recent"),
-                                        TopNavItem(Screen.MostPlayed.route, "Top"),
-                                        TopNavItem(Screen.Favorites.route, "Favorites"),
-                                        TopNavItem(Screen.Playlists.route, "Playlists"),
-                                        TopNavItem(Screen.Albums.route, "Albums")
-                                    ),
+                            item {
+                                SongsScreenHeader(
+                                    onMenuClick = onMenuClick,
                                     currentRoute = currentRoute,
-                                    onItemClick = onNavigate,
-                                    modifier = Modifier.padding(bottom = 24.dp)
+                                    onNavigate = onNavigate
                                 )
+                            }
                             }
                         }
 
@@ -334,64 +276,4 @@ fun SongsScreen(
     }
 }
 
-@Composable
-private fun PermissionRequiredView(onRequest: () -> Unit) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text("LOCKED", style = MaterialTheme.typography.displayMedium)
-             Spacer(modifier = Modifier.height(16.dp))
-            ArtisticButton(
-                text = "ACCESS DATA",
-                onClick = onRequest
-            )
-        }
-    }
-}
 
-@Composable
-private fun SelectionTopBar(
-    selectedCount: Int,
-    onClose: () -> Unit,
-    onSelectAll: () -> Unit,
-    onActions: () -> Unit
-) {
-    // Selection mode top bar
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-    ) {
-        ArtisticCard(
-            modifier = Modifier.fillMaxWidth(),
-            backgroundColor = Slate900,
-            borderColor = Slate700
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                IconButton(onClick = onClose) {
-                    Icon(Icons.Default.Close, null, tint = Slate50)
-                }
-                Text(
-                    text = "$selectedCount selected",
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        fontWeight = FontWeight.SemiBold
-                    ),
-                    color = Slate50
-                )
-                Row {
-                    IconButton(onClick = onSelectAll) {
-                        Icon(Icons.Default.SelectAll, null, tint = Slate50)
-                    }
-                    IconButton(onClick = onActions) {
-                        Icon(Icons.Default.MoreVert, null, tint = Slate50)
-                    }
-                }
-            }
-        }
-    }
-}

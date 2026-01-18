@@ -10,12 +10,21 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,6 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import com.fourshil.musicya.ui.theme.NeoCoral
 import com.fourshil.musicya.ui.theme.NeoShadowLight
 import com.fourshil.musicya.ui.theme.Slate700
@@ -233,3 +243,49 @@ fun MangaFX(
     )
 }
 
+@Composable
+fun NeoDialogWrapper(
+    title: String,
+    onDismiss: () -> Unit,
+    contentColor: Color = Slate900,
+    surfaceColor: Color = Color.White,
+    content: @Composable () -> Unit
+) {
+    Dialog(onDismissRequest = onDismiss) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(NeoDimens.BorderMedium, contentColor)
+                .background(surfaceColor)
+                .padding(24.dp)
+        ) {
+            Column {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Black),
+                        color = contentColor
+                    )
+                    Icon(
+                        Icons.Default.Close, 
+                        null, 
+                        modifier = Modifier
+                            .clickable(onClick = onDismiss)
+                            .size(24.dp),
+                        tint = contentColor
+                    )
+                }
+                HorizontalDivider(
+                    thickness = 4.dp, 
+                    color = contentColor,
+                    modifier = Modifier.padding(vertical = 16.dp)
+                )
+                content()
+            }
+        }
+    }
+}
