@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fourshil.musicya.data.db.MusicDao
 import com.fourshil.musicya.player.PlayerController
+import com.fourshil.musicya.util.Lyrics
+import com.fourshil.musicya.util.LyricsManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -12,7 +14,8 @@ import javax.inject.Inject
 @HiltViewModel
 class NowPlayingViewModel @Inject constructor(
     private val playerController: PlayerController,
-    private val musicDao: MusicDao
+    private val musicDao: MusicDao,
+    private val lyricsManager: LyricsManager
 ) : ViewModel() {
 
     val currentSong = playerController.currentSong
@@ -27,11 +30,29 @@ class NowPlayingViewModel @Inject constructor(
     val isFavorite = currentSong.flatMapLatest { song ->
         if (song != null) musicDao.isFavorite(song.id) else flowOf(false)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+    
+    // Lyrics support
+    private val _lyrics = MutableStateFlow<Lyrics?>(null)
+    val lyrics = _lyrics.asStateFlow()
+    
+    private val _showLyrics = MutableStateFlow(false)
+    val showLyrics = _showLyrics.asStateFlow()
 
     init {
         playerController.connect()
         // Start position updates when ViewModel is created
         playerController.startPositionUpdates()
+        
+        // Load lyrics when song changes
+        viewModelScope.launch {
+            currentSong.collect { song ->
+                if (song != null) {
+                    _lyrics.value = lyricsManager.getLyricsForSong(song)
+                } else {
+                    _lyrics.value = null
+                }
+            }
+        }
     }
 
     fun togglePlayPause() = playerController.togglePlayPause()
@@ -50,6 +71,18 @@ class NowPlayingViewModel @Inject constructor(
             musicDao.toggleFavorite(song.id)
         }
     }
+    
+    fun toggleLyricsView() {
+        _showLyrics.value = !_showLyrics.value
+    }
+    
+    /**
+     * Get the current lyric line index based on playback position.
+     */
+    fun getCurrentLyricIndex(): Int {
+        val currentLyrics = _lyrics.value ?: return -1
+        return currentLyrics.getCurrentLineIndex(position.value)
+    }
 
     override fun onCleared() {
         super.onCleared()
@@ -57,4 +90,5 @@ class NowPlayingViewModel @Inject constructor(
         playerController.stopPositionUpdates()
     }
 }
+
 

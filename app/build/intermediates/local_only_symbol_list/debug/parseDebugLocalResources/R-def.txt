@@ -29,6 +29,8 @@ string delete_playlist
 string details
 string equalizer
 string grant_permission
+string hide_lyrics
+string lyrics
 string nav_albums
 string nav_artists
 string nav_favorites
@@ -37,6 +39,7 @@ string nav_playlists
 string nav_settings
 string nav_songs
 string next
+string no_lyrics
 string no_songs
 string no_songs_in_queue
 string now_playing
@@ -58,6 +61,7 @@ string repeat
 string repeat_one
 string select_a_song
 string share
+string show_lyrics
 string shuffle
 string sleep_timer
 string sleep_timer_10

@@ -424,8 +424,10 @@
     <string name="exo_track_surround_7_point_1">7.1 surround sound</string>
     <string name="exo_track_unknown">Unknown</string>
     <string name="grant_permission">Grant Permission</string>
+    <string name="hide_lyrics">Hide Lyrics</string>
     <string name="in_progress">In progress</string>
     <string name="indeterminate">Partially checked</string>
+    <string name="lyrics">Lyrics</string>
     <string name="m3c_bottom_sheet_collapse_description">Collapse bottom sheet</string>
     <string name="m3c_bottom_sheet_dismiss_description">Dismiss bottom sheet</string>
     <string name="m3c_bottom_sheet_drag_handle_description">Drag handle</string>
@@ -501,6 +503,7 @@
     <string name="nav_songs">Songs</string>
     <string name="navigation_menu">"Navigation menu"</string>
     <string name="next">Next</string>
+    <string name="no_lyrics">No lyrics available</string>
     <string name="no_songs">No songs found</string>
     <string name="no_songs_in_queue">No songs in queue</string>
     <string name="not_selected">Not selected</string>
@@ -528,6 +531,7 @@
     <string name="select_a_song">Select a song</string>
     <string name="selected">Selected</string>
     <string name="share">Share</string>
+    <string name="show_lyrics">Show Lyrics</string>
     <string name="shuffle">Shuffle</string>
     <string name="sleep_timer">Sleep Timer</string>
     <string name="sleep_timer_10">10 minutes</string>

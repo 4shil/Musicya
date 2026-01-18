@@ -77,6 +77,12 @@
     <string name="crossfade_off">Off</string>
     <string name="crossfade_seconds">%1$d seconds</string>
 
+    <!-- Lyrics -->
+    <string name="lyrics">Lyrics</string>
+    <string name="no_lyrics">No lyrics available</string>
+    <string name="show_lyrics">Show Lyrics</string>
+    <string name="hide_lyrics">Hide Lyrics</string>
+
     <!-- Permissions -->
     <string name="permission_required">Permission Required</string>
     <string name="permission_music_rationale">Musicya needs access to your music files to play them.</string>

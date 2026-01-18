@@ -584,8 +584,10 @@ string exo_track_surround_5_point_1
 string exo_track_surround_7_point_1
 string exo_track_unknown
 string grant_permission
+string hide_lyrics
 string in_progress
 string indeterminate
+string lyrics
 string m3c_bottom_sheet_collapse_description
 string m3c_bottom_sheet_dismiss_description
 string m3c_bottom_sheet_drag_handle_description
@@ -657,6 +659,7 @@ string nav_settings
 string nav_songs
 string navigation_menu
 string next
+string no_lyrics
 string no_songs
 string no_songs_in_queue
 string not_selected
@@ -684,6 +687,7 @@ string repeat_one
 string select_a_song
 string selected
 string share
+string show_lyrics
 string shuffle
 string sleep_timer
 string sleep_timer_10
