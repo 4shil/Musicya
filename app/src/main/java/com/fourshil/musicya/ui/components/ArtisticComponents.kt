@@ -1,3 +1,4 @@
+@file:Suppress("DEPRECATION")
 package com.fourshil.musicya.ui.components
 
 import androidx.compose.animation.core.Spring
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,8 +31,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-@Suppress("DEPRECATION")
-import androidx.compose.material.ripple.rememberRipple
 import com.fourshil.musicya.ui.theme.NeoCoral
 import com.fourshil.musicya.ui.theme.NeoShadowLight
 import com.fourshil.musicya.ui.theme.Slate700

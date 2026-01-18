@@ -49,6 +49,15 @@ class PlayerController @Inject constructor(
     private val _repeatMode = MutableStateFlow(Player.REPEAT_MODE_OFF)
     val repeatMode = _repeatMode.asStateFlow()
     
+    // Sleep Timer
+    private var sleepTimerJob: Job? = null
+    private val _sleepTimerRemaining = MutableStateFlow(0L) // milliseconds remaining
+    val sleepTimerRemaining = _sleepTimerRemaining.asStateFlow()
+    
+    // Playback Speed
+    private val _playbackSpeed = MutableStateFlow(1.0f)
+    val playbackSpeed = _playbackSpeed.asStateFlow()
+    
     val controller: MediaController?
         get() = if (controllerFuture?.isDone == true) {
             try { controllerFuture?.get() } catch (e: Exception) { null }
@@ -265,8 +274,75 @@ class PlayerController @Inject constructor(
         return songs
     }
     
+    /**
+     * Start a sleep timer. Playback will pause after the specified duration.
+     * @param minutes Duration in minutes (0 to cancel)
+     */
+    fun setSleepTimer(minutes: Int) {
+        cancelSleepTimer()
+        if (minutes <= 0) return
+        
+        val durationMs = minutes * 60 * 1000L
+        _sleepTimerRemaining.value = durationMs
+        
+        sleepTimerJob = scope.launch {
+            var remaining = durationMs
+            while (remaining > 0 && isActive) {
+                delay(1000)
+                remaining -= 1000
+                _sleepTimerRemaining.value = remaining
+            }
+            if (isActive) {
+                controller?.pause()
+                _sleepTimerRemaining.value = 0
+            }
+        }
+    }
+    
+    /**
+     * Cancel the active sleep timer.
+     */
+    fun cancelSleepTimer() {
+        sleepTimerJob?.cancel()
+        sleepTimerJob = null
+        _sleepTimerRemaining.value = 0
+    }
+    
+    /**
+     * Check if sleep timer is active.
+     */
+    fun isSleepTimerActive(): Boolean = sleepTimerJob?.isActive == true
+    
+    /**
+     * Set playback speed.
+     * @param speed Valid range: 0.25f to 3.0f (clamped)
+     */
+    fun setPlaybackSpeed(speed: Float) {
+        val clampedSpeed = speed.coerceIn(0.25f, 3.0f)
+        controller?.setPlaybackSpeed(clampedSpeed)
+        _playbackSpeed.value = clampedSpeed
+    }
+    
+    /**
+     * Cycle through common playback speed presets.
+     */
+    fun cyclePlaybackSpeed() {
+        val speeds = listOf(0.5f, 0.75f, 1.0f, 1.25f, 1.5f, 2.0f)
+        val currentIndex = speeds.indexOfFirst { it == _playbackSpeed.value }
+        val nextIndex = if (currentIndex == -1 || currentIndex == speeds.lastIndex) 0 else currentIndex + 1
+        setPlaybackSpeed(speeds[nextIndex])
+    }
+    
+    /**
+     * Reset playback speed to normal (1.0x).
+     */
+    fun resetPlaybackSpeed() {
+        setPlaybackSpeed(1.0f)
+    }
+    
     fun release() {
         stopPositionUpdates()
+        cancelSleepTimer()
         controllerFuture?.let { MediaController.releaseFuture(it) }
         controllerFuture = null
     }

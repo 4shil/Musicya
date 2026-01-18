@@ -21,9 +21,22 @@ class SettingsViewModel @Inject constructor(
         ThemeMode.SYSTEM
     )
     
+    val crossfadeDuration = settingsPreferences.crossfadeDuration.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        0
+    )
+    
     fun setThemeMode(mode: ThemeMode) {
         viewModelScope.launch {
             settingsPreferences.setThemeMode(mode)
         }
     }
+    
+    fun setCrossfadeDuration(seconds: Int) {
+        viewModelScope.launch {
+            settingsPreferences.setCrossfadeDuration(seconds)
+        }
+    }
 }
+

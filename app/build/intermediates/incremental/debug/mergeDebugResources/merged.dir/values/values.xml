@@ -359,6 +359,9 @@
     <string name="close_drawer">"Close navigation menu"</string>
     <string name="close_sheet">"Close sheet"</string>
     <string name="create_playlist">Create Playlist</string>
+    <string name="crossfade">Crossfade</string>
+    <string name="crossfade_off">Off</string>
+    <string name="crossfade_seconds">%1$d seconds</string>
     <string name="default_error_message">"Invalid input"</string>
     <string name="default_notification_channel_name">Now playing</string>
     <string name="default_popup_window_title" ns2:ignore="ExtraTranslation">"Pop-Up Window"</string>
@@ -509,6 +512,9 @@
     <string name="permission_required">Permission Required</string>
     <string name="play">Play</string>
     <string name="play_next">Play Next</string>
+    <string name="playback_speed">Playback Speed</string>
+    <string name="playback_speed_normal">Normal</string>
+    <string name="playback_speed_value">%1$.2fx</string>
     <string name="playlist_name">Playlist name</string>
     <string name="previous">Previous</string>
     <string name="queue">Queue</string>
@@ -523,6 +529,16 @@
     <string name="selected">Selected</string>
     <string name="share">Share</string>
     <string name="shuffle">Shuffle</string>
+    <string name="sleep_timer">Sleep Timer</string>
+    <string name="sleep_timer_10">10 minutes</string>
+    <string name="sleep_timer_15">15 minutes</string>
+    <string name="sleep_timer_30">30 minutes</string>
+    <string name="sleep_timer_45">45 minutes</string>
+    <string name="sleep_timer_5">5 minutes</string>
+    <string name="sleep_timer_60">1 hour</string>
+    <string name="sleep_timer_active">%1$d min remaining</string>
+    <string name="sleep_timer_cancel">Cancel Timer</string>
+    <string name="sleep_timer_off">Off</string>
     <string name="status_bar_notification_info_overflow">999+</string>
     <string name="switch_role">Switch</string>
     <string name="tab">Tab</string>

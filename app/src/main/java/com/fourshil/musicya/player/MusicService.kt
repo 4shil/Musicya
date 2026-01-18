@@ -33,7 +33,7 @@ class MusicService : MediaSessionService() {
     override fun onCreate() {
         super.onCreate()
         
-        // Build ExoPlayer with audio focus handling
+        // Build ExoPlayer with audio focus handling and gapless playback
         player = ExoPlayer.Builder(this)
             .setAudioAttributes(
                 AudioAttributes.Builder()
@@ -44,6 +44,10 @@ class MusicService : MediaSessionService() {
             )
             .setHandleAudioBecomingNoisy(true) // Pause when headphones unplugged
             .build()
+            .apply {
+                // Enable gapless playback
+                pauseAtEndOfMediaItems = false
+            }
             
         // Attach Audio Engine to the player's session
         player?.let {

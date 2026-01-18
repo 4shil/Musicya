@@ -16,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.fourshil.musicya.data.SettingsPreferences
 import com.fourshil.musicya.data.ThemeMode
+import com.fourshil.musicya.player.PlayerController
 import com.fourshil.musicya.ui.navigation.MusicyaNavGraph
 import com.fourshil.musicya.ui.theme.MusicyaTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -28,6 +29,9 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var settingsPreferences: SettingsPreferences
+    
+    @Inject
+    lateinit var playerController: PlayerController
 
     @OptIn(ExperimentalPermissionsApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,7 +69,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MusicyaNavGraph()
+                    MusicyaNavGraph(playerController = playerController)
                 }
             }
         }

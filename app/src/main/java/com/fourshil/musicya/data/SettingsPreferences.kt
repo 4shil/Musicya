@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -25,6 +26,7 @@ class SettingsPreferences @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
     private val themeKey = stringPreferencesKey("theme_mode")
+    private val crossfadeKey = intPreferencesKey("crossfade_duration")
     
     val themeMode: Flow<ThemeMode> = context.dataStore.data.map { preferences ->
         when (preferences[themeKey]) {
@@ -32,6 +34,13 @@ class SettingsPreferences @Inject constructor(
             "dark" -> ThemeMode.DARK
             else -> ThemeMode.SYSTEM
         }
+    }
+    
+    /**
+     * Crossfade duration in seconds. 0 = disabled.
+     */
+    val crossfadeDuration: Flow<Int> = context.dataStore.data.map { preferences ->
+        preferences[crossfadeKey] ?: 0
     }
     
     suspend fun setThemeMode(mode: ThemeMode) {
@@ -43,4 +52,15 @@ class SettingsPreferences @Inject constructor(
             }
         }
     }
+    
+    /**
+     * Set crossfade duration in seconds.
+     * @param seconds Duration (0 = off, valid: 2, 5, 8, 10, 12)
+     */
+    suspend fun setCrossfadeDuration(seconds: Int) {
+        context.dataStore.edit { preferences ->
+            preferences[crossfadeKey] = seconds.coerceIn(0, 12)
+        }
+    }
 }
+

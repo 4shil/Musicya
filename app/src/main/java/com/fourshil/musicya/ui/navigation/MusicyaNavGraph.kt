@@ -25,12 +25,15 @@ import com.fourshil.musicya.ui.queue.QueueScreen
 import com.fourshil.musicya.ui.search.SearchScreen
 import com.fourshil.musicya.ui.settings.EqualizerScreen
 import com.fourshil.musicya.ui.settings.SettingsScreen
+import com.fourshil.musicya.player.PlayerController
 import com.fourshil.musicya.ui.theme.PureBlack
 import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MusicyaNavGraph() {
+fun MusicyaNavGraph(
+    playerController: PlayerController
+) {
     val navController = rememberNavController()
     val nowPlayingViewModel: NowPlayingViewModel = hiltViewModel()
     
@@ -170,6 +173,7 @@ fun MusicyaNavGraph() {
                     composable(Screen.Search.route) { SearchScreen(onBack = { navController.popBackStack() }) }
                     composable(Screen.Settings.route) {
                          SettingsScreen(
+                            playerController = playerController,
                             onBack = { navController.popBackStack() }, 
                             onEqualizerClick = { navController.navigate(Screen.Equalizer.route) }
                          )

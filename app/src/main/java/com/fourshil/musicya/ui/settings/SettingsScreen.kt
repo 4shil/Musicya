@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.fourshil.musicya.data.ThemeMode
+import com.fourshil.musicya.player.PlayerController
 import com.fourshil.musicya.ui.components.ArtisticButton
 import com.fourshil.musicya.ui.components.ArtisticCard
 import com.fourshil.musicya.ui.theme.NeoCoral
@@ -35,16 +36,20 @@ import com.fourshil.musicya.ui.theme.NeoShadowLight
 @Composable
 fun SettingsScreen(
     viewModel: SettingsViewModel = hiltViewModel(),
+    playerController: PlayerController,
     onBack: () -> Unit = {},
     onEqualizerClick: () -> Unit = {}
 ) {
-    var sleepTimerEnabled by remember { mutableStateOf(false) }
-    var sleepTimerMinutes by remember { mutableStateOf(30) }
     var showSleepTimerDialog by remember { mutableStateOf(false) }
     var showThemeDialog by remember { mutableStateOf(false) }
     
     val currentTheme by viewModel.themeMode.collectAsState()
+    val sleepTimerRemaining by playerController.sleepTimerRemaining.collectAsState()
     val scrollState = rememberScrollState()
+    
+    // Convert remaining ms to minutes for display
+    val sleepTimerMinutes = (sleepTimerRemaining / 60000).toInt()
+    val sleepTimerActive = sleepTimerRemaining > 0
 
     // Determine content color based on theme
     val isDark = when (currentTheme) {
@@ -69,7 +74,7 @@ fun SettingsScreen(
             Row(verticalAlignment = Alignment.CenterVertically) {
                  ArtisticButton(
                     onClick = onBack,
-                    icon = { Icon(Icons.AutoMirrored.Filled.ArrowBack, null, tint = contentColor) },
+                    icon = { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Go back", tint = contentColor) },
                     modifier = Modifier.size(56.dp),
                     backgroundColor = surfaceColor,
 
@@ -97,33 +102,98 @@ fun SettingsScreen(
                 contentColor = contentColor,
                 borderColor = contentColor
             )
+            
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            // Playback Speed
+            val currentSpeed by playerController.playbackSpeed.collectAsState()
+            SettingsItem(
+                title = "Playback Speed",
+                subtitle = if (currentSpeed == 1.0f) "Normal" else String.format("%.2fx", currentSpeed),
+                icon = Icons.Default.Speed,
+                onClick = { playerController.cyclePlaybackSpeed() },
+                contentColor = contentColor,
+                borderColor = contentColor,
+                trailingContent = {
+                    Text(
+                        text = String.format("%.1fx", currentSpeed),
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Black),
+                        color = if (currentSpeed != 1.0f) NeoCoral else contentColor.copy(alpha = 0.6f)
+                    )
+                }
+            )
+            
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            // Crossfade
+            var showCrossfadeDialog by remember { mutableStateOf(false) }
+            val crossfadeDuration by viewModel.crossfadeDuration.collectAsState()
+            SettingsItem(
+                title = "Crossfade",
+                subtitle = if (crossfadeDuration == 0) "Off" else "$crossfadeDuration seconds",
+                icon = Icons.Default.SwapHoriz,
+                onClick = { showCrossfadeDialog = true },
+                contentColor = contentColor,
+                borderColor = contentColor,
+                trailingContent = if (crossfadeDuration > 0) {
+                    {
+                        Text(
+                            text = "${crossfadeDuration}s",
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Black),
+                            color = NeoCoral
+                        )
+                    }
+                } else null
+            )
+            
+            // Crossfade Dialog
+            if (showCrossfadeDialog) {
+                NeoDialogWrapper(
+                    title = "CROSSFADE",
+                    onDismiss = { showCrossfadeDialog = false },
+                    contentColor = contentColor,
+                    surfaceColor = surfaceColor
+                ) {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        listOf(0, 2, 5, 8, 10, 12).forEach { seconds ->
+                            NeoSelectionItem(
+                                text = if (seconds == 0) "OFF" else "$seconds SECONDS",
+                                selected = crossfadeDuration == seconds,
+                                contentColor = contentColor,
+                                surfaceColor = surfaceColor,
+                                onClick = {
+                                    viewModel.setCrossfadeDuration(seconds)
+                                    showCrossfadeDialog = false
+                                }
+                            )
+                        }
+                    }
+                }
+            }
 
             Spacer(modifier = Modifier.height(24.dp))
 
             // --- PREFERENCES SECTION ---
             SettingsSectionHeader("Preferences", contentColor)
             
-            // Sleep Timer
+            // Sleep Timer - Connected to PlayerController
             SettingsItem(
                 title = "Sleep Timer",
-                subtitle = if (sleepTimerEnabled) "$sleepTimerMinutes min remaining" else "Disabled",
+                subtitle = if (sleepTimerActive) "$sleepTimerMinutes min remaining" else "Off",
                 icon = Icons.Default.Timer,
                 onClick = { showSleepTimerDialog = true },
                 contentColor = contentColor,
                 borderColor = contentColor,
-                trailingContent = {
-                    Switch(
-                        checked = sleepTimerEnabled,
-                        onCheckedChange = { sleepTimerEnabled = it },
-                         colors = SwitchDefaults.colors(
-                            checkedThumbColor = surfaceColor, // Inverted for contrast
-                            checkedTrackColor = contentColor,
-                            uncheckedThumbColor = contentColor,
-                            uncheckedTrackColor = surfaceColor,
-                            uncheckedBorderColor = contentColor
+                trailingContent = if (sleepTimerActive) {
+                    {
+                        Icon(
+                            Icons.Default.CheckCircle,
+                            contentDescription = "Timer active",
+                            tint = NeoCoral,
+                            modifier = Modifier.size(24.dp)
                         )
-                    )
-                }
+                    }
+                } else null
             )
             
             Spacer(modifier = Modifier.height(16.dp))
@@ -167,15 +237,14 @@ fun SettingsScreen(
                 surfaceColor = surfaceColor
             ) {
                  Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    listOf(15, 30, 45, 60, 90).forEach { minutes ->
+                    listOf(5, 10, 15, 30, 45, 60).forEach { minutes ->
                         NeoSelectionItem(
-                            text = "$minutes MINUTES",
-                            selected = sleepTimerMinutes == minutes && sleepTimerEnabled,
+                            text = if (minutes == 60) "1 HOUR" else "$minutes MINUTES",
+                            selected = sleepTimerActive && sleepTimerMinutes == minutes,
                             contentColor = contentColor,
                             surfaceColor = surfaceColor,
                             onClick = {
-                                sleepTimerMinutes = minutes
-                                sleepTimerEnabled = true
+                                playerController.setSleepTimer(minutes)
                                 showSleepTimerDialog = false
                             }
                         )
@@ -183,10 +252,10 @@ fun SettingsScreen(
                     Spacer(modifier = Modifier.height(8.dp))
                      ArtisticButton(
                         onClick = { 
-                            sleepTimerEnabled = false
+                            playerController.cancelSleepTimer()
                             showSleepTimerDialog = false 
                         },
-                        text = "DISABLE TIMER",
+                        text = if (sleepTimerActive) "CANCEL TIMER" else "CLOSE",
                         backgroundColor = contentColor,
                         contentColor = surfaceColor,
                          modifier = Modifier.fillMaxWidth()

@@ -21,6 +21,9 @@ string cd_menu
 string cd_more_options
 string cd_search
 string create_playlist
+string crossfade
+string crossfade_off
+string crossfade_seconds
 string delete
 string delete_playlist
 string details
@@ -42,6 +45,9 @@ string permission_music_rationale
 string permission_required
 string play
 string play_next
+string playback_speed
+string playback_speed_normal
+string playback_speed_value
 string playlist_name
 string previous
 string queue
@@ -53,6 +59,16 @@ string repeat_one
 string select_a_song
 string share
 string shuffle
+string sleep_timer
+string sleep_timer_10
+string sleep_timer_15
+string sleep_timer_30
+string sleep_timer_45
+string sleep_timer_5
+string sleep_timer_60
+string sleep_timer_active
+string sleep_timer_cancel
+string sleep_timer_off
 string tap_to_open
 string theme
 string theme_dark

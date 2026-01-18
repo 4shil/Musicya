@@ -519,6 +519,9 @@ string cd_search
 string close_drawer
 string close_sheet
 string create_playlist
+string crossfade
+string crossfade_off
+string crossfade_seconds
 string default_error_message
 string default_notification_channel_name
 string default_popup_window_title
@@ -665,6 +668,9 @@ string permission_music_rationale
 string permission_required
 string play
 string play_next
+string playback_speed
+string playback_speed_normal
+string playback_speed_value
 string playlist_name
 string previous
 string queue
@@ -679,6 +685,16 @@ string select_a_song
 string selected
 string share
 string shuffle
+string sleep_timer
+string sleep_timer_10
+string sleep_timer_15
+string sleep_timer_30
+string sleep_timer_45
+string sleep_timer_5
+string sleep_timer_60
+string sleep_timer_active
+string sleep_timer_cancel
+string sleep_timer_off
 string status_bar_notification_info_overflow
 string switch_role
 string tab
