@@ -5,7 +5,9 @@ import com.fourshil.musicya.di.RepositoryModule;
 import com.fourshil.musicya.player.MusicService_GeneratedInjector;
 import com.fourshil.musicya.ui.library.FavoritesViewModel_HiltModules;
 import com.fourshil.musicya.ui.library.LibraryViewModel_HiltModules;
+import com.fourshil.musicya.ui.library.MostPlayedViewModel_HiltModules;
 import com.fourshil.musicya.ui.library.PlaylistsViewModel_HiltModules;
+import com.fourshil.musicya.ui.library.RecentlyPlayedViewModel_HiltModules;
 import com.fourshil.musicya.ui.nowplaying.NowPlayingViewModel_HiltModules;
 import com.fourshil.musicya.ui.playlist.PlaylistDetailViewModel_HiltModules;
 import com.fourshil.musicya.ui.queue.QueueViewModel_HiltModules;
@@ -161,12 +163,14 @@ public final class MusicyaApp_HiltComponents {
           HiltWrapper_ActivityRetainedComponentManager_LifecycleModule.class,
           HiltWrapper_SavedStateHandleModule.class,
           LibraryViewModel_HiltModules.KeyModule.class,
+          MostPlayedViewModel_HiltModules.KeyModule.class,
           ActivityCBuilderModule.class,
           ViewModelCBuilderModule.class,
           NowPlayingViewModel_HiltModules.KeyModule.class,
           PlaylistDetailViewModel_HiltModules.KeyModule.class,
           PlaylistsViewModel_HiltModules.KeyModule.class,
           QueueViewModel_HiltModules.KeyModule.class,
+          RecentlyPlayedViewModel_HiltModules.KeyModule.class,
           SearchViewModel_HiltModules.KeyModule.class,
           SettingsViewModel_HiltModules.KeyModule.class
       }
@@ -208,10 +212,12 @@ public final class MusicyaApp_HiltComponents {
           FavoritesViewModel_HiltModules.BindsModule.class,
           HiltWrapper_HiltViewModelFactory_ViewModelModule.class,
           LibraryViewModel_HiltModules.BindsModule.class,
+          MostPlayedViewModel_HiltModules.BindsModule.class,
           NowPlayingViewModel_HiltModules.BindsModule.class,
           PlaylistDetailViewModel_HiltModules.BindsModule.class,
           PlaylistsViewModel_HiltModules.BindsModule.class,
           QueueViewModel_HiltModules.BindsModule.class,
+          RecentlyPlayedViewModel_HiltModules.BindsModule.class,
           SearchViewModel_HiltModules.BindsModule.class,
           SettingsViewModel_HiltModules.BindsModule.class
       }

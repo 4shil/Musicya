@@ -51,7 +51,9 @@ fun MusicyaNavGraph(
         Screen.Albums.route,
         Screen.Artists.route,
         Screen.Playlists.route,
-        Screen.Favorites.route
+        Screen.Favorites.route,
+        Screen.RecentlyPlayed.route,
+        Screen.MostPlayed.route
     )
 
     // Should we show the bottom bar?
@@ -137,6 +139,32 @@ fun MusicyaNavGraph(
                     }
                     composable(Screen.Favorites.route) { 
                         FavoritesScreen(
+                            currentRoute = currentRoute,
+                            onNavigate = { route ->
+                                navController.navigate(route) {
+                                    popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            }
+                        )
+                    }
+                    
+                    composable(Screen.RecentlyPlayed.route) {
+                        RecentlyPlayedScreen(
+                            currentRoute = currentRoute,
+                            onNavigate = { route ->
+                                navController.navigate(route) {
+                                    popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            }
+                        )
+                    }
+                    
+                    composable(Screen.MostPlayed.route) {
+                        MostPlayedScreen(
                             currentRoute = currentRoute,
                             onNavigate = { route ->
                                 navController.navigate(route) {

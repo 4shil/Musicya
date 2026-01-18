@@ -49,7 +49,7 @@ class MusicRepository @Inject constructor(
         val selection = "${MediaStore.Audio.Media.IS_MUSIC} != 0"
         val sortOrder = "${MediaStore.Audio.Media.TITLE} ASC"
         
-        android.util.Log.d("MusicRepository", "Starting song query...")
+
         
         try {
             context.contentResolver.query(
@@ -87,10 +87,8 @@ class MusicRepository @Inject constructor(
                     )
                 }
             }
-            android.util.Log.d("MusicRepository", "Found ${songs.size} songs")
-        } catch (e: Exception) {
-            android.util.Log.e("MusicRepository", "Error querying songs", e)
-            e.printStackTrace()
+        } catch (_: Exception) {
+            // Silently handle query errors
         }
         
         cachedSongs = songs

@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.fourshil.musicya.ui.components.HalftoneBackground
+import com.fourshil.musicya.ui.components.LyricsBottomSheet
 import com.fourshil.musicya.ui.components.MarqueeText
 import com.fourshil.musicya.ui.theme.*
 
@@ -59,6 +60,9 @@ fun NowPlayingScreen(
     val shuffleEnabled by viewModel.shuffleEnabled.collectAsState()
     val repeatMode by viewModel.repeatMode.collectAsState()
     val isFavorite by viewModel.isFavorite.collectAsState()
+    
+    // Lyrics state
+    var showLyrics by remember { mutableStateOf(false) }
 
     val isDark = MaterialTheme.colorScheme.background.luminance() < 0.5f
     val backgroundColor = MaterialTheme.colorScheme.background
@@ -111,6 +115,20 @@ fun NowPlayingScreen(
                     onClick = onQueueClick,
                     icon = Icons.AutoMirrored.Filled.QueueMusic,
                     backgroundColor = surfaceColor
+                )
+            }
+            
+            // Lyrics button row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                NeoIconButton(
+                    onClick = { showLyrics = true },
+                    icon = Icons.Default.Lyrics,
+                    backgroundColor = surfaceColor,
+                    size = 40.dp,
+                    iconSize = 20.dp
                 )
             }
 
@@ -318,6 +336,15 @@ fun NowPlayingScreen(
                 }
             }
         }
+    }
+    
+    // Lyrics Bottom Sheet
+    if (showLyrics && currentSong != null) {
+        LyricsBottomSheet(
+            songPath = currentSong?.path ?: "",
+            currentPositionMs = position,
+            onDismiss = { showLyrics = false }
+        )
     }
 }
 

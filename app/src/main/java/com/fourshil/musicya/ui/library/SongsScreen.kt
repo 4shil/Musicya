@@ -189,11 +189,11 @@ fun SongsScreen(
                                 TopNavigationChips(
                                     items = listOf(
                                         TopNavItem(Screen.Songs.route, "Songs"),
+                                        TopNavItem(Screen.RecentlyPlayed.route, "Recent"),
+                                        TopNavItem(Screen.MostPlayed.route, "Top"),
                                         TopNavItem(Screen.Favorites.route, "Favorites"),
-                                        TopNavItem(Screen.Folders.route, "Folders"),
                                         TopNavItem(Screen.Playlists.route, "Playlists"),
-                                        TopNavItem(Screen.Albums.route, "Albums"),
-                                        TopNavItem(Screen.Artists.route, "Artists")
+                                        TopNavItem(Screen.Albums.route, "Albums")
                                     ),
                                     currentRoute = currentRoute,
                                     onItemClick = onNavigate,

@@ -21,8 +21,12 @@ import com.fourshil.musicya.ui.library.FavoritesViewModel;
 import com.fourshil.musicya.ui.library.FavoritesViewModel_HiltModules_KeyModule_ProvideFactory;
 import com.fourshil.musicya.ui.library.LibraryViewModel;
 import com.fourshil.musicya.ui.library.LibraryViewModel_HiltModules_KeyModule_ProvideFactory;
+import com.fourshil.musicya.ui.library.MostPlayedViewModel;
+import com.fourshil.musicya.ui.library.MostPlayedViewModel_HiltModules_KeyModule_ProvideFactory;
 import com.fourshil.musicya.ui.library.PlaylistsViewModel;
 import com.fourshil.musicya.ui.library.PlaylistsViewModel_HiltModules_KeyModule_ProvideFactory;
+import com.fourshil.musicya.ui.library.RecentlyPlayedViewModel;
+import com.fourshil.musicya.ui.library.RecentlyPlayedViewModel_HiltModules_KeyModule_ProvideFactory;
 import com.fourshil.musicya.ui.nowplaying.NowPlayingViewModel;
 import com.fourshil.musicya.ui.nowplaying.NowPlayingViewModel_HiltModules_KeyModule_ProvideFactory;
 import com.fourshil.musicya.ui.playlist.PlaylistDetailViewModel;
@@ -35,6 +39,7 @@ import com.fourshil.musicya.ui.settings.EqualizerViewModel;
 import com.fourshil.musicya.ui.settings.EqualizerViewModel_HiltModules_KeyModule_ProvideFactory;
 import com.fourshil.musicya.ui.settings.SettingsViewModel;
 import com.fourshil.musicya.ui.settings.SettingsViewModel_HiltModules_KeyModule_ProvideFactory;
+import com.fourshil.musicya.util.LyricsManager;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
@@ -388,7 +393,7 @@ public final class DaggerMusicyaApp_HiltComponents_SingletonC {
 
     @Override
     public Set<String> getViewModelKeys() {
-      return ImmutableSet.<String>of(EqualizerViewModel_HiltModules_KeyModule_ProvideFactory.provide(), FavoritesViewModel_HiltModules_KeyModule_ProvideFactory.provide(), LibraryViewModel_HiltModules_KeyModule_ProvideFactory.provide(), NowPlayingViewModel_HiltModules_KeyModule_ProvideFactory.provide(), PlaylistDetailViewModel_HiltModules_KeyModule_ProvideFactory.provide(), PlaylistsViewModel_HiltModules_KeyModule_ProvideFactory.provide(), QueueViewModel_HiltModules_KeyModule_ProvideFactory.provide(), SearchViewModel_HiltModules_KeyModule_ProvideFactory.provide(), SettingsViewModel_HiltModules_KeyModule_ProvideFactory.provide());
+      return ImmutableSet.<String>of(EqualizerViewModel_HiltModules_KeyModule_ProvideFactory.provide(), FavoritesViewModel_HiltModules_KeyModule_ProvideFactory.provide(), LibraryViewModel_HiltModules_KeyModule_ProvideFactory.provide(), MostPlayedViewModel_HiltModules_KeyModule_ProvideFactory.provide(), NowPlayingViewModel_HiltModules_KeyModule_ProvideFactory.provide(), PlaylistDetailViewModel_HiltModules_KeyModule_ProvideFactory.provide(), PlaylistsViewModel_HiltModules_KeyModule_ProvideFactory.provide(), QueueViewModel_HiltModules_KeyModule_ProvideFactory.provide(), RecentlyPlayedViewModel_HiltModules_KeyModule_ProvideFactory.provide(), SearchViewModel_HiltModules_KeyModule_ProvideFactory.provide(), SettingsViewModel_HiltModules_KeyModule_ProvideFactory.provide());
     }
 
     @Override
@@ -429,6 +434,8 @@ public final class DaggerMusicyaApp_HiltComponents_SingletonC {
 
     private Provider<LibraryViewModel> libraryViewModelProvider;
 
+    private Provider<MostPlayedViewModel> mostPlayedViewModelProvider;
+
     private Provider<NowPlayingViewModel> nowPlayingViewModelProvider;
 
     private Provider<PlaylistDetailViewModel> playlistDetailViewModelProvider;
@@ -436,6 +443,8 @@ public final class DaggerMusicyaApp_HiltComponents_SingletonC {
     private Provider<PlaylistsViewModel> playlistsViewModelProvider;
 
     private Provider<QueueViewModel> queueViewModelProvider;
+
+    private Provider<RecentlyPlayedViewModel> recentlyPlayedViewModelProvider;
 
     private Provider<SearchViewModel> searchViewModelProvider;
 
@@ -457,17 +466,19 @@ public final class DaggerMusicyaApp_HiltComponents_SingletonC {
       this.equalizerViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 0);
       this.favoritesViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 1);
       this.libraryViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 2);
-      this.nowPlayingViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 3);
-      this.playlistDetailViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 4);
-      this.playlistsViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 5);
-      this.queueViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 6);
-      this.searchViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 7);
-      this.settingsViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 8);
+      this.mostPlayedViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 3);
+      this.nowPlayingViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 4);
+      this.playlistDetailViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 5);
+      this.playlistsViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 6);
+      this.queueViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 7);
+      this.recentlyPlayedViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 8);
+      this.searchViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 9);
+      this.settingsViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 10);
     }
 
     @Override
     public Map<String, javax.inject.Provider<ViewModel>> getHiltViewModelMap() {
-      return ImmutableMap.<String, javax.inject.Provider<ViewModel>>builderWithExpectedSize(9).put("com.fourshil.musicya.ui.settings.EqualizerViewModel", ((Provider) equalizerViewModelProvider)).put("com.fourshil.musicya.ui.library.FavoritesViewModel", ((Provider) favoritesViewModelProvider)).put("com.fourshil.musicya.ui.library.LibraryViewModel", ((Provider) libraryViewModelProvider)).put("com.fourshil.musicya.ui.nowplaying.NowPlayingViewModel", ((Provider) nowPlayingViewModelProvider)).put("com.fourshil.musicya.ui.playlist.PlaylistDetailViewModel", ((Provider) playlistDetailViewModelProvider)).put("com.fourshil.musicya.ui.library.PlaylistsViewModel", ((Provider) playlistsViewModelProvider)).put("com.fourshil.musicya.ui.queue.QueueViewModel", ((Provider) queueViewModelProvider)).put("com.fourshil.musicya.ui.search.SearchViewModel", ((Provider) searchViewModelProvider)).put("com.fourshil.musicya.ui.settings.SettingsViewModel", ((Provider) settingsViewModelProvider)).build();
+      return ImmutableMap.<String, javax.inject.Provider<ViewModel>>builderWithExpectedSize(11).put("com.fourshil.musicya.ui.settings.EqualizerViewModel", ((Provider) equalizerViewModelProvider)).put("com.fourshil.musicya.ui.library.FavoritesViewModel", ((Provider) favoritesViewModelProvider)).put("com.fourshil.musicya.ui.library.LibraryViewModel", ((Provider) libraryViewModelProvider)).put("com.fourshil.musicya.ui.library.MostPlayedViewModel", ((Provider) mostPlayedViewModelProvider)).put("com.fourshil.musicya.ui.nowplaying.NowPlayingViewModel", ((Provider) nowPlayingViewModelProvider)).put("com.fourshil.musicya.ui.playlist.PlaylistDetailViewModel", ((Provider) playlistDetailViewModelProvider)).put("com.fourshil.musicya.ui.library.PlaylistsViewModel", ((Provider) playlistsViewModelProvider)).put("com.fourshil.musicya.ui.queue.QueueViewModel", ((Provider) queueViewModelProvider)).put("com.fourshil.musicya.ui.library.RecentlyPlayedViewModel", ((Provider) recentlyPlayedViewModelProvider)).put("com.fourshil.musicya.ui.search.SearchViewModel", ((Provider) searchViewModelProvider)).put("com.fourshil.musicya.ui.settings.SettingsViewModel", ((Provider) settingsViewModelProvider)).build();
     }
 
     @Override
@@ -505,22 +516,28 @@ public final class DaggerMusicyaApp_HiltComponents_SingletonC {
           case 2: // com.fourshil.musicya.ui.library.LibraryViewModel 
           return (T) new LibraryViewModel(singletonCImpl.musicRepositoryProvider.get(), singletonCImpl.playerControllerProvider.get(), singletonCImpl.provideMusicDaoProvider.get());
 
-          case 3: // com.fourshil.musicya.ui.nowplaying.NowPlayingViewModel 
-          return (T) new NowPlayingViewModel(singletonCImpl.playerControllerProvider.get(), singletonCImpl.provideMusicDaoProvider.get());
+          case 3: // com.fourshil.musicya.ui.library.MostPlayedViewModel 
+          return (T) new MostPlayedViewModel(singletonCImpl.provideMusicDaoProvider.get(), singletonCImpl.musicRepositoryProvider.get(), singletonCImpl.playerControllerProvider.get());
 
-          case 4: // com.fourshil.musicya.ui.playlist.PlaylistDetailViewModel 
+          case 4: // com.fourshil.musicya.ui.nowplaying.NowPlayingViewModel 
+          return (T) new NowPlayingViewModel(singletonCImpl.playerControllerProvider.get(), singletonCImpl.provideMusicDaoProvider.get(), singletonCImpl.lyricsManagerProvider.get());
+
+          case 5: // com.fourshil.musicya.ui.playlist.PlaylistDetailViewModel 
           return (T) new PlaylistDetailViewModel(singletonCImpl.musicRepositoryProvider.get(), singletonCImpl.playerControllerProvider.get(), singletonCImpl.provideMusicDaoProvider.get(), viewModelCImpl.savedStateHandle);
 
-          case 5: // com.fourshil.musicya.ui.library.PlaylistsViewModel 
+          case 6: // com.fourshil.musicya.ui.library.PlaylistsViewModel 
           return (T) new PlaylistsViewModel(singletonCImpl.provideMusicDaoProvider.get(), singletonCImpl.musicRepositoryProvider.get());
 
-          case 6: // com.fourshil.musicya.ui.queue.QueueViewModel 
+          case 7: // com.fourshil.musicya.ui.queue.QueueViewModel 
           return (T) new QueueViewModel(singletonCImpl.playerControllerProvider.get());
 
-          case 7: // com.fourshil.musicya.ui.search.SearchViewModel 
+          case 8: // com.fourshil.musicya.ui.library.RecentlyPlayedViewModel 
+          return (T) new RecentlyPlayedViewModel(singletonCImpl.provideMusicDaoProvider.get(), singletonCImpl.musicRepositoryProvider.get(), singletonCImpl.playerControllerProvider.get());
+
+          case 9: // com.fourshil.musicya.ui.search.SearchViewModel 
           return (T) new SearchViewModel(singletonCImpl.musicRepositoryProvider.get(), singletonCImpl.playerControllerProvider.get());
 
-          case 8: // com.fourshil.musicya.ui.settings.SettingsViewModel 
+          case 10: // com.fourshil.musicya.ui.settings.SettingsViewModel 
           return (T) new SettingsViewModel(singletonCImpl.settingsPreferencesProvider.get());
 
           default: throw new AssertionError(id);
@@ -627,6 +644,8 @@ public final class DaggerMusicyaApp_HiltComponents_SingletonC {
 
     private Provider<MusicRepository> musicRepositoryProvider;
 
+    private Provider<LyricsManager> lyricsManagerProvider;
+
     private SingletonCImpl(ApplicationContextModule applicationContextModuleParam) {
       this.applicationContextModule = applicationContextModuleParam;
       initialize(applicationContextModuleParam);
@@ -641,6 +660,7 @@ public final class DaggerMusicyaApp_HiltComponents_SingletonC {
       this.provideAppDatabaseProvider = DoubleCheck.provider(new SwitchingProvider<AppDatabase>(singletonCImpl, 4));
       this.provideMusicDaoProvider = DoubleCheck.provider(new SwitchingProvider<MusicDao>(singletonCImpl, 3));
       this.musicRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<MusicRepository>(singletonCImpl, 5));
+      this.lyricsManagerProvider = DoubleCheck.provider(new SwitchingProvider<LyricsManager>(singletonCImpl, 6));
     }
 
     @Override
@@ -693,6 +713,9 @@ public final class DaggerMusicyaApp_HiltComponents_SingletonC {
 
           case 5: // com.fourshil.musicya.data.repository.MusicRepository 
           return (T) new MusicRepository(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
+
+          case 6: // com.fourshil.musicya.util.LyricsManager 
+          return (T) new LyricsManager(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
 
           default: throw new AssertionError(id);
         }
