@@ -53,14 +53,26 @@ fun MusicyaNavGraph(
         Screen.Playlists.route,
         Screen.Favorites.route,
         Screen.RecentlyPlayed.route,
-        Screen.MostPlayed.route
+        Screen.MostPlayed.route,
+        Screen.NeverPlayed.route
     )
 
     // Should we show the bottom bar?
     val showBottomNav = libraryRoutes.contains(currentRoute) || currentRoute == Screen.Folders.route
 
-    // Is Dark mode active? (Based on theme)
-    val isDark = MaterialTheme.colorScheme.background.luminance() < 0.5f
+    // Unified Header Logic
+    val currentTitle = when (currentRoute) {
+        Screen.Songs.route -> "SONGS"
+        Screen.Albums.route -> "ALBUMS"
+        Screen.Artists.route -> "ARTISTS"
+        Screen.Folders.route -> "FOLDERS"
+        Screen.Favorites.route -> "FAVORITES"
+        Screen.Playlists.route -> "PLAYLISTS"
+        Screen.RecentlyPlayed.route -> "RECENT"
+        Screen.MostPlayed.route -> "POPULAR"
+        Screen.NeverPlayed.route -> "UNHEARD"
+        else -> "MUSICYA"
+    }
 
     // Halftone Overlay for the entire app
     Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
@@ -71,6 +83,25 @@ fun MusicyaNavGraph(
         
         Scaffold(
             containerColor = Color.Transparent,
+            topBar = {
+               if (libraryRoutes.contains(currentRoute) || currentRoute == Screen.Folders.route) {
+                   UnifiedLibraryHeader(
+                       title = currentTitle,
+                       currentRoute = currentRoute,
+                       onMenuClick = { navController.navigate(Screen.Settings.route) },
+                       onSearchClick = { navController.navigate(Screen.Search.route) },
+                       onNavigate = { route ->
+                            if (route != currentRoute) {
+                                navController.navigate(route) {
+                                    popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            }
+                       }
+                   )
+               }
+            },
             bottomBar = {
                 // Navigation Bar
             }
@@ -89,90 +120,55 @@ fun MusicyaNavGraph(
                         SongsScreen(
                             onMenuClick = { navController.navigate(Screen.Settings.route) },
                             currentRoute = currentRoute,
-                            onNavigate = { route ->
-                                navController.navigate(route) {
-                                    popUpTo(navController.graph.findStartDestination().id) { saveState = true }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            }
+                            onNavigate = { } // Navigation handled by parent
                         )
                     }
                     composable(Screen.Albums.route) {
                         AlbumsScreen(
                             onAlbumClick = { id -> navController.navigate(Screen.PlaylistDetail.createRoute("album", id.toString())) },
                             currentRoute = currentRoute,
-                            onNavigate = { route ->
-                                navController.navigate(route) {
-                                    popUpTo(navController.graph.findStartDestination().id) { saveState = true }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            }
+                            onNavigate = { }
                         )
                     }
                     composable(Screen.Artists.route) {
                         ArtistsScreen(
                             onArtistClick = { name -> navController.navigate(Screen.PlaylistDetail.createRoute("artist", name)) },
                             currentRoute = currentRoute,
-                            onNavigate = { route ->
-                                navController.navigate(route) {
-                                    popUpTo(navController.graph.findStartDestination().id) { saveState = true }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            }
+                            onNavigate = { }
                         )
                     }
                     composable(Screen.Folders.route) {
                         FoldersScreen(
                             onFolderClick = { path -> navController.navigate(Screen.PlaylistDetail.createRoute("folder", path)) },
                             currentRoute = currentRoute,
-                            onNavigate = { route ->
-                                navController.navigate(route) {
-                                    popUpTo(navController.graph.findStartDestination().id) { saveState = true }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            }
+                            onNavigate = { }
                         )
                     }
                     composable(Screen.Favorites.route) { 
                         FavoritesScreen(
                             currentRoute = currentRoute,
-                            onNavigate = { route ->
-                                navController.navigate(route) {
-                                    popUpTo(navController.graph.findStartDestination().id) { saveState = true }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            }
+                            onNavigate = { }
                         )
                     }
                     
                     composable(Screen.RecentlyPlayed.route) {
                         RecentlyPlayedScreen(
                             currentRoute = currentRoute,
-                            onNavigate = { route ->
-                                navController.navigate(route) {
-                                    popUpTo(navController.graph.findStartDestination().id) { saveState = true }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            }
+                            onNavigate = { }
                         )
                     }
                     
                     composable(Screen.MostPlayed.route) {
                         MostPlayedScreen(
                             currentRoute = currentRoute,
-                            onNavigate = { route ->
-                                navController.navigate(route) {
-                                    popUpTo(navController.graph.findStartDestination().id) { saveState = true }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            }
+                            onNavigate = { }
+                        )
+                    }
+
+                    composable(Screen.NeverPlayed.route) {
+                        NeverPlayedScreen(
+                            currentRoute = currentRoute,
+                            onNavigate = { }
                         )
                     }
                     
@@ -180,13 +176,7 @@ fun MusicyaNavGraph(
                         PlaylistsScreen(
                             onPlaylistClick = { id -> navController.navigate(Screen.PlaylistDetail.createRoute("playlist", id.toString())) },
                             currentRoute = currentRoute,
-                            onNavigate = { route ->
-                                navController.navigate(route) {
-                                    popUpTo(navController.graph.findStartDestination().id) { saveState = true }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            }
+                            onNavigate = { }
                         )
                     }
                     

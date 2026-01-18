@@ -13,12 +13,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.fourshil.musicya.ui.components.ArtisticButton
 import com.fourshil.musicya.ui.components.ArtisticCard
+import com.fourshil.musicya.ui.components.TopNavigationChips
+import com.fourshil.musicya.ui.navigation.NavigationUtils
 import com.fourshil.musicya.ui.theme.NeoDimens
+import com.fourshil.musicya.ui.theme.NeoCoral
 import com.fourshil.musicya.ui.theme.Slate50
 import com.fourshil.musicya.ui.theme.Slate700
 import com.fourshil.musicya.ui.theme.Slate900
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Search
 
 @Composable
 fun PermissionRequiredView(onRequest: () -> Unit) {
@@ -142,14 +148,7 @@ fun SongsScreenHeader(
     Spacer(modifier = Modifier.height(24.dp))
 
     TopNavigationChips(
-        items = listOf(
-            TopNavItem(com.fourshil.musicya.ui.navigation.Screen.Songs.route, "Songs"),
-            TopNavItem(com.fourshil.musicya.ui.navigation.Screen.RecentlyPlayed.route, "Recent"),
-            TopNavItem(com.fourshil.musicya.ui.navigation.Screen.MostPlayed.route, "Top"),
-            TopNavItem(com.fourshil.musicya.ui.navigation.Screen.Favorites.route, "Favorites"),
-            TopNavItem(com.fourshil.musicya.ui.navigation.Screen.Playlists.route, "Playlists"),
-            TopNavItem(com.fourshil.musicya.ui.navigation.Screen.Albums.route, "Albums")
-        ),
+        items = NavigationUtils.LibraryTabs,
         currentRoute = currentRoute,
         onItemClick = onNavigate,
         modifier = Modifier.padding(bottom = 24.dp)

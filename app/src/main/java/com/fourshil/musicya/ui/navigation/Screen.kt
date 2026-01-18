@@ -10,6 +10,7 @@ sealed class Screen(val route: String) {
     data object Favorites : Screen("favorites")
     data object RecentlyPlayed : Screen("recently_played")
     data object MostPlayed : Screen("most_played")
+    data object NeverPlayed : Screen("never_played")
     data object Playlists : Screen("playlists")
     data object NowPlaying : Screen("now_playing")
     data object Queue : Screen("queue")

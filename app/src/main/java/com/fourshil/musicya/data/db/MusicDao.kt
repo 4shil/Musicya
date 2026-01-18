@@ -141,5 +141,12 @@ interface MusicDao {
      */
     @Query("SELECT playCount FROM song_play_history WHERE songId = :songId")
     fun getPlayCount(songId: Long): Flow<Int?>
+
+    /**
+     * Get IDs of all songs that have been played at least once.
+     * Used to calculate "Never Played" songs.
+     */
+    @Query("SELECT songId FROM song_play_history WHERE playCount > 0")
+    fun getAllPlayedSongIds(): Flow<List<Long>>
 }
 

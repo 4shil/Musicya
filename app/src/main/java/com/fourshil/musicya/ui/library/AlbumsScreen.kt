@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import com.fourshil.musicya.ui.components.TopNavItem
 import com.fourshil.musicya.ui.components.TopNavigationChips
 import com.fourshil.musicya.ui.navigation.Screen
+import com.fourshil.musicya.ui.navigation.NavigationUtils
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Album
 import androidx.compose.material3.*
@@ -61,45 +62,7 @@ fun AlbumsScreen(
     ) {
         // Header & Nav (Span All)
         item(span = { GridItemSpan(maxLineSpan) }) {
-            Column {
-                Spacer(modifier = Modifier.height(24.dp))
-                Text(
-                    text = "THE",
-                    style = MaterialTheme.typography.displayMedium.copy(
-                        fontSize = 42.sp,
-                        fontWeight = FontWeight.Black,
-                        fontStyle = FontStyle.Italic
-                    ),
-                    lineHeight = 40.sp,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-                Text(
-                    text = "ALBUMS",
-                    style = MaterialTheme.typography.displayMedium.copy(
-                        fontSize = 42.sp,
-                        fontWeight = FontWeight.Black,
-                        fontStyle = FontStyle.Italic,
-                        color = MangaRed
-                    ),
-                     lineHeight = 40.sp
-                )
-                
-                Spacer(modifier = Modifier.height(24.dp))
-
-                TopNavigationChips(
-                    items = listOf(
-                        TopNavItem(Screen.Songs.route, "Songs"),
-                        TopNavItem(Screen.Favorites.route, "Favorites"),
-                        TopNavItem(Screen.Folders.route, "Folders"),
-                        TopNavItem(Screen.Playlists.route, "Playlists"),
-                        TopNavItem(Screen.Albums.route, "Albums"),
-                        TopNavItem(Screen.Artists.route, "Artists")
-                    ),
-                    currentRoute = currentRoute,
-                    onItemClick = onNavigate,
-                    modifier = Modifier.padding(bottom = 24.dp)
-                )
-            }
+            Spacer(modifier = Modifier.height(262.dp))
         }
 
         if (isLoading) {

@@ -132,16 +132,9 @@ fun SongsScreen(
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         if (!selectionState.isSelectionMode) {
-                            item {
-                                Spacer(modifier = Modifier.height(24.dp))
-                            item {
-                                SongsScreenHeader(
-                                    onMenuClick = onMenuClick,
-                                    currentRoute = currentRoute,
-                                    onNavigate = onNavigate
-                                )
-                            }
-                            }
+                              item {
+                                   Spacer(modifier = Modifier.height(262.dp))
+                              }
                         }
 
                         itemsIndexed(

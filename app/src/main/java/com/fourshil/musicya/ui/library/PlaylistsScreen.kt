@@ -33,6 +33,7 @@ import com.fourshil.musicya.ui.theme.Slate900
 import com.fourshil.musicya.ui.components.TopNavItem
 import com.fourshil.musicya.ui.components.TopNavigationChips
 import com.fourshil.musicya.ui.navigation.Screen
+import com.fourshil.musicya.ui.navigation.NavigationUtils
 
 @Composable
 fun PlaylistsScreen(
@@ -55,48 +56,8 @@ fun PlaylistsScreen(
     ) {
         item {
              Column(modifier = Modifier.padding(horizontal = NeoDimens.ScreenPadding)) {
-                Spacer(modifier = Modifier.height(24.dp))
-                
-                // Header
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Playlists",
-                        style = MaterialTheme.typography.displaySmall.copy(
-                            fontWeight = FontWeight.Bold,
-                            letterSpacing = (-0.5).sp
-                        ),
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                    
-                    // Add Button
-                    ArtisticButton(
-                        onClick = { showCreateDialog = true },
-                        icon = { Icon(Icons.Default.Add, null, tint = Slate50) },
-                        modifier = Modifier.size(52.dp),
-                        backgroundColor = NeoCoral
-                    )
-                }
-                
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(262.dp))
              }
-
-             TopNavigationChips(
-                items = listOf(
-                    TopNavItem(Screen.Songs.route, "Songs"),
-                    TopNavItem(Screen.Favorites.route, "Favorites"),
-                    TopNavItem(Screen.Folders.route, "Folders"),
-                    TopNavItem(Screen.Playlists.route, "Playlists"),
-                    TopNavItem(Screen.Albums.route, "Albums"),
-                    TopNavItem(Screen.Artists.route, "Artists")
-                ),
-                currentRoute = currentRoute,
-                onItemClick = onNavigate,
-                modifier = Modifier.padding(bottom = 24.dp)
-            )
         }
 
         if (playlists.isEmpty()) {

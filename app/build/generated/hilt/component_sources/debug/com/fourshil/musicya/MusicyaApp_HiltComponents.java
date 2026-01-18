@@ -6,6 +6,7 @@ import com.fourshil.musicya.player.MusicService_GeneratedInjector;
 import com.fourshil.musicya.ui.library.FavoritesViewModel_HiltModules;
 import com.fourshil.musicya.ui.library.LibraryViewModel_HiltModules;
 import com.fourshil.musicya.ui.library.MostPlayedViewModel_HiltModules;
+import com.fourshil.musicya.ui.library.NeverPlayedViewModel_HiltModules;
 import com.fourshil.musicya.ui.library.PlaylistsViewModel_HiltModules;
 import com.fourshil.musicya.ui.library.RecentlyPlayedViewModel_HiltModules;
 import com.fourshil.musicya.ui.nowplaying.NowPlayingViewModel_HiltModules;
@@ -166,6 +167,7 @@ public final class MusicyaApp_HiltComponents {
           MostPlayedViewModel_HiltModules.KeyModule.class,
           ActivityCBuilderModule.class,
           ViewModelCBuilderModule.class,
+          NeverPlayedViewModel_HiltModules.KeyModule.class,
           NowPlayingViewModel_HiltModules.KeyModule.class,
           PlaylistDetailViewModel_HiltModules.KeyModule.class,
           PlaylistsViewModel_HiltModules.KeyModule.class,
@@ -213,6 +215,7 @@ public final class MusicyaApp_HiltComponents {
           HiltWrapper_HiltViewModelFactory_ViewModelModule.class,
           LibraryViewModel_HiltModules.BindsModule.class,
           MostPlayedViewModel_HiltModules.BindsModule.class,
+          NeverPlayedViewModel_HiltModules.BindsModule.class,
           NowPlayingViewModel_HiltModules.BindsModule.class,
           PlaylistDetailViewModel_HiltModules.BindsModule.class,
           PlaylistsViewModel_HiltModules.BindsModule.class,

@@ -15,12 +15,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.HorizontalDivider
@@ -286,6 +289,44 @@ fun NeoDialogWrapper(
                 )
                 content()
             }
+        }
+    }
+}
+
+@Composable
+fun NeoSelectionItem(
+    text: String,
+    selected: Boolean,
+    modifier: Modifier = Modifier,
+    contentColor: Color = Slate900,
+    surfaceColor: Color = Color.White,
+    onClick: () -> Unit
+) {
+    val backgroundColor = if (selected) contentColor else surfaceColor
+    val textColor = if (selected) surfaceColor else contentColor
+
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .border(NeoDimens.BorderThin, contentColor)
+            .background(backgroundColor)
+            .clickable(onClick = onClick)
+            .padding(16.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+            color = textColor
+        )
+        if (selected) {
+            Icon(
+                imageVector = Icons.Default.Check,
+                contentDescription = "Selected",
+                tint = textColor,
+                modifier = Modifier.size(20.dp)
+            )
         }
     }
 }

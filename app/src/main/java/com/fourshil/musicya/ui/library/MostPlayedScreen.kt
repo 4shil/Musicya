@@ -19,6 +19,7 @@ import com.fourshil.musicya.ui.components.TopNavItem
 import com.fourshil.musicya.ui.components.TopNavigationChips
 import com.fourshil.musicya.ui.navigation.Screen
 import com.fourshil.musicya.ui.theme.NeoDimens
+import com.fourshil.musicya.ui.navigation.NavigationUtils
 
 @Composable
 fun MostPlayedScreen(
@@ -43,32 +44,7 @@ fun MostPlayedScreen(
     ) {
         item {
             Column(modifier = Modifier.padding(horizontal = NeoDimens.ScreenPadding)) {
-                Spacer(modifier = Modifier.height(24.dp))
-                
-                // Header
-                Text(
-                    text = "Most Played",
-                    style = MaterialTheme.typography.displaySmall.copy(
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = (-0.5).sp
-                    ),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier.padding(bottom = 24.dp)
-                )
-
-                TopNavigationChips(
-                    items = listOf(
-                        TopNavItem(Screen.Songs.route, "Songs"),
-                        TopNavItem(Screen.RecentlyPlayed.route, "Recent"),
-                        TopNavItem(Screen.MostPlayed.route, "Top"),
-                        TopNavItem(Screen.Favorites.route, "Favorites"),
-                        TopNavItem(Screen.Playlists.route, "Playlists"),
-                        TopNavItem(Screen.Albums.route, "Albums")
-                    ),
-                    currentRoute = currentRoute,
-                    onItemClick = onNavigate,
-                    modifier = Modifier.padding(bottom = 24.dp)
-                )
+                Spacer(modifier = Modifier.height(262.dp))
             }
         }
 

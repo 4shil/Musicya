@@ -19,6 +19,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -345,5 +346,6 @@ class PlayerController @Inject constructor(
         cancelSleepTimer()
         controllerFuture?.let { MediaController.releaseFuture(it) }
         controllerFuture = null
+        scope.cancel()
     }
 }

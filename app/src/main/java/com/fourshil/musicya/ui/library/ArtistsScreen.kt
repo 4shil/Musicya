@@ -30,6 +30,7 @@ import com.fourshil.musicya.ui.theme.PureBlack
 import com.fourshil.musicya.ui.components.TopNavItem
 import com.fourshil.musicya.ui.components.TopNavigationChips
 import com.fourshil.musicya.ui.navigation.Screen
+import com.fourshil.musicya.ui.navigation.NavigationUtils
 
 @Composable
 fun ArtistsScreen(
@@ -49,47 +50,7 @@ fun ArtistsScreen(
         contentPadding = PaddingValues(bottom = 160.dp)
     ) {
         item {
-             Column(modifier = Modifier.padding(horizontal = 24.dp)) {
-                Spacer(modifier = Modifier.height(24.dp))
-                
-                Box(modifier = Modifier.fillMaxWidth()) {
-                    Text(
-                        text = "THE",
-                        style = MaterialTheme.typography.displayMedium.copy(
-                            fontSize = 32.sp,
-                            fontWeight = FontWeight.Black
-                        ),
-                        modifier = Modifier.align(Alignment.TopStart),
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                    Text(
-                        text = "ARTISTS",
-                        style = MaterialTheme.typography.displayMedium.copy(
-                            fontSize = 64.sp,
-                            fontWeight = FontWeight.Black,
-                            fontStyle = FontStyle.Italic
-                        ),
-                        color = MaterialTheme.colorScheme.onBackground,
-                        modifier = Modifier.padding(top = 24.dp)
-                    )
-                }
-                
-                Spacer(modifier = Modifier.height(32.dp))
-             }
-
-             TopNavigationChips(
-                items = listOf(
-                    TopNavItem(Screen.Songs.route, "Songs"),
-                    TopNavItem(Screen.Favorites.route, "Favorites"),
-                    TopNavItem(Screen.Folders.route, "Folders"),
-                    TopNavItem(Screen.Playlists.route, "Playlists"),
-                    TopNavItem(Screen.Albums.route, "Albums"),
-                    TopNavItem(Screen.Artists.route, "Artists")
-                ),
-                currentRoute = currentRoute,
-                onItemClick = onNavigate,
-                modifier = Modifier.padding(bottom = 24.dp)
-            )
+             Spacer(modifier = Modifier.height(262.dp))
         }
 
         if (isLoading) {
