@@ -49,9 +49,9 @@ fun PlaylistDetailScreen(
             modifier = Modifier.padding(horizontal = NeoDimens.ScreenPadding, vertical = NeoDimens.SpacingL),
             verticalAlignment = Alignment.CenterVertically
         ) {
-             NeoButton(
+            NeoButton(
                 onClick = onBack,
-                modifier = Modifier.size(52.dp),
+                modifier = Modifier.size(NeoDimens.TouchTargetMedium),
                 borderWidth = NeoDimens.BorderBold,
                 shadowSize = NeoDimens.ShadowDefault
             ) { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Go back", tint = MaterialTheme.colorScheme.onSurface) }
@@ -86,7 +86,7 @@ fun PlaylistDetailScreen(
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                  NeoCard(
-                                    modifier = Modifier.size(200.dp),
+                                    modifier = Modifier.size(200.dp), // Kept specific size for layout balance
                                     borderWidth = NeoDimens.BorderBold,
                                     shadowSize = NeoDimens.ShadowProminent
                                 ) {
@@ -120,15 +120,15 @@ fun PlaylistDetailScreen(
                                         borderWidth = NeoDimens.BorderBold,
                                         shadowSize = NeoDimens.ShadowDefault
                                      ) {
-                                         Row(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+                                         Row(modifier = Modifier.padding(horizontal = NeoDimens.SpacingL, vertical = NeoDimens.SpacingM), verticalAlignment = Alignment.CenterVertically) {
                                              Icon(Icons.Default.PlayArrow, contentDescription = "Play all songs", tint = MaterialTheme.colorScheme.onPrimary)
-                                             Spacer(modifier = Modifier.width(8.dp))
+                                             Spacer(modifier = Modifier.width(NeoDimens.SpacingS))
                                              Text("Play All", color = MaterialTheme.colorScheme.onPrimary, fontWeight = FontWeight.Medium)
                                          }
                                      }
                                       NeoButton(
                                         onClick = { viewModel.shufflePlay() },
-                                        modifier = Modifier.size(52.dp),
+                                        modifier = Modifier.size(NeoDimens.TouchTargetMedium),
                                         borderWidth = NeoDimens.BorderBold,
                                          shadowSize = NeoDimens.ShadowDefault
                                      ) {

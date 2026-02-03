@@ -76,7 +76,7 @@ fun FoldersScreen(
                             Icon(
                                 imageVector = Icons.Default.Folder,
                                 contentDescription = null,
-                                modifier = Modifier.size(64.dp),
+                                modifier = Modifier.size(NeoDimens.IconHero),
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                             )
                             Text(
@@ -138,7 +138,7 @@ private fun FolderListItem(
             // Folder icon or art grid
             Box(
                 modifier = Modifier
-                    .size(48.dp)
+                    .size(NeoDimens.TouchTargetMin)
                     .clip(RoundedCornerShape(NeoDimens.CornerSmall))
                     .background(MaterialTheme.colorScheme.surfaceVariant),
                 contentAlignment = Alignment.Center
@@ -146,7 +146,7 @@ private fun FolderListItem(
                 if (artUris.isNotEmpty()) {
                     PlaylistArtGrid(
                         uris = artUris.take(4), 
-                        size = 48.dp,
+                        size = NeoDimens.TouchTargetMin,
                         isScrolling = isScrolling
                     )
                 } else {
@@ -154,7 +154,7 @@ private fun FolderListItem(
                          Icon(
                             imageVector = Icons.Default.Folder,
                             contentDescription = null,
-                            modifier = Modifier.size(24.dp),
+                            modifier = Modifier.size(NeoDimens.IconMedium),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
