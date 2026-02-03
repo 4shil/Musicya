@@ -57,7 +57,8 @@ fun NowPlayingScreen(
  
     // Colors from HTML spec
     val bgLight = NeoBackground
-    val textDark = Color(0xFF171717) // Slate-900 like
+    // textDark removed, use MaterialTheme.colorScheme.onBackground or similar
+
     
     // Status bar padding is handled by system logic usually, but here we might want manual control if pure full screen
     // Assuming Scaffolding above handles basic insets or we use systemBarsPadding
@@ -70,13 +71,14 @@ fun NowPlayingScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(horizontal = 32.dp), // px-8 equivalent roughly
+                .padding(padding)
+                .padding(horizontal = NeoDimens.SpacingXXL), // px-8 equivalent
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             
             // 1. Top Bar
             // h-12 flex justify-between items-center pt-4 (We'll just add spacer top)
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(NeoDimens.SpacingL))
             
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -86,8 +88,8 @@ fun NowPlayingScreen(
                 // Back Button (Expand More)
                 NeoButton(
                     onClick = onBack,
-                    modifier = Modifier.size(48.dp),
-                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier.size(NeoDimens.TouchTargetMin),
+                    shape = RoundedCornerShape(NeoDimens.CornerLarge),
                     shadowSize = 2.dp
                 ) {
                     // Use ExpandMore to match specific design request "Expand" button looks like "down" usually for sheet-like player
@@ -109,22 +111,22 @@ fun NowPlayingScreen(
                 Box {
                     NeoButton(
                         onClick = { showMenu = true },
-                        modifier = Modifier.size(48.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        shadowSize = 2.dp
+                        modifier = Modifier.size(NeoDimens.TouchTargetMin),
+                        shape = RoundedCornerShape(NeoDimens.CornerLarge),
+                        shadowSize = NeoDimens.ShadowSubtle
                     ) {
                         Icon(Icons.Default.MoreHoriz, null, tint = MaterialTheme.colorScheme.onSurface)
                     }
 
                     MaterialTheme(
-                        shapes = MaterialTheme.shapes.copy(extraSmall = RoundedCornerShape(12.dp))
+                        shapes = MaterialTheme.shapes.copy(extraSmall = RoundedCornerShape(NeoDimens.CornerMedium))
                     ) {
                         DropdownMenu(
                             expanded = showMenu,
                             onDismissRequest = { showMenu = false },
                             modifier = Modifier
                                 .background(MaterialTheme.colorScheme.surface)
-                                .border(2.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp))
+                                .border(NeoDimens.BorderBold, MaterialTheme.colorScheme.outline, RoundedCornerShape(NeoDimens.CornerMedium))
                         ) {
                             DropdownMenuItem(
                                 text = { Text("Details", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface) },
@@ -139,7 +141,7 @@ fun NowPlayingScreen(
                 }
             }
             
-            Spacer(modifier = Modifier.height(40.dp)) // gap-10 roughly
+            Spacer(modifier = Modifier.height(NeoDimens.SpacingHuge)) // gap-10 roughly
             
             // 2. Album Art
             // aspect-square w-full bg-accent-blue border-4 border-black rounded-[48px] shadow-neobrutal-lg
@@ -152,7 +154,7 @@ fun NowPlayingScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .offset(8.dp, 8.dp)
+                        .offset(NeoDimens.SpacingS, NeoDimens.SpacingS)
                         .background(if (isSystemInDarkTheme()) SoftShadowDark else SoftShadowLight, RoundedCornerShape(48.dp))
                 )
                 
@@ -161,7 +163,7 @@ fun NowPlayingScreen(
                     modifier = Modifier.fillMaxSize(),
                     shape = RoundedCornerShape(48.dp),
                     color = MaterialTheme.colorScheme.primaryContainer, // Use themed container
-                    border = androidx.compose.foundation.BorderStroke(4.dp, if (isSystemInDarkTheme()) MaterialTheme.colorScheme.outline else Color.Black)
+                    border = androidx.compose.foundation.BorderStroke(NeoDimens.BorderProminent, if (isSystemInDarkTheme()) MaterialTheme.colorScheme.outline else Color.Black)
                 ) {
                     // Swipe Gestures on Art
                      val density = androidx.compose.ui.platform.LocalDensity.current
@@ -202,7 +204,7 @@ fun NowPlayingScreen(
                 }
             }
             
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(NeoDimens.SpacingHuge))
             
             // 3. Song Info Row
             Row(
@@ -231,25 +233,25 @@ fun NowPlayingScreen(
                     )
                 }
                 
-                Spacer(modifier = Modifier.width(16.dp))
+                Spacer(modifier = Modifier.width(NeoDimens.SpacingL))
                 
                 // Favorite Button
                 NeoButton(
                     onClick = { viewModel.toggleFavorite() },
-                    modifier = Modifier.size(56.dp), // w-14 h-14
-                    shape = RoundedCornerShape(16.dp),
-                    shadowSize = 2.dp
+                    modifier = Modifier.size(NeoDimens.TouchTargetLarge), // w-14 h-14
+                    shape = RoundedCornerShape(NeoDimens.CornerLarge),
+                    shadowSize = NeoDimens.ShadowSubtle
                 ) {
                     Icon(
                         if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                         null,
                         // Tint needs to be visible against default button bg (Surface)
-                        tint = if (isFavorite) Color(0xFFE11D48) else MaterialTheme.colorScheme.onSurface 
+                        tint = if (isFavorite) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface 
                     )
                 }
             }
             
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(NeoDimens.SpacingXL))
             
             // 4. Progress
             Column(modifier = Modifier.fillMaxWidth()) {
@@ -269,12 +271,12 @@ fun NowPlayingScreen(
                 ) {
                     NeoProgressBar(
                         progress = if (duration > 0) position.toFloat() / duration else 0f,
-                        height = 24.dp, // h-6
+                        height = NeoDimens.IconMedium, // h-6
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
                 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(NeoDimens.SpacingM))
                 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -293,7 +295,7 @@ fun NowPlayingScreen(
                 }
             }
             
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(NeoDimens.SpacingXL))
             
             // 5. Controls
             Row(
@@ -304,16 +306,16 @@ fun NowPlayingScreen(
                 // Shuffle
                 NeoButton(
                     onClick = { viewModel.toggleShuffle() },
-                    modifier = Modifier.size(56.dp),
-                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier.size(NeoDimens.TouchTargetLarge),
+                    shape = RoundedCornerShape(NeoDimens.CornerLarge),
                     backgroundColor = MaterialTheme.colorScheme.surface,
-                    shadowSize = 2.dp,
-                    borderWidth = 2.dp
+                    shadowSize = NeoDimens.ShadowSubtle,
+                    borderWidth = NeoDimens.BorderBold
                 ) {
                     Icon(
                         Icons.Default.Shuffle, 
                         null, 
-                        modifier = Modifier.size(24.dp),
+                        modifier = Modifier.size(NeoDimens.IconMedium),
                         tint = if (shuffleEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                     )
                 }
@@ -321,10 +323,10 @@ fun NowPlayingScreen(
                 // Prev
                 NeoButton(
                     onClick = { viewModel.skipToPrevious() },
-                    modifier = Modifier.size(64.dp),
-                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier.size(NeoDimens.IconHero),
+                    shape = RoundedCornerShape(NeoDimens.CornerLarge),
                     backgroundColor = MaterialTheme.colorScheme.surface, // Clean
-                    shadowSize = 4.dp
+                    shadowSize = NeoDimens.ShadowProminent
                 ) {
                     Icon(
                         Icons.Default.SkipPrevious, 
@@ -340,7 +342,7 @@ fun NowPlayingScreen(
                     modifier = Modifier.size(96.dp), // w-24 h-24
                     shape = RoundedCornerShape(32.dp),
                     backgroundColor = MaterialTheme.colorScheme.primary, // Was NeoPrimary
-                    shadowSize = 8.dp // neobrutal-lg
+                    shadowSize = NeoDimens.ShadowHero // neobrutal-lg
                 ) {
                     Icon(
                         if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
@@ -353,10 +355,10 @@ fun NowPlayingScreen(
                 // Next
                 NeoButton(
                     onClick = { viewModel.skipToNext() },
-                    modifier = Modifier.size(64.dp),
-                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier.size(NeoDimens.IconHero),
+                    shape = RoundedCornerShape(NeoDimens.CornerLarge),
                     backgroundColor = MaterialTheme.colorScheme.surface, // Clean
-                    shadowSize = 4.dp
+                    shadowSize = NeoDimens.ShadowProminent
                 ) {
                     Icon(
                         Icons.Default.SkipNext, 
@@ -369,10 +371,10 @@ fun NowPlayingScreen(
                 // Repeat
                 NeoButton(
                     onClick = { viewModel.toggleRepeat() },
-                    modifier = Modifier.size(56.dp),
-                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier.size(NeoDimens.TouchTargetLarge),
+                    shape = RoundedCornerShape(NeoDimens.CornerLarge),
                     backgroundColor = MaterialTheme.colorScheme.surface,
-                    shadowSize = 2.dp
+                    shadowSize = NeoDimens.ShadowSubtle
                 ) {
                      Icon(
                          if (repeatMode == 1) Icons.Default.RepeatOne else Icons.Default.Repeat,
@@ -387,7 +389,7 @@ fun NowPlayingScreen(
             
             // 6. Bottom Actions
             Row(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = NeoDimens.SpacingL),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 ActionItem(icon = Icons.Default.Lyrics, label = "LYRICS", onClick = { showLyrics = true })
@@ -411,18 +413,18 @@ fun NowPlayingScreen(
                  )
             }
             
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(NeoDimens.SpacingXXL))
             
             // Bottom Indicator line (decorative)
             Box(
                 modifier = Modifier
                     .width(128.dp)
-                    .height(6.dp)
+                    .height(NeoDimens.CornerXS)
                     .clip(RoundedCornerShape(50))
                     .background(MaterialTheme.colorScheme.outline.copy(alpha = 0.3f))
             )
             
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(NeoDimens.SpacingS))
         }
     }
     
@@ -456,13 +458,13 @@ fun ActionItem(icon: ImageVector, label: String, onClick: () -> Unit) {
     ) {
         NeoButton(
             onClick = onClick,
-            modifier = Modifier.size(48.dp),
-            shape = RoundedCornerShape(12.dp),
-            shadowSize = 2.dp
+            modifier = Modifier.size(NeoDimens.TouchTargetMin),
+            shape = RoundedCornerShape(NeoDimens.CornerMedium),
+            shadowSize = NeoDimens.ShadowSubtle
         ) {
-            Icon(icon, contentDescription = label, modifier = Modifier.size(24.dp))
+            Icon(icon, contentDescription = label, modifier = Modifier.size(NeoDimens.IconMedium))
         }
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(NeoDimens.SpacingS))
         Text(
             text = label,
             style = MaterialTheme.typography.labelSmall.copy(

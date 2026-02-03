@@ -85,7 +85,7 @@ fun SearchScreen(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(NeoDimens.CornerFull),
                     backgroundColor = MaterialTheme.colorScheme.surfaceVariant,
-                    shadowSize = 4.dp
+                    shadowSize = NeoDimens.ShadowProminent
                 ) {
                     Row(
                         modifier = Modifier.padding(
@@ -126,8 +126,8 @@ fun SearchScreen(
                                 onClick = { viewModel.onQueryChange("") },
                                 icon = Icons.Default.Close,
                                 contentDescription = "Clear search",
-                                size = 32.dp,
-                                iconSize = 18.dp
+                                size = NeoDimens.IconXL,
+                                iconSize = NeoDimens.IconSmall
                             )
                         }
                     }
@@ -165,7 +165,7 @@ fun SearchScreen(
                         Icon(
                             imageVector = Icons.Default.Search,
                             contentDescription = null,
-                            modifier = Modifier.size(64.dp),
+                            modifier = Modifier.size(NeoDimens.IconHero),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                         )
                         Text(
@@ -192,7 +192,7 @@ fun SearchScreen(
                         Icon(
                             imageVector = Icons.Default.SearchOff,
                             contentDescription = null,
-                            modifier = Modifier.size(64.dp),
+                            modifier = Modifier.size(NeoDimens.IconHero),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                         )
                         Text(
@@ -313,7 +313,7 @@ private fun SearchResultItem(
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(NeoDimens.CornerMedium),
         backgroundColor = MaterialTheme.colorScheme.surface,
-        shadowSize = 2.dp
+        shadowSize = NeoDimens.ShadowSubtle
     ) {
         Row(
             modifier = Modifier.padding(NeoDimens.SpacingM),
@@ -325,7 +325,7 @@ private fun SearchResultItem(
                     .size(NeoDimens.AlbumArtSmall)
                     .clip(RoundedCornerShape(if (isArtist) NeoDimens.CornerFull else NeoDimens.CornerSmall))
                     .background(MaterialTheme.colorScheme.surfaceVariant)
-                    .border(2.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(if (isArtist) NeoDimens.CornerFull else NeoDimens.CornerSmall)),
+                    .border(NeoDimens.BorderBold, MaterialTheme.colorScheme.outline, RoundedCornerShape(if (isArtist) NeoDimens.CornerFull else NeoDimens.CornerSmall)),
                 contentAlignment = Alignment.Center
             ) {
                 if (artUri != null) {
