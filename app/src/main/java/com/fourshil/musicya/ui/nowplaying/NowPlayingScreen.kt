@@ -163,7 +163,7 @@ fun NowPlayingScreen(
                     modifier = Modifier.fillMaxSize(),
                     shape = RoundedCornerShape(48.dp),
                     color = MaterialTheme.colorScheme.primaryContainer, // Use themed container
-                    border = androidx.compose.foundation.BorderStroke(NeoDimens.BorderProminent, if (isSystemInDarkTheme()) MaterialTheme.colorScheme.outline else Color.Black)
+                    border = androidx.compose.foundation.BorderStroke(NeoDimens.BorderBold, if (isSystemInDarkTheme()) MaterialTheme.colorScheme.outline else Color.Black)
                 ) {
                     // Swipe Gestures on Art
                      val density = androidx.compose.ui.platform.LocalDensity.current
