@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
-// import coil.request.Precision (Removed)
 import com.fourshil.musicya.ui.components.LyricsBottomSheet
 import com.fourshil.musicya.ui.components.NeoButton
 import com.fourshil.musicya.ui.components.NeoProgressBar
