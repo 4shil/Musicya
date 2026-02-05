@@ -26,8 +26,18 @@ An offline music player for Android with a Neo-Brutalist design. Plays local aud
 - ExoPlayer / MediaSession (audio engine)
 - Material 3
 
-**Min SDK:** Android 7.0 (API 24)  
+**Min SDK:** Android 8.0 (API 26)  
 **Target SDK:** Android 14 (API 34)
+
+## What's New in v1.1.0
+
+- Pull-to-refresh library scanning
+- Improved accessibility with content descriptions on all icons
+- Proper back navigation from NowPlayingScreen
+- Crossfade engine fixes and initialization
+- Gradient rendering performance improvements
+- Snackbar error handling for library loading
+- Settings screen accessibility improvements
 
 ## Building
 
