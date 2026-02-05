@@ -36,7 +36,7 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
-import androidx.paging.compose.itemContentType
+import androidx.paging.compose.LazyPagingItems
 
 /**
  * Clean Minimalistic Songs Screen
@@ -257,7 +257,7 @@ fun SongsScreen(
                         items(
                             count = pagedSongs.itemCount,
                             key = pagedSongs.itemKey { it.id },
-                            contentType = pagedSongs.itemContentType { "song" }
+                            contentType = { "song" }
                         ) { index ->
                             val song = pagedSongs[index]
                             
