@@ -115,7 +115,7 @@ private fun AlbumCard(
             .fillMaxWidth()
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(12.dp),
-        shadowSize = 4.dp,
+        shadowSize = NeoDimens.ShadowProminent,
         backgroundColor = MaterialTheme.colorScheme.surface,
         borderWidth = 2.dp
     ) {

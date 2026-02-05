@@ -241,7 +241,7 @@ fun SongsScreen(
                                 SongListItem(
                                     song = song,
                                     isSelected = isSelected,
-                                    inSelectionMode = selectionState.isSelectionMode,
+                                    isSelectionMode = selectionState.isSelectionMode,
                                     isScrolling = isScrolling,
                                     onClick = {
                                         if (selectionState.isSelectionMode) {
