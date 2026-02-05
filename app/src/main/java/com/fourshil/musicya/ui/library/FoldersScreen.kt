@@ -75,7 +75,7 @@ fun FoldersScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Folder,
-                                contentDescription = null,
+                                contentDescription = "No folders",
                                 modifier = Modifier.size(NeoDimens.IconHero),
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                             )
@@ -153,7 +153,7 @@ private fun FolderListItem(
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                          Icon(
                             imageVector = Icons.Default.Folder,
-                            contentDescription = null,
+                            contentDescription = "Folder",
                             modifier = Modifier.size(NeoDimens.IconMedium),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -181,7 +181,7 @@ private fun FolderListItem(
 
             Icon(
                 imageVector = Icons.Default.ChevronRight,
-                contentDescription = null,
+                contentDescription = "View folder",
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(NeoDimens.IconMedium)
             )
