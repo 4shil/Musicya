@@ -133,7 +133,10 @@ class PlayerController @Inject constructor(
         
         controllerFuture?.addListener({
             val mediaController = controller ?: return@addListener
-            
+
+            // Initialize CrossfadeManager with player reference and scope
+            crossfadeManager.initialize(mediaController, scope)
+
             mediaController.addListener(object : Player.Listener {
                 override fun onIsPlayingChanged(isPlaying: Boolean) {
                     _isPlaying.value = isPlaying
