@@ -13,6 +13,8 @@ import androidx.compose.material.icons.filled.SelectAll
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import kotlinx.coroutines.launch
@@ -80,15 +82,22 @@ fun SongsScreen(
     
     LaunchedEffect(permissionsState.allPermissionsGranted) {
         if (permissionsState.allPermissionsGranted) {
-            viewModel.refresh()
-            pagedSongs.refresh()
+            try {
+                viewModel.refresh()
+                pagedSongs.refresh()
+            } catch (e: Exception) {
+                snackbarHostState.showSnackbar("Failed to load music library")
+            }
         } else {
             permissionsState.launchMultiplePermissionRequest()
         }
     }
 
+    val snackbarHostState = remember { SnackbarHostState() }
+
     NeoScaffold(
         containerColor = MaterialTheme.colorScheme.background,
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             if (selectionState.isSelectionMode) {
                 val scope = rememberCoroutineScope()
