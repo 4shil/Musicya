@@ -28,8 +28,6 @@ import com.fourshil.musicya.ui.components.NeoCard
 import com.fourshil.musicya.ui.theme.NeoCoral
 import com.fourshil.musicya.ui.theme.NeoAmber
 import com.fourshil.musicya.ui.theme.NeoDimens
-import com.fourshil.musicya.ui.theme.Slate50
-import com.fourshil.musicya.ui.theme.Slate900
 
 import com.fourshil.musicya.ui.components.TopNavItem
 import com.fourshil.musicya.ui.components.TopNavigationChips
@@ -83,7 +81,7 @@ fun PlaylistsScreen(
                                 .background(MaterialTheme.colorScheme.surfaceVariant),
                              contentAlignment = Alignment.Center
                         ) {
-                            Icon(Icons.Default.Add, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Icon(Icons.Default.Add, contentDescription = "Create new playlist", tint = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                         
                         Spacer(modifier = Modifier.width(16.dp))
@@ -232,8 +230,8 @@ fun PlaylistArtisticItem(
                     PlaylistArtGrid(uris = artUris, size = 56.dp, isScrolling = isScrolling)
                 } else {
                     Icon(
-                         Icons.Default.Folder, 
-                         null, 
+                         Icons.Default.Folder,
+                         contentDescription = "Playlist",
                          tint = MaterialTheme.colorScheme.onSurface,
                          modifier = Modifier.size(24.dp)
                     )
@@ -259,7 +257,7 @@ fun PlaylistArtisticItem(
             }
             
             IconButton(onClick = onRename) {
-                Icon(Icons.Default.Edit, null, tint = Color.Black)
+                Icon(Icons.Default.Edit, contentDescription = "Rename playlist", tint = MaterialTheme.colorScheme.onSurface)
             }
         }
     }
