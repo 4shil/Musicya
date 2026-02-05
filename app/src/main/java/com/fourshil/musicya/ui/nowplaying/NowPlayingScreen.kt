@@ -71,7 +71,6 @@ fun NowPlayingScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(padding)
                 .padding(horizontal = NeoDimens.SpacingXXL), // px-8 equivalent
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -93,7 +92,7 @@ fun NowPlayingScreen(
                     shadowSize = 2.dp
                 ) {
                     // Use ExpandMore to match specific design request "Expand" button looks like "down" usually for sheet-like player
-                    Icon(Icons.Default.ExpandMore, null, tint = MaterialTheme.colorScheme.onSurface)
+                    Icon(Icons.Default.ExpandMore, contentDescription = "Minimize player", tint = MaterialTheme.colorScheme.onSurface)
                 }
                 
                 Text(
@@ -115,7 +114,7 @@ fun NowPlayingScreen(
                         shape = RoundedCornerShape(NeoDimens.CornerLarge),
                         shadowSize = NeoDimens.ShadowSubtle
                     ) {
-                        Icon(Icons.Default.MoreHoriz, null, tint = MaterialTheme.colorScheme.onSurface)
+Icon(Icons.Default.MoreHoriz, contentDescription = "More options", tint = MaterialTheme.colorScheme.onSurface)
                     }
 
                     MaterialTheme(
@@ -134,7 +133,7 @@ fun NowPlayingScreen(
                                     showMenu = false
                                     showDetails = true
                                 },
-                                leadingIcon = { Icon(Icons.Default.Info, null, tint = MaterialTheme.colorScheme.onSurface) }
+                                leadingIcon = { Icon(Icons.Default.Info, contentDescription = "Song details", tint = MaterialTheme.colorScheme.onSurface) }
                             )
                         }
                     }
@@ -244,9 +243,9 @@ fun NowPlayingScreen(
                 ) {
                     Icon(
                         if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                        null,
+                        contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites",
                         // Tint needs to be visible against default button bg (Surface)
-                        tint = if (isFavorite) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface 
+                        tint = if (isFavorite) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
                     )
                 }
             }
@@ -313,8 +312,8 @@ fun NowPlayingScreen(
                     borderWidth = NeoDimens.BorderBold
                 ) {
                     Icon(
-                        Icons.Default.Shuffle, 
-                        null, 
+                        Icons.Default.Shuffle,
+                        contentDescription = "Shuffle",
                         modifier = Modifier.size(NeoDimens.IconMedium),
                         tint = if (shuffleEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                     )
@@ -329,9 +328,9 @@ fun NowPlayingScreen(
                     shadowSize = NeoDimens.ShadowProminent
                 ) {
                     Icon(
-                        Icons.Default.SkipPrevious, 
-                        null, 
-                        modifier = Modifier.size(36.dp), 
+                        Icons.Default.SkipPrevious,
+                        contentDescription = "Previous track",
+                        modifier = Modifier.size(36.dp),
                         tint = MaterialTheme.colorScheme.onSurface
                     )
                 }
@@ -346,7 +345,7 @@ fun NowPlayingScreen(
                 ) {
                     Icon(
                         if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
-                        null,
+                        contentDescription = if (isPlaying) "Pause" else "Play",
                         tint = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier.size(60.dp) // text-6xl
                     )
@@ -361,9 +360,9 @@ fun NowPlayingScreen(
                     shadowSize = NeoDimens.ShadowProminent
                 ) {
                     Icon(
-                        Icons.Default.SkipNext, 
-                        null, 
-                        modifier = Modifier.size(36.dp), 
+                        Icons.Default.SkipNext,
+                        contentDescription = "Next track",
+                        modifier = Modifier.size(36.dp),
                         tint = MaterialTheme.colorScheme.onSurface
                     )
                 }
@@ -378,7 +377,7 @@ fun NowPlayingScreen(
                 ) {
                      Icon(
                          if (repeatMode == 1) Icons.Default.RepeatOne else Icons.Default.Repeat,
-                         null, 
+                         contentDescription = "Repeat",
                          modifier = Modifier.size(24.dp),
                          tint = if (repeatMode != 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                      )
