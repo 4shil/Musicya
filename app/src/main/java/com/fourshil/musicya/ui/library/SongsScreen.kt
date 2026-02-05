@@ -161,10 +161,7 @@ fun SongsScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .then(
-                    if (selectionState.isSelectionMode) Modifier.padding(padding)
-                    else Modifier
-                )
+                .padding(padding)
         ) {
             when {
                 !permissionsState.allPermissionsGranted -> {
