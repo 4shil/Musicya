@@ -216,7 +216,15 @@ fun SongsScreen(
                     // Song list with fade edge
                     val listState = androidx.compose.foundation.lazy.rememberLazyListState()
                     val isScrolling by remember { derivedStateOf { listState.isScrollInProgress } }
-                    val fadeHeight = 24.dp // Height of the fade effect
+                    val fadeHeight = NeoDimens.SpacingXXL // Height of the fade effect
+                    val fadeGradient = remember {
+                        Brush.verticalGradient(
+                            colors = listOf(
+                                MaterialTheme.colorScheme.background,
+                                MaterialTheme.colorScheme.background.copy(alpha = 0f)
+                            )
+                        )
+                    }
                     
                     Box(modifier = Modifier.fillMaxSize()) {
                         LazyColumn(
@@ -277,14 +285,7 @@ fun SongsScreen(
                                 .fillMaxWidth()
                                 .height(fadeHeight)
                                 .align(Alignment.TopCenter)
-                                .background(
-                                    Brush.verticalGradient(
-                                        colors = listOf(
-                                            MaterialTheme.colorScheme.background,
-                                            MaterialTheme.colorScheme.background.copy(alpha = 0f)
-                                        )
-                                    )
-                                )
+                                .background(fadeGradient)
                         )
                     }
                 }
