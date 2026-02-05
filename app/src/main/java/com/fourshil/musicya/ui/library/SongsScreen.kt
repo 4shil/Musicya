@@ -11,6 +11,8 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.SelectAll
 import androidx.compose.material3.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import kotlinx.coroutines.launch
@@ -213,7 +215,9 @@ fun SongsScreen(
                 }
                 
                 else -> {
-                    // Song list with fade edge
+                    // Song list with fade edge and pull-to-refresh
+                    val isRefreshing by remember { mutableStateOf(false) }
+                    val pullRefreshState = rememberPullToRefreshState()
                     val listState = androidx.compose.foundation.lazy.rememberLazyListState()
                     val isScrolling by remember { derivedStateOf { listState.isScrollInProgress } }
                     val fadeHeight = NeoDimens.SpacingXXL // Height of the fade effect
@@ -226,7 +230,15 @@ fun SongsScreen(
                         )
                     }
                     
-                    Box(modifier = Modifier.fillMaxSize()) {
+                    PullToRefreshBox(
+                        isRefreshing = isRefreshing,
+                        onRefresh = {
+                            viewModel.refresh()
+                        },
+                        state = pullRefreshState,
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        Box(modifier = Modifier.fillMaxSize()) {
                         LazyColumn(
                             modifier = Modifier.fillMaxSize(),
                             state = listState,
@@ -288,7 +300,7 @@ fun SongsScreen(
                                 .background(fadeGradient)
                         )
                     }
-                }
+                    }
             }
         }
     }
