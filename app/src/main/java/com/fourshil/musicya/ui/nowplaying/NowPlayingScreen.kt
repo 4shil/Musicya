@@ -1,5 +1,6 @@
 package com.fourshil.musicya.ui.nowplaying
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
@@ -53,6 +54,9 @@ fun NowPlayingScreen(
     var showLyrics by remember { mutableStateOf(false) }
     var showMenu by remember { mutableStateOf(false) }
     var showDetails by remember { mutableStateOf(false) }
+    
+    // Handle back press to minimize player
+    BackHandler { onBack() }
  
     // Colors from HTML spec
     val bgLight = NeoBackground
