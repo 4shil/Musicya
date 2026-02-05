@@ -98,14 +98,14 @@ fun SettingsScreen(
         ) {
             // Audio Section
             SettingsSection(title = "AUDIO") {
-                SettingsItem(
+                SettingsRow(
                     title = "Equalizer",
                     subtitle = "Adjust audio frequencies",
                     icon = Icons.Default.GraphicEq,
                     onClick = onEqualizerClick
                 )
                 
-                SettingsItem(
+                SettingsRow(
                     title = "Playback Speed",
                     subtitle = if (currentSpeed == 1.0f) "Normal" else String.format("%.2fx", currentSpeed),
                     icon = Icons.Default.Speed,
@@ -121,7 +121,7 @@ fun SettingsScreen(
                     }
                 )
                 
-                SettingsItem(
+                SettingsRow(
                     title = "Crossfade",
                     subtitle = if (crossfadeDuration == 0) "Off" else "$crossfadeDuration seconds",
                     icon = Icons.Default.SwapHoriz,
@@ -143,7 +143,7 @@ fun SettingsScreen(
 
             // Preferences Section
             SettingsSection(title = "PREFERENCES") {
-                SettingsItem(
+                SettingsRow(
                     title = "Sleep Timer",
                     subtitle = if (sleepTimerActive) "$sleepTimerMinutes min remaining" else "Off",
                     icon = Icons.Default.Timer,
@@ -160,7 +160,7 @@ fun SettingsScreen(
                     } else null
                 )
                 
-                SettingsItem(
+                SettingsRow(
                     title = "Theme",
                     subtitle = when (currentTheme) {
                         ThemeMode.SYSTEM -> "System default"
@@ -176,7 +176,7 @@ fun SettingsScreen(
 
             // Info Section
             SettingsSection(title = "ABOUT") {
-                SettingsItem(
+                SettingsRow(
                     title = "About LYRA",
                     subtitle = "Version 1.0.0",
                     icon = Icons.Default.Info,
@@ -260,12 +260,13 @@ private fun SettingsSection(
  * Clean Settings Item
  */
 @Composable
-private fun SettingsItem(
+fun SettingsRow(
     title: String,
     subtitle: String,
     icon: ImageVector,
     onClick: () -> Unit,
-    trailingContent: @Composable (() -> Unit)? = null
+    trailingContent: @Composable (() -> Unit)? = null,
+    iconContentDescription: String = title
 ) {
     Row(
         modifier = Modifier
@@ -286,9 +287,9 @@ private fun SettingsItem(
         ) {
             Icon(
                 imageVector = icon,
-                contentDescription = null,
+                contentDescription = iconContentDescription,
                 modifier = Modifier.size(20.dp),
-                tint = MaterialTheme.colorScheme.onSurface // Use onSurface
+                tint = MaterialTheme.colorScheme.onSurface
             )
         }
         
@@ -312,7 +313,7 @@ private fun SettingsItem(
         
         Icon(
             imageVector = Icons.Default.ChevronRight,
-            contentDescription = null,
+            contentDescription = "Open $title",
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.size(20.dp)
         )
