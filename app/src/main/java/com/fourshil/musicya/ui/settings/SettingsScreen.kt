@@ -191,10 +191,24 @@ fun SettingsScreen(
             // Info Section
             SettingsSection(title = "ABOUT") {
                 SettingsRow(
-                    title = "About LYRA",
-                    subtitle = "Version 1.0.0",
+                    title = "About Musicya",
+                    subtitle = "Version 1.1.0",
                     icon = Icons.Default.Info,
                     onClick = {}
+                )
+                
+                SettingsRow(
+                    title = "Dark Mode",
+                    subtitle = "Toggle dark theme",
+                    icon = Icons.Default.DarkMode,
+                    onClick = { viewModel.toggleDarkMode() },
+                    trailingContent = {
+                        Switch(
+                            checked = currentTheme == "dark",
+                            onCheckedChange = { viewModel.toggleDarkMode() },
+                            modifier = Modifier
+                        )
+                    }
                 )
             }
             
