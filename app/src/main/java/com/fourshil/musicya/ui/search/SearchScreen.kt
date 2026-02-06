@@ -46,6 +46,7 @@ fun SearchScreen(
     val albums by viewModel.albums.collectAsState()
     val artists by viewModel.artists.collectAsState()
     val isSearching by viewModel.isSearching.collectAsState()
+    val recentSearches by viewModel.recentSearches.collectAsState()
 
     NeoScaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -103,7 +104,12 @@ fun SearchScreen(
                         Spacer(modifier = Modifier.width(NeoDimens.SpacingM))
                         BasicTextField(
                             value = query,
-                            onValueChange = { viewModel.onQueryChange(it) },
+                            onValueChange = {
+                            viewModel.onQueryChange(it)
+                            if (it.isNotBlank()) {
+                                viewModel.saveRecentSearch(it)
+                            }
+                        },
                             textStyle = MaterialTheme.typography.bodyLarge.copy(
                                 color = MaterialTheme.colorScheme.onSurface
                             ),
