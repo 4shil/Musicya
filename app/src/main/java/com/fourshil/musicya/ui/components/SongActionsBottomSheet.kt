@@ -25,6 +25,7 @@ fun SongActionsBottomSheet(
     onAddToQueue: () -> Unit,
     onToggleFavorite: () -> Unit,
     onAddToPlaylist: () -> Unit,
+    onShare: () -> Unit,
     onViewDetails: () -> Unit,
     onDelete: () -> Unit
 ) {
@@ -81,6 +82,15 @@ fun SongActionsBottomSheet(
                 text = if (isFavorite) "Remove from Favorites" else "Add to Favorites",
                 onClick = {
                     onToggleFavorite()
+                    onDismiss()
+                }
+            )
+            
+            ActionItem(
+                icon = Icons.Default.Share,
+                text = "Share",
+                onClick = {
+                    onShare()
                     onDismiss()
                 }
             )
