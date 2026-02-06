@@ -137,6 +137,20 @@ fun SettingsScreen(
                         }
                     } else null
                 )
+
+                SettingsRow(
+                    title = "Playback Statistics",
+                    subtitle = "View your listening history",
+                    icon = Icons.Default.Analytics,
+                    onClick = { /* Navigate to stats screen */ },
+                    trailingContent = {
+                        Text(
+                            text = "${com.fourshil.musicya.util.PlaybackStats.totalSongsPlayed.value} songs",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                )
             }
 
             Spacer(modifier = Modifier.height(24.dp))
