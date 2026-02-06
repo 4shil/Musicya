@@ -2,6 +2,7 @@ package com.fourshil.musicya.ui.queue
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -250,7 +251,7 @@ private fun QueueItem(
                     ) {
                         Icon(
                             Icons.Default.PlayArrow,
-                            contentDescription = null,
+                            contentDescription = "Now playing",
                             tint = MaterialTheme.colorScheme.onPrimary,
                             modifier = Modifier.size(24.dp)
                         )
@@ -288,6 +289,14 @@ private fun QueueItem(
                     overflow = TextOverflow.Ellipsis
                 )
             }
+
+            // Drag handle for reordering
+            Icon(
+                Icons.Default.DragHandle,
+                contentDescription = "Drag to reorder",
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(NeoDimens.IconMedium)
+            )
 
             // Remove button
             IconButton(onClick = onRemove) {
