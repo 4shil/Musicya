@@ -394,14 +394,23 @@ Icon(Icons.Default.MoreHoriz, contentDescription = "More options", tint = Materi
                 modifier = Modifier.fillMaxWidth().padding(horizontal = NeoDimens.SpacingL),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
+                // Crossfade toggle
+                var crossfadeEnabled by remember { mutableStateOf(viewModel.crossfadeEnabled.value) }
+                ActionItem(
+                    icon = Icons.Default.Transition,
+                    label = "CROSSFADE",
+                    onClick = {
+                        viewModel.toggleCrossfade()
+                        crossfadeEnabled = !crossfadeEnabled
+                    },
+                    isActive = crossfadeEnabled
+                )
                 ActionItem(icon = Icons.Default.Lyrics, label = "LYRICS", onClick = { showLyrics = true })
                 ActionItem(icon = Icons.Default.QueueMusic, label = "QUEUE", onClick = onQueueClick)
-                
-                 val context = LocalContext.current
-                 ActionItem(
-                     icon = Icons.Default.Share, 
-                     label = "SHARE", 
-                     onClick = {
+                ActionItem(
+                    icon = Icons.Default.Share, 
+                    label = "SHARE", 
+                    onClick = {
                         currentSong?.let { song ->
                             val sendIntent: android.content.Intent = android.content.Intent().apply {
                                 action = android.content.Intent.ACTION_SEND
@@ -411,8 +420,8 @@ Icon(Icons.Default.MoreHoriz, contentDescription = "More options", tint = Materi
                             val shareIntent = android.content.Intent.createChooser(sendIntent, null)
                             context.startActivity(shareIntent)
                         }
-                     }
-                 )
+                    }
+                )
             }
             
             Spacer(modifier = Modifier.height(NeoDimens.SpacingXXL))
@@ -453,26 +462,25 @@ Icon(Icons.Default.MoreHoriz, contentDescription = "More options", tint = Materi
 
 
 @Composable
-fun ActionItem(icon: ImageVector, label: String, onClick: () -> Unit) {
+fun ActionItem(icon: ImageVector, label: String, onClick: () -> Unit, isActive: Boolean = false) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.clickable(onClick = onClick, indication = null, interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() })
     ) {
-        NeoButton(
-            onClick = onClick,
-            modifier = Modifier.size(NeoDimens.TouchTargetMin),
-            shape = RoundedCornerShape(NeoDimens.CornerMedium),
-            shadowSize = NeoDimens.ShadowSubtle
-        ) {
-            Icon(icon, contentDescription = label, modifier = Modifier.size(NeoDimens.IconMedium))
-        }
-        Spacer(modifier = Modifier.height(NeoDimens.SpacingS))
+        Icon(
+            icon,
+            contentDescription = label,
+            modifier = Modifier.size(24.dp),
+            tint = if (isActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Spacer(modifier = Modifier.height(4.dp))
         Text(
-            text = label,
+            label,
             style = MaterialTheme.typography.labelSmall.copy(
-                fontWeight = FontWeight.Medium,
-                letterSpacing = 0.sp
-            )
+                fontWeight = if (isActive) FontWeight.Bold else FontWeight.Medium,
+                fontSize = 10.sp
+            ),
+            color = if (isActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }
