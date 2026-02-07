@@ -65,7 +65,8 @@ class SearchViewModel @Inject constructor(
     private fun observeQuery() {
         viewModelScope.launch {
             _query
-                .debounce(300)
+                .debounce(150) // Faster response for snappier feel
+                .distinctUntilChanged() // Skip duplicate queries
                 .collect { q ->
                     if (q.isBlank()) {
                         _songs.value = emptyList()
