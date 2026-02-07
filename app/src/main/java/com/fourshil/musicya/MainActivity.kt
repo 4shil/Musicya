@@ -3,6 +3,7 @@ package com.fourshil.musicya
 import android.Manifest
 import android.os.Build
 import android.os.Bundle
+import android.window.SplashScreen
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -36,6 +37,13 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalPermissionsApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        // Install splash screen
+        val splashScreen = installSplashScreen()
+        
+        // Keep splash screen visible until we're ready
+        splashScreen.setKeepOnScreenCondition { false }
+        
         enableEdgeToEdge()
 
         setContent {
