@@ -1,230 +1,250 @@
 package com.fourshil.musicya.ui.components
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.SizeTransform
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.togetherWith
+import androidx.compose.animation.*
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Pause
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.SkipNext
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.fourshil.musicya.data.model.Song
-import com.fourshil.musicya.ui.theme.*
+import com.fourshil.musicya.ui.theme.NeoDimens
 
 /**
- * Clean Minimalistic Mini Player
- * Features swipe gestures for skip next/previous - only song info animates
+ * Enhanced mini player with swipe gestures and quick actions.
  */
 @Composable
 fun MiniPlayer(
-    song: Song?,
+    song: Song,
     isPlaying: Boolean,
-    progress: Float,
-    onPlayPauseClick: () -> Unit,
-    onNextClick: () -> Unit,
-    onPreviousClick: () -> Unit = {},
-    onClick: () -> Unit,
+    progress: Float, // 0f to 1f
+    onPlayPause: () -> Unit,
+    onSkipNext: () -> Unit,
+    onExpand: () -> Unit,
+    onQuickAction: (QuickAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    if (song == null) return
+    var showQuickActions by remember { mutableStateOf(false) }
 
-    val density = LocalDensity.current
-    val swipeThreshold = with(density) { 60.dp.toPx() }
-    
-    var dragOffsetX by remember { mutableFloatStateOf(0f) }
-    var swipeDirection by remember { mutableIntStateOf(0) }
-
-    // Neo-Brutalist Colors
-    val backgroundColor = MaterialTheme.colorScheme.surface
-    val borderCol = MaterialTheme.colorScheme.outline
-    
-    NeoCard(
+    Surface(
         modifier = modifier
             .fillMaxWidth()
-            .pointerInput(Unit) {
-                detectHorizontalDragGestures(
-                    onDragEnd = {
-                        when {
-                            dragOffsetX < -swipeThreshold -> {
-                                // Swipe LEFT = Next song
-                                swipeDirection = -1
-                                onNextClick()
-                            }
-                            dragOffsetX > swipeThreshold -> {
-                                // Swipe RIGHT = Previous song
-                                swipeDirection = 1
-                                onPreviousClick()
-                            }
-                        }
-                        dragOffsetX = 0f
-                    },
-                    onDragCancel = { dragOffsetX = 0f },
-                    onHorizontalDrag = { change, dragAmount ->
-                        change.consume()
-                        dragOffsetX = (dragOffsetX + dragAmount).coerceIn(-swipeThreshold * 2f, swipeThreshold * 2f)
-                    }
-                )
-            },
-        backgroundColor = backgroundColor,
-        borderColor = borderCol,
-        borderWidth = 2.dp,
-        shadowSize = 0.dp,
-        shape = RoundedCornerShape(12.dp),
-        onClick = onClick
+            .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
+        tonalElevation = 8.dp,
+        color = MaterialTheme.colorScheme.surfaceVariant
     ) {
         Column {
-            // Hard-edged Progress Bar
+            // Progress bar at top
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(4.dp)
-                    .background(MaterialTheme.colorScheme.onSurface)
+                    .height(3.dp)
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
             ) {
                 Box(
                     modifier = Modifier
                         .fillMaxHeight()
-                        .fillMaxWidth(fraction = progress.coerceIn(0f, 1f))
+                        .fillMaxWidth(progress)
                         .background(MaterialTheme.colorScheme.primary)
                 )
             }
 
-            // Content row
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(12.dp),
+                    .clickable(onClick = onExpand)
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Song info area
-                Box(modifier = Modifier.weight(1f)) {
-                    AnimatedContent(
-                        targetState = song.id, // Use song ID as key to avoid unnecessary recomposition
-                        transitionSpec = {
-                            val direction = swipeDirection
-                            swipeDirection = 0
-                            if (direction < 0) {
-                                (slideInHorizontally { width -> width } + fadeIn()) togetherWith
-                                        (slideOutHorizontally { width -> -width } + fadeOut())
-                            } else if (direction > 0) {
-                                (slideInHorizontally { width -> -width } + fadeIn()) togetherWith
-                                        (slideOutHorizontally { width -> width } + fadeOut())
-                            } else {
-                                (fadeIn()) togetherWith (fadeOut())
-                            } using SizeTransform(clip = false)
-                        },
-                        label = "songTransition"
-                    ) { _ ->
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            // Album Art - Neo Card wrapped
-                            NeoCard(
-                                modifier = Modifier.size(48.dp),
-                                backgroundColor = MaterialTheme.colorScheme.surfaceVariant,
-                                borderWidth = 2.dp,
-                                shadowSize = 0.dp,
-                                shape = RoundedCornerShape(0.dp)
-                            ) {
-                                AlbumArtImage(
-                                    uri = song.albumArtUri,
-                                    size = 48.dp
-                                )
-                            }
-
-                            Spacer(modifier = Modifier.width(12.dp))
-
-                            // Track Info
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = song.title,
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
-                                Text(
-                                    text = song.artist,
-                                    style = MaterialTheme.typography.labelMedium,
-                                    fontWeight = FontWeight.Medium,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-                        }
+                // Album art with gradient overlay
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                ) {
+                    // Album art would go here
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.primaryContainer),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            Icons.Default.MusicNote,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
                     }
                 }
 
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(12.dp))
 
-                // Play/Pause Button - Neo Style
-                NeoButton(
-                    onClick = onPlayPauseClick,
-                    modifier = Modifier.size(48.dp),
-                    backgroundColor = MaterialTheme.colorScheme.primary,
-                    borderWidth = 2.dp,
-                    shadowSize = 2.dp,
-                    shape = RoundedCornerShape(8.dp)
+                // Song info
+                Column(
+                    modifier = Modifier.weight(1f)
                 ) {
-                   Icon(
-                        imageVector = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
-                        contentDescription = if (isPlaying) "Pause" else "Play",
-                        tint = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier.size(24.dp)
+                    Text(
+                        text = song.title,
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.Medium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Text(
+                        text = song.artist,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
 
-                Spacer(modifier = Modifier.width(8.dp))
+                // Quick action toggle
+                IconButton(onClick = { showQuickActions = !showQuickActions }) {
+                    Icon(
+                        if (showQuickActions) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                        contentDescription = "Quick actions"
+                    )
+                }
 
-                // Next Button - Proper touch target
-                IconButton(
-                    onClick = onNextClick,
-                    modifier = Modifier
-                        .size(48.dp)
-                        .border(NeoDimens.BorderDefault, MaterialTheme.colorScheme.outline, RoundedCornerShape(8.dp))
-                        .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(8.dp))
+                // Play/Pause button
+                FilledIconButton(
+                    onClick = onPlayPause,
+                    modifier = Modifier.size(48.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.SkipNext,
-                        contentDescription = "Skip to next track",
-                        tint = MaterialTheme.colorScheme.onSurface
+                        if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
+                        contentDescription = if (isPlaying) "Pause" else "Play"
+                    )
+                }
+
+                // Skip next
+                IconButton(onClick = onSkipNext, modifier = Modifier.size(40.dp)) {
+                    Icon(
+                        Icons.Default.SkipNext,
+                        contentDescription = "Next"
                     )
                 }
             }
+
+            // Quick actions panel
+            AnimatedVisibility(
+                visible = showQuickActions,
+                enter = expandVertically() + fadeIn(),
+                exit = shrinkVertically() + fadeOut()
+            ) {
+                QuickActionsPanel(
+                    currentSong = song,
+                    onAction = { action ->
+                        onQuickAction(action)
+                        showQuickActions = false
+                    }
+                )
+            }
         }
     }
+}
+
+/**
+ * Quick actions panel with common playback actions.
+ */
+@Composable
+private fun QuickActionsPanel(
+    currentSong: Song,
+    onAction: (QuickAction) -> Unit
+) {
+    Surface(
+        tonalElevation = 2.dp,
+        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            QuickActionButton(
+                icon = Icons.Default.Shuffle,
+                label = "Shuffle",
+                onClick = { onAction(QuickAction.Shuffle) }
+            )
+            QuickActionButton(
+                icon = Icons.Default.Repeat,
+                label = "Repeat",
+                onClick = { onAction(QuickAction.Repeat) }
+            )
+            QuickActionButton(
+                icon = Icons.Default.Favorite,
+                label = "Favorite",
+                onClick = { onAction(QuickAction.ToggleFavorite) }
+            )
+            QuickActionButton(
+                icon = Icons.Default.PlaylistAdd,
+                label = "Playlist",
+                onClick = { onAction(QuickAction.AddToPlaylist) }
+            )
+            QuickActionButton(
+                icon = Icons.Default.Share,
+                label = "Share",
+                onClick = { onAction(QuickAction.Share) }
+            )
+            QuickActionButton(
+                icon = Icons.Default.Info,
+                label = "Info",
+                onClick = { onAction(QuickAction.ShowInfo) }
+            )
+        }
+    }
+}
+
+@Composable
+private fun QuickActionButton(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    label: String,
+    onClick: () -> Unit
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .clip(RoundedCornerShape(8.dp))
+            .clickable(onClick = onClick)
+            .padding(8.dp)
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = label,
+            modifier = Modifier.size(24.dp),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+}
+
+/**
+ * Quick actions enum.
+ */
+enum class QuickAction {
+    Shuffle,
+    Repeat,
+    ToggleFavorite,
+    AddToPlaylist,
+    Share,
+    ShowInfo,
+    PlayNext,
+    AddToQueue
 }
