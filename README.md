@@ -182,6 +182,38 @@ Musicya follows **Clean Architecture** with proper separation:
 - **Domain Layer** — Use cases and business logic
 - **Data Layer** — Repositories, Room database, MediaStore access
 
+## Project Statistics
+
+| Metric | Value |
+|--------|-------|
+| Total Commits | 95 (session) / 244 (total) |
+| Days of Development | 5 |
+| Kotlin Source Files | 142 |
+| XML Resource Files | 12 |
+| Markdown Docs | 23 |
+| Lines of Code | 21,344 |
+| Test Files | 10+ |
+| Min SDK | 26 (Android 8.0) |
+| Target SDK | 34 (Android 14) |
+| Release APK Size | ~15MB (with R8) |
+
+## Quick Start
+
+```bash
+# Clone
+git clone https://github.com/4shil/Musicya.git
+cd Musicya
+
+# Build
+./gradlew assembleDebug
+
+# Run tests
+./gradlew test
+
+# Verify build
+./scripts/verify_build.sh
+```
+
 ## License
 
 MIT
