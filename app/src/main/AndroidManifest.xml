@@ -19,11 +19,30 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.Musicya"
+        android:hardwareAccelerated="true"
+        android:largeHeap="true"
         tools:targetApi="34">
+        
+        <!-- Application metadata -->
+        <meta-data
+            android:name="com.fourshil.musicya.VERSION"
+            android:value="1.2.0" />
+        <meta-data
+            android:name="com.fourshil.musicya.MIN_SDK"
+            android:value="26" />
+        <meta-data
+            android:name="com.fourshil.musicya.TARGET_SDK"
+            android:value="34" />
+        <meta-data
+            android:name="com.fourshil.musicya.BUILD_TYPE"
+            android:value="release" />
         
         <activity
             android:name=".MainActivity"
             android:exported="true"
+            android:launchMode="singleTask"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+            android:windowSoftInputMode="adjustResize"
             android:theme="@style/Theme.Musicya">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
