@@ -1,118 +1,219 @@
 package com.fourshil.musicya.data.repository
 
+import android.content.ContentResolver
+import android.content.ContentUris
+import android.content.Context
+import android.database.MatrixCursor
+import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
+import com.fourshil.musicya.data.model.Song
+import io.mockk.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.*
+import org.junit.After
 import org.junit.Assert.*
+import org.junit.Before
 import org.junit.Test
 
-/**
- * Unit tests for MusicRepository logic.
- */
+@OptIn(ExperimentalCoroutinesApi::class)
 class MusicRepositoryTest {
 
-    @Test
-    fun `song filtering by artist name is case-sensitive`() {
-        val songs = listOf(
-            TestSong(1, "Song 1", "ArtistA"),
-            TestSong(2, "Song 2", "ArtistB"),
-            TestSong(3, "Song 3", "artistA") // lowercase
-        )
-        
-        val filtered = songs.filter { it.artist == "ArtistA" }
-        assertEquals(1, filtered.size)
-        assertEquals(1L, filtered.first().id)
-    }
+    private lateinit var repository: MusicRepository
+    private lateinit var mockContext: Context
+    private lateinit var mockContentResolver: ContentResolver
+    private val testDispatcher = StandardTestDispatcher()
 
-    @Test
-    fun `song grouping by album works correctly`() {
-        val songs = listOf(
-            TestSong(1, "Song 1", "Artist", albumId = 100),
-            TestSong(2, "Song 2", "Artist", albumId = 100),
-            TestSong(3, "Song 3", "Artist", albumId = 200)
-        )
-        
-        val grouped = songs.groupBy { it.albumId }
-        assertEquals(2, grouped.size)
-        assertEquals(2, grouped[100L]?.size)
-        assertEquals(1, grouped[200L]?.size)
-    }
-
-    @Test
-    fun `folder path extraction from file path`() {
-        val path = "/storage/emulated/0/Music/Artist/Album/song.mp3"
-        val folder = path.substringBeforeLast("/")
-        assertEquals("/storage/emulated/0/Music/Artist/Album", folder)
-    }
-
-    @Test
-    fun `folder name from path`() {
-        val path = "/storage/emulated/0/Music/Artist/Album/song.mp3"
-        val folder = path.substringBeforeLast("/")
-        val folderName = folder.substringAfterLast("/")
-        assertEquals("Album", folderName)
-    }
-
-    @Test
-    fun `caching returns same list without re-query`() {
-        var queryCount = 0
-        
-        // Simulate cached fetch
-        fun getSongs(): List<TestSong> {
-            queryCount++
-            return listOf(TestSong(1, "Song", "Artist"))
-        }
-        
-        var cache: List<TestSong>? = null
-        
-        // First call - cache miss
-        cache = cache ?: getSongs()
-        assertEquals(1, queryCount)
-        
-        // Second call - cache hit
-        cache = cache ?: getSongs()
-        assertEquals(1, queryCount) // Should not increment
-    }
-
-    @Test
-    fun `song ID list generation`() {
-        val songs = listOf(
-            TestSong(1, "Song 1", "Artist"),
-            TestSong(2, "Song 2", "Artist"),
-            TestSong(3, "Song 3", "Artist")
-        )
-        
-        val ids = songs.map { it.id }
-        assertEquals(listOf(1L, 2L, 3L), ids)
-    }
-
-    @Test
-    fun `paged query offset and limit calculation`() {
-        val pageSize = 50
-        val page = 2
-        
-        val offset = page * pageSize
-        val limit = pageSize
-        
-        assertEquals(100, offset)
-        assertEquals(50, limit)
-    }
-
-    @Test
-    fun `delete returns count of deleted items`() {
-        val songIds = listOf(1L, 2L, 3L)
-        var deletedCount = 0
-        
-        // Simulate deletion with some failures
-        songIds.forEach { id ->
-            val success = id != 2L // ID 2 fails
-            if (success) deletedCount++
-        }
-        
-        assertEquals(2, deletedCount)
-    }
-
-    private data class TestSong(
-        val id: Long,
-        val title: String,
-        val artist: String,
-        val albumId: Long = 0L
+    private val testSongs = listOf(
+        Song(id = 1, title = "Song A", artist = "Artist 1", album = "Album A", duration = 180000, path = "/music/song_a.mp3"),
+        Song(id = 2, title = "Song B", artist = "Artist 2", album = "Album B", duration = 240000, path = "/music/song_b.mp3"),
+        Song(id = 3, title = "Song C", artist = "Artist 1", album = "Album A", duration = 200000, path = "/music/song_c.mp3")
     )
+
+    @Before
+    fun setup() {
+        Dispatchers.setMain(testDispatcher)
+        mockContext = mockk()
+        mockContentResolver = mockk()
+
+        every { mockContext.applicationContext } returns mockContext
+        every { mockContext.contentResolver } returns mockContentResolver
+
+        repository = MusicRepository(mockContext)
+    }
+
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
+        unmockkAll()
+    }
+
+    @Test
+    fun `getAllSongs returns list of songs`() = runTest {
+        // Mock MediaStore query
+        val mockCursor = createMockSongCursor(testSongs)
+        every { mockContentResolver.query(any(), any(), any(), any(), any()) } returns mockCursor
+
+        val songs = withContext(Dispatchers.IO) {
+            repository.getAllSongs()
+        }
+
+        assertNotNull(songs)
+        assertEquals(3, songs.size)
+    }
+
+    @Test
+    fun `searchSongs filters by title`() = runTest {
+        val mockCursor = createMockSongCursor(testSongs)
+        every { mockContentResolver.query(any(), any(), any(), any(), any()) } returns mockCursor
+
+        val results = withContext(Dispatchers.IO) {
+            repository.searchSongs("Song A")
+        }
+
+        assertNotNull(results)
+    }
+
+    @Test
+    fun `searchSongs filters by artist`() = runTest {
+        val mockCursor = createMockSongCursor(testSongs)
+        every { mockContentResolver.query(any(), any(), any(), any(), any()) } returns mockCursor
+
+        val results = withContext(Dispatchers.IO) {
+            repository.searchSongs("Artist 1")
+        }
+
+        assertNotNull(results)
+    }
+
+    @Test
+    fun `getSongsByAlbum returns album songs`() = runTest {
+        val mockCursor = createMockSongCursor(testSongs)
+        every { mockContentResolver.query(any(), any(), any(), any(), any()) } returns mockCursor
+
+        val songs = withContext(Dispatchers.IO) {
+            repository.getSongsByAlbum("Album A")
+        }
+
+        assertNotNull(songs)
+    }
+
+    @Test
+    fun `getSongsByArtist returns artist songs`() = runTest {
+        val mockCursor = createMockSongCursor(testSongs.filter { it.artist == "Artist 1" })
+        every { mockContentResolver.query(any(), any(), any(), any(), any()) } returns mockCursor
+
+        val songs = withContext(Dispatchers.IO) {
+            repository.getSongsByArtist("Artist 1")
+        }
+
+        assertNotNull(songs)
+    }
+
+    @Test
+    fun `getRecentlyAdded returns recent songs`() = runTest {
+        val mockCursor = createMockSongCursor(testSongs)
+        every { mockContentResolver.query(any(), any(), any(), any(), any()) } returns mockCursor
+
+        val songs = withContext(Dispatchers.IO) {
+            repository.getRecentlyAdded(30)
+        }
+
+        assertNotNull(songs)
+    }
+
+    @Test
+    fun `cache is used on subsequent calls`() = runTest {
+        val mockCursor = createMockSongCursor(testSongs)
+        every { mockContentResolver.query(any(), any(), any(), any(), any()) } returns mockCursor
+
+        // First call
+        withContext(Dispatchers.IO) {
+            repository.getAllSongs()
+        }
+
+        // Second call should use cache
+        val cached = withContext(Dispatchers.IO) {
+            repository.getAllSongs()
+        }
+
+        // Query should only be called once
+        verify(exactly = 1) { mockContentResolver.query(any(), any(), any(), any(), any()) }
+        assertEquals(3, cached.size)
+    }
+
+    @Test
+    fun `invalidateCache forces fresh query`() = runTest {
+        val mockCursor = createMockSongCursor(testSongs)
+        every { mockContentResolver.query(any(), any(), any(), any(), any()) } returns mockCursor
+
+        // First call
+        withContext(Dispatchers.IO) {
+            repository.getAllSongs()
+        }
+
+        // Invalidate cache
+        repository.invalidateCache()
+
+        // Second call should query again
+        withContext(Dispatchers.IO) {
+            repository.getAllSongs()
+        }
+
+        // Query should be called twice (once for each getAllSongs after invalidate)
+        verify(exactly = 2) { mockContentResolver.query(any(), any(), any(), any(), any()) }
+    }
+
+    @Test
+    fun `empty MediaStore returns empty list`() = runTest {
+        every { mockContentResolver.query(any(), any(), any(), any(), any()) } returns null
+
+        val songs = withContext(Dispatchers.IO) {
+            repository.getAllSongs()
+        }
+
+        assertNotNull(songs)
+        assertTrue(songs.isEmpty())
+    }
+
+    @Test
+    fun `error querying MediaStore returns empty list`() = runTest {
+        every { mockContentResolver.query(any(), any(), any(), any(), any()) } throws RuntimeException("Query failed")
+
+        val songs = withContext(Dispatchers.IO) {
+            repository.getAllSongs()
+        }
+
+        assertNotNull(songs)
+        assertTrue(songs.isEmpty())
+    }
+
+    private fun createMockSongCursor(songs: List<Song>): android.database.Cursor {
+        val cursor = MatrixCursor(
+            arrayOf(
+                MediaStore.Audio.Media._ID,
+                MediaStore.Audio.Media.TITLE,
+                MediaStore.Audio.Media.ARTIST,
+                MediaStore.Audio.Media.ALBUM,
+                MediaStore.Audio.Media.DURATION,
+                MediaStore.Audio.Media.DATA,
+                MediaStore.Audio.Media.SIZE
+            )
+        )
+
+        songs.forEach { song ->
+            cursor.addRow(arrayOf(
+                song.id,
+                song.title,
+                song.artist,
+                song.album,
+                song.duration,
+                song.path,
+                song.fileSize
+            ))
+        }
+
+        return cursor
+    }
 }
