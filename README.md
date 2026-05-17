@@ -2,8 +2,6 @@
 
 An offline music player for Android with a Neo-Brutalist design. Plays local audio files — no streaming, no internet required.
 
-![android music player](https://media.giphy.com/media/l0HlBO7eyXzSZkJri/giphy.gif)
-
 ## Features
 
 ### Core Playback
@@ -11,46 +9,50 @@ An offline music player for Android with a Neo-Brutalist design. Plays local aud
 - **Playback Controls** — Play, pause, skip, seek, shuffle, repeat
 - **Playback Speed** — Adjust playback from 0.5x to 2.0x
 - **Crossfade** — Smooth transitions between tracks
-- **Sleep Timer** — Auto-stop playback after set duration
+- **Sleep Timer** — Auto-stop playback after set duration with fade-out
 - **Audio Focus** — Proper handling of interruptions (calls, notifications)
 
 ### Organization & Library
-- **Playlists** — Create, edit, merge, export, and import playlists
+- **Playlists** — Create, edit, merge, export, and import playlists as JSON
 - **Smart Playlists** — Recently Added, Most Played, Favorites
 - **Genres** — Browse music by detected genre from file paths
 - **Folders** — Navigate music by folder structure with breadcrumb support
 - **Multi-Select** — Batch operations on multiple songs
+- **Duplicate Detection** — Find and remove duplicate songs by name, path, or duration
 
 ### Search & Discovery
-- **Fuzzy Search** — Find songs even with typos
+- **Fuzzy Search** — Find songs even with typos using Levenshtein distance
 - **Recent Searches** — Quick access to past queries
 - **Albums** — Browse by album with track listings
-- **Artists** — View discography by artist
+- **Artists** — View full discography by artist
+- **Statistics** — Listening history, play counts, library overview
 
 ### User Experience
 - **Car Mode** — Large touch targets for safe driving
 - **Quick Settings Tile** — Control playback from notification shade
-- **Home Screen Widget** — 4x2 widget with playback controls
+- **Home Screen Widget** — 4x2 widget with album art and playback controls
 - **Lock Screen Controls** — Full media controls on lock screen
 - **Gesture Support** — Swipe to skip tracks
 - **Onboarding** — Feature introduction for new users
+- **Haptic Feedback** — Tactile response on interactions
 
 ### Customization
-- **Equalizer** — 10 presets + custom 8-band EQ
+- **Equalizer** — 10 presets (Pop, Rock, Jazz, Classical, Hip Hop, Electronic, R&B, Country, Vocal, Flat) + custom 8-band EQ
 - **Theme** — Light/dark mode with primary color customization
 - **Animated Transitions** — Smooth page and theme transitions
 
 ### Data Management
 - **Library Import/Export** — Backup and restore library metadata
-- **Settings Backup** — Export/import app settings
-- **Duplicate Detection** — Find and remove duplicate songs
-- **Folder Sync** — Auto-detect new music files
+- **Settings Backup** — Export/import app settings as JSON
+- **Folder Sync** — Auto-detect new music files with FileObserver
+- **Playlist Export** — Share playlists as JSON files
 
-### Technical Features
-- **Paging** — Efficient handling of large music libraries (1000+ songs)
-- **Caching** — In-memory and disk caching for fast loading
-- **Thread-Safe** — Proper concurrency handling
+### Technical
+- **Paging 3** — Efficient handling of large music libraries (1000+ songs)
+- **Caching** — In-memory and disk caching for album art and metadata
+- **Thread-Safe** — Proper concurrency handling with mutex locks
 - **Accessibility** — Full TalkBack support with semantic descriptions
+- **R8 Optimized** — Code shrinking for smaller APK size
 
 ## Tech Stack
 
@@ -60,51 +62,11 @@ An offline music player for Android with a Neo-Brutalist design. Plays local aud
 - **Room** — Local SQLite database
 - **ExoPlayer / Media3** — Audio playback engine
 - **Paging 3** — Efficient large list handling
+- **Coil** — Image loading with memory and disk caching
 - **Material 3** — Modern design system
 
-**Min SDK:** Android 8.0 (API 26)  
+**Min SDK:** Android 8.0 (API 26)
 **Target SDK:** Android 14 (API 34)
-
-## What's New in v1.1.0
-
-### Enhanced Playback
-- Audio focus management for proper interruption handling
-- Lock screen media controls with full playback state
-- Quick Settings tile for notification shade control
-- Playback history and statistics tracking
-
-### New Screens
-- **Car Mode** — Safe driving with extra-large controls
-- **Genre Browser** — Music organized by detected genre
-- **Album Detail** — Track listings with disc info
-- **Artist Detail** — Discography view
-- **Statistics** — Listening history and library overview
-- **Lyrics** — Online lyrics fetching
-
-### Improved Organization
-- Folder breadcrumb navigation
-- Playlist merge utility
-- Multi-select batch operations
-- Drag-and-drop queue reordering
-- Smart shuffle around current track
-
-### Better Search
-- Fuzzy search with Levenshtein distance
-- Recent searches history
-- Results sorted by relevance
-
-### System Integration
-- Home screen widget with album art
-- App shortcuts (Shuffle All, Random, etc.)
-- Deep links for sharing and navigation
-- Queue persistence across restarts
-
-### UI/UX Polish
-- Animated theme transitions
-- Haptic feedback on interactions
-- Enhanced onboarding flow
-- Error states with retry actions
-- Splash screen for faster perceived startup
 
 ## Building
 
@@ -116,103 +78,74 @@ An offline music player for Android with a Neo-Brutalist design. Plays local aud
 
 ### Steps
 
-1. Clone the repository:
-
 ```bash
 git clone https://github.com/4shil/Musicya.git
-```
-
-2. Open the project in Android Studio.
-
-3. Sync Gradle dependencies.
-
-4. Run on a device or emulator (API 26+).
-
-```bash
+cd Musicya
 ./gradlew assembleDebug
 ```
 
-The APK will be at `app/build/outputs/apk/debug/app-debug.apk`.
+The debug APK will be at `app/build/outputs/apk/debug/app-debug.apk`.
+
+For release builds:
+
+```bash
+./gradlew assembleRelease
+```
 
 ## Project Structure
 
 ```
 app/src/main/java/com/fourshil/musicya/
+├── MusicyaApp.kt          # Application class with Hilt and crash reporting
+├── MainActivity.kt        # Main activity with splash screen
 ├── data/
-│   ├── db/             # Room entities and DAO (Song, Playlist, Favorites, History)
-│   ├── model/          # Data models
-│   └── repository/     # MusicRepository, paging source
-├── di/                 # Hilt modules
-├── player/             # Audio engine, audio focus, crossfade
-├── service/            # Media notification, lock screen, background scan
+│   ├── db/                # Room entities and DAO (Song, Playlist, Favorites, History)
+│   ├── model/             # Data models
+│   └── repository/        # MusicRepository with caching and paging
+├── di/                    # Hilt dependency injection modules
+├── player/                # Audio engine, audio focus, crossfade
+├── service/               # Media notification, lock screen, background scan
 ├── ui/
-│   ├── album/          # Album detail screen
-│   ├── artist/         # Artist detail screen
-│   ├── carmode/        # Car mode UI
-│   ├── equalizer/      # Equalizer presets and custom bands
-│   ├── genre/          # Genre browser
-│   ├── library/        # Main library, songs, folders, statistics
-│   ├── lyrics/         # Online lyrics fetching
-│   ├── nowplaying/     # Full player screen
-│   ├── onboarding/     # First-launch onboarding
-│   ├── playlist/       # Playlist screens
-│   ├── queue/          # Queue management
-│   ├── search/         # Search with fuzzy matching
-│   ├── settings/       # Settings, sleep timer, about
-│   └── theme/          # Colors, typography, Neo-Brutalist design
-├── util/               # Utilities (album art, backup, cleanup, etc.)
-└── widget/             # Home screen widget
+│   ├── album/             # Album detail screen and ViewModel
+│   ├── artist/            # Artist detail screen and ViewModel
+│   ├── carmode/           # Car mode UI
+│   ├── components/        # Shared UI components (mini player, multi-select, etc.)
+│   ├── equalizer/         # Equalizer presets and custom bands
+│   ├── genre/             # Genre browser
+│   ├── library/           # Main library, songs, folders, statistics
+│   ├── lyrics/            # Online lyrics fetching
+│   ├── navigation/        # Navigation graph and animations
+│   ├── nowplaying/        # Full player screen
+│   ├── onboarding/        # First-launch onboarding
+│   ├── playlist/          # Playlist screens
+│   ├── queue/             # Queue management with drag-and-drop
+│   ├── search/            # Search with fuzzy matching
+│   ├── settings/          # Settings, sleep timer, about
+│   ├── theme/             # Colors, typography, Neo-Brutalist design
+│   └── widget/            # Home screen widget
+└── util/                  # Utilities (album art, backup, cleanup, etc.)
 ```
 
 ## Permissions
 
-- `READ_MEDIA_AUDIO` — Read audio files from device storage
-- `READ_EXTERNAL_STORAGE` (API < 33) — Legacy storage access
-- `FOREGROUND_SERVICE` — Keep playback running in background
-- `FOREGROUND_SERVICE_MEDIA_PLAYBACK` — Media playback service
-- `WAKE_LOCK` — Prevent CPU sleep during playback
-- `RECEIVE_BOOT_COMPLETED` — Restore widget state on reboot
-- `POST_NOTIFICATIONS` — Show playback notifications (Android 13+)
+| Permission | Purpose |
+|---|---|
+| `READ_MEDIA_AUDIO` | Read audio files from device storage |
+| `READ_EXTERNAL_STORAGE` | Legacy storage access (API < 33) |
+| `FOREGROUND_SERVICE` | Keep playback running in background |
+| `FOREGROUND_SERVICE_MEDIA_PLAYBACK` | Media playback service |
+| `WAKE_LOCK` | Prevent CPU sleep during playback |
+| `POST_NOTIFICATIONS` | Show playback notifications (Android 13+) |
 
 ## Architecture
 
-Musicya follows **Clean Architecture** with proper separation:
+Musicya follows **Clean Architecture** with proper separation of concerns:
 
-- **UI Layer** — Compose screens and ViewModels
-- **Domain Layer** — Use cases and business logic
+- **UI Layer** — Compose screens with ViewModels and StateFlow
 - **Data Layer** — Repositories, Room database, MediaStore access
+- **Dependency Injection** — Hilt modules for loose coupling
 
-## Project Statistics
-
-| Metric | Value |
-|--------|-------|
-| Total Commits | 95 (session) / 244 (total) |
-| Days of Development | 5 |
-| Kotlin Source Files | 142 |
-| XML Resource Files | 12 |
-| Markdown Docs | 23 |
-| Lines of Code | 21,344 |
-| Test Files | 10+ |
-| Min SDK | 26 (Android 8.0) |
-| Target SDK | 34 (Android 14) |
-| Release APK Size | ~15MB (with R8) |
-
-## Quick Start
-
-```bash
-# Clone
-git clone https://github.com/4shil/Musicya.git
-cd Musicya
-
-# Build
-./gradlew assembleDebug
-
-# Run tests
-./gradlew test
-
-# Verify build
-./scripts/verify_build.sh
-```
+State is managed reactively using Kotlin `StateFlow` and `collectAsState()`. The player communicates through a `PlayerController` interface, keeping the UI decoupled from ExoPlayer internals.
 
 ## License
 
