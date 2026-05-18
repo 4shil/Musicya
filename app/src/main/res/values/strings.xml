@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">LYRA</string>
+    <string name="app_name">Musicya</string>
     
     <!-- Navigation -->
     <string name="nav_songs">Songs</string>
@@ -99,5 +99,70 @@
     <string name="cd_back">Go back</string>
     <string name="cd_close">Close</string>
     <string name="cd_more_options">More options</string>
-</resources>
+    <string name="cd_play_pause">Play or pause</string>
+    <string name="cd_skip_next">Skip to next track</string>
+    <string name="cd_skip_previous">Skip to previous track</string>
+    <string name="cd_shuffle">Toggle shuffle</string>
+    <string name="cd_repeat">Toggle repeat mode</string>
+    <string name="cd_add_to_favorites">Add to favorites</string>
+    <string name="cd_drag_handle">Drag to reorder</string>
+    <string name="cd_checkbox">Select song</string>
+    
+    <!-- Car Mode -->
+    <string name="car_mode">Car Mode</string>
+    <string name="car_mode_enabled">Car mode is active</string>
+    
+    <!-- Statistics -->
+    <string name="statistics">Statistics</string>
+    <string name="total_songs">Total Songs</string>
+    <string name="total_duration">Total Duration</string>
+    <string name="listening_time">Listening Time</string>
+    <string name="most_played">Most Played</string>
+    <string name="recently_played">Recently Played</string>
+    
+    <!-- Deep Links -->
+    <string name="deep_link_error">Unable to open link</string>
+    <string name="deep_link_song_not_found">Song not found</string>
+    
+    <!-- Quick Actions -->
+    <string name="shuffle_all">Shuffle All</string>
+    <string name="random_play">Random Play</string>
+    
+    <!-- Backup -->
+    <string name="backup">Backup</string>
+    <string name="restore">Restore</string>
+    <string name="backup_created">Backup created successfully</string>
+    <string name="backup_restored">Backup restored successfully</string>
+    <string name="backup_failed">Backup failed</string>
+    
+    <!-- Multi-Select -->
+    <string name="selected_count">%1$d selected</string>
+    <string name="select_all">Select All</string>
+    <string name="deselect_all">Deselect All</string>
+    <string name="delete_selected">Delete Selected</string>
+    
+    <!-- File Info -->
+    <string name="file_info">File Info</string>
+    <string name="file_path">Path</string>
+    <string name="file_size">Size</string>
+    <string name="bitrate">Bitrate</string>
+    <string name="sample_rate">Sample Rate</string>
+    <string name="channels">Channels</string>
+    
+    <!-- Errors -->
+    <string name="error_loading_songs">Failed to load songs</string>
+    <string name="error_no_music_found">No music files found on device</string>
+    <string name="error_permission_denied">Permission denied</string>
+    <string name="retry">Retry</string>
+    
+    <!-- Empty States -->
+    <string name="empty_library">Your music library is empty</string>
+    <string name="empty_search">No songs found for your search</string>
+    <string name="empty_playlist">This playlist is empty</string>
+    <string name="empty_queue">No songs in queue</string>
+    <string name="empty_recently_played">No recently played songs</string>
+    
+    <!-- Version -->
+    <string name="version">Version %1$s</string>
+    <string name="build_number">Build %1$d</string>
 

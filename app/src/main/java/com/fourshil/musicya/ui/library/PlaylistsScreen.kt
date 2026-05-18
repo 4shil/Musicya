@@ -13,7 +13,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -21,15 +20,12 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.fourshil.musicya.data.db.Playlist
-
 import com.fourshil.musicya.ui.components.CreatePlaylistDialog
 import com.fourshil.musicya.ui.components.PlaylistArtGrid
 import com.fourshil.musicya.ui.components.NeoCard
 import com.fourshil.musicya.ui.theme.NeoCoral
 import com.fourshil.musicya.ui.theme.NeoAmber
 import com.fourshil.musicya.ui.theme.NeoDimens
-import com.fourshil.musicya.ui.theme.Slate50
-import com.fourshil.musicya.ui.theme.Slate900
 
 import com.fourshil.musicya.ui.components.TopNavItem
 import com.fourshil.musicya.ui.components.TopNavigationChips
@@ -83,7 +79,7 @@ fun PlaylistsScreen(
                                 .background(MaterialTheme.colorScheme.surfaceVariant),
                              contentAlignment = Alignment.Center
                         ) {
-                            Icon(Icons.Default.Add, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Icon(Icons.Default.Add, contentDescription = "Create new playlist", tint = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                         
                         Spacer(modifier = Modifier.width(16.dp))
@@ -232,8 +228,8 @@ fun PlaylistArtisticItem(
                     PlaylistArtGrid(uris = artUris, size = 56.dp, isScrolling = isScrolling)
                 } else {
                     Icon(
-                         Icons.Default.Folder, 
-                         null, 
+                         Icons.Default.Folder,
+                         contentDescription = "Playlist",
                          tint = MaterialTheme.colorScheme.onSurface,
                          modifier = Modifier.size(24.dp)
                     )
@@ -259,7 +255,7 @@ fun PlaylistArtisticItem(
             }
             
             IconButton(onClick = onRename) {
-                Icon(Icons.Default.Edit, null, tint = Color.Black)
+                Icon(Icons.Default.Edit, contentDescription = "Rename playlist", tint = MaterialTheme.colorScheme.onSurface)
             }
         }
     }

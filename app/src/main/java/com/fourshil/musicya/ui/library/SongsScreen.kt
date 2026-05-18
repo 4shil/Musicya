@@ -11,6 +11,10 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.SelectAll
 import androidx.compose.material3.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import kotlinx.coroutines.launch
@@ -32,7 +36,7 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
-import androidx.paging.compose.itemContentType
+import androidx.paging.compose.LazyPagingItems
 
 /**
  * Clean Minimalistic Songs Screen
@@ -78,15 +82,22 @@ fun SongsScreen(
     
     LaunchedEffect(permissionsState.allPermissionsGranted) {
         if (permissionsState.allPermissionsGranted) {
-            viewModel.refresh()
-            pagedSongs.refresh()
+            try {
+                viewModel.refresh()
+                pagedSongs.refresh()
+            } catch (e: Exception) {
+                snackbarHostState.showSnackbar("Failed to load music library")
+            }
         } else {
             permissionsState.launchMultiplePermissionRequest()
         }
     }
 
+    val snackbarHostState = remember { SnackbarHostState() }
+
     NeoScaffold(
         containerColor = MaterialTheme.colorScheme.background,
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             if (selectionState.isSelectionMode) {
                 val scope = rememberCoroutineScope()
@@ -159,10 +170,7 @@ fun SongsScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .then(
-                    if (selectionState.isSelectionMode) Modifier.padding(padding)
-                    else Modifier
-                )
+                .padding(padding)
         ) {
             when {
                 !permissionsState.allPermissionsGranted -> {
@@ -213,12 +221,30 @@ fun SongsScreen(
                 }
                 
                 else -> {
-                    // Song list with fade edge
+                    // Song list with fade edge and pull-to-refresh
+                    val isRefreshing by remember { mutableStateOf(false) }
+                    val pullRefreshState = rememberPullToRefreshState()
                     val listState = androidx.compose.foundation.lazy.rememberLazyListState()
                     val isScrolling by remember { derivedStateOf { listState.isScrollInProgress } }
-                    val fadeHeight = 24.dp // Height of the fade effect
+                    val fadeHeight = NeoDimens.SpacingXXL // Height of the fade effect
+                    val fadeGradient = remember {
+                        Brush.verticalGradient(
+                            colors = listOf(
+                                MaterialTheme.colorScheme.background,
+                                MaterialTheme.colorScheme.background.copy(alpha = 0f)
+                            )
+                        )
+                    }
                     
-                    Box(modifier = Modifier.fillMaxSize()) {
+                    PullToRefreshBox(
+                        isRefreshing = isRefreshing,
+                        onRefresh = {
+                            viewModel.refresh()
+                        },
+                        state = pullRefreshState,
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        Box(modifier = Modifier.fillMaxSize()) {
                         LazyColumn(
                             modifier = Modifier.fillMaxSize(),
                             state = listState,
@@ -231,7 +257,7 @@ fun SongsScreen(
                         items(
                             count = pagedSongs.itemCount,
                             key = pagedSongs.itemKey { it.id },
-                            contentType = pagedSongs.itemContentType { "song" }
+                            contentType = { "song" }
                         ) { index ->
                             val song = pagedSongs[index]
                             
@@ -241,7 +267,7 @@ fun SongsScreen(
                                 SongListItem(
                                     song = song,
                                     isSelected = isSelected,
-                                    inSelectionMode = selectionState.isSelectionMode,
+                                    isSelectionMode = selectionState.isSelectionMode,
                                     isScrolling = isScrolling,
                                     onClick = {
                                         if (selectionState.isSelectionMode) {
@@ -277,17 +303,10 @@ fun SongsScreen(
                                 .fillMaxWidth()
                                 .height(fadeHeight)
                                 .align(Alignment.TopCenter)
-                                .background(
-                                    Brush.verticalGradient(
-                                        colors = listOf(
-                                            MaterialTheme.colorScheme.background,
-                                            MaterialTheme.colorScheme.background.copy(alpha = 0f)
-                                        )
-                                    )
-                                )
+                                .background(fadeGradient)
                         )
                     }
-                }
+                    }
             }
         }
     }

@@ -30,6 +30,7 @@ class NowPlayingViewModel @Inject constructor(
     val isPlaying = playerController.isPlaying
     val shuffleEnabled = playerController.shuffleEnabled
     val repeatMode = playerController.repeatMode
+    val crossfadeEnabled = playerController.crossfadeEnabled
     
     // Use PlayerController's position/duration directly
     val position = playerController.currentPosition
@@ -79,6 +80,7 @@ class NowPlayingViewModel @Inject constructor(
     fun skipToPrevious() = playerController.skipToPrevious()
     fun toggleShuffle() = playerController.toggleShuffle()
     fun toggleRepeat() = playerController.toggleRepeat()
+    fun toggleCrossfade() = playerController.toggleCrossfade()
     
     fun seekTo(positionMs: Long) {
         playerController.seekTo(positionMs)
@@ -94,6 +96,17 @@ class NowPlayingViewModel @Inject constructor(
     fun toggleLyricsView() {
         _showLyrics.value = !_showLyrics.value
     }
+
+    private val _showAddToPlaylist = MutableStateFlow(false)
+    val showAddToPlaylist = _showAddToPlaylist.asStateFlow()
+
+    private val _showMetadataEditor = MutableStateFlow(false)
+    val showMetadataEditor = _showMetadataEditor.asStateFlow()
+
+    fun openAddToPlaylist() { _showAddToPlaylist.value = true }
+    fun closeAddToPlaylist() { _showAddToPlaylist.value = false }
+    fun openMetadataEditor() { _showMetadataEditor.value = true }
+    fun closeMetadataEditor() { _showMetadataEditor.value = false }
     
     /**
      * Get the current lyric line index based on playback position.

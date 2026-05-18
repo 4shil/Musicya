@@ -46,6 +46,7 @@ fun SearchScreen(
     val albums by viewModel.albums.collectAsState()
     val artists by viewModel.artists.collectAsState()
     val isSearching by viewModel.isSearching.collectAsState()
+    val recentSearches by viewModel.recentSearches.collectAsState()
 
     NeoScaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -96,14 +97,19 @@ fun SearchScreen(
                     ) {
                         Icon(
                             Icons.Default.Search,
-                            contentDescription = null,
+                            contentDescription = "Search",
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.size(NeoDimens.IconMedium)
                         )
                         Spacer(modifier = Modifier.width(NeoDimens.SpacingM))
                         BasicTextField(
                             value = query,
-                            onValueChange = { viewModel.onQueryChange(it) },
+                            onValueChange = {
+                            viewModel.onQueryChange(it)
+                            if (it.isNotBlank()) {
+                                viewModel.saveRecentSearch(it)
+                            }
+                        },
                             textStyle = MaterialTheme.typography.bodyLarge.copy(
                                 color = MaterialTheme.colorScheme.onSurface
                             ),
@@ -164,7 +170,7 @@ fun SearchScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Search,
-                            contentDescription = null,
+                            contentDescription = "Search music",
                             modifier = Modifier.size(NeoDimens.IconHero),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                         )
@@ -191,7 +197,7 @@ fun SearchScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.SearchOff,
-                            contentDescription = null,
+                            contentDescription = "No search results",
                             modifier = Modifier.size(NeoDimens.IconHero),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                         )
@@ -333,7 +339,7 @@ private fun SearchResultItem(
                 } else {
                     Icon(
                         imageVector = if (isArtist) Icons.Default.Person else Icons.Default.Album,
-                        contentDescription = null,
+                        contentDescription = if (isArtist) "Artist" else "Album",
                         modifier = Modifier.size(NeoDimens.IconMedium),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -360,7 +366,7 @@ private fun SearchResultItem(
 
             Icon(
                 imageVector = Icons.Default.ChevronRight,
-                contentDescription = null,
+                contentDescription = "Open",
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(NeoDimens.IconMedium)
             )

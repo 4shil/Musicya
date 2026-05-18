@@ -28,6 +28,13 @@ class QueueViewModel @Inject constructor(
         playerController.controller?.removeMediaItem(index)
     }
 
+    fun moveItem(fromIndex: Int, toIndex: Int) {
+        val controller = playerController.controller ?: return
+        val items = controller.mediaItemCount
+        if (fromIndex < 0 || fromIndex >= items || toIndex < 0 || toIndex >= items) return
+        controller.moveMediaItem(fromIndex, toIndex)
+    }
+
     fun clearQueue() {
         playerController.controller?.clearMediaItems()
     }

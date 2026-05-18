@@ -131,6 +131,13 @@ fun MusicyaTheme(
         else -> LightColorScheme
     }
     
+    // Animate color scheme transitions
+    val animatedColorScheme = androidx.compose.animation.animateColorAsState(
+        targetValue = colorScheme.background,
+        animationSpec = androidx.compose.animation.core.tween(500),
+        label = "bg"
+    )
+    
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {

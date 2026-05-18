@@ -11,6 +11,8 @@ data class Playlist(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     val name: String,
+    val description: String = "",
+    val coverArtPath: String? = null,
     val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis()
 )

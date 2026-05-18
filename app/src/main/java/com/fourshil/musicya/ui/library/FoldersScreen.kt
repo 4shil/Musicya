@@ -9,12 +9,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Folder
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,6 +42,12 @@ fun FoldersScreen(
     val songs by viewModel.songs.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
 
+    // Breadcrumb navigation state
+    var currentPath by remember { mutableStateOf<String?>(null) }
+    val breadcrumbParts = remember(currentPath) {
+        currentPath?.split("/")?.filter { it.isNotBlank() } ?: emptyList()
+    }
+    
     val listState = androidx.compose.foundation.lazy.rememberLazyListState()
     val isScrolling by remember { derivedStateOf { listState.isScrollInProgress } }
 
@@ -51,6 +60,20 @@ fun FoldersScreen(
         ),
         verticalArrangement = Arrangement.spacedBy(NeoDimens.SpacingXS)
     ) {
+        // Breadcrumb navigation
+        if (breadcrumbParts.isNotEmpty()) {
+            item {
+                BreadcrumbNavigation(
+                    parts = breadcrumbParts,
+                    onPartClick = { index ->
+                        val newPath = "/" + breadcrumbParts.subList(0, index + 1).joinToString("/")
+                        currentPath = newPath
+                    },
+                    onRootClick = { currentPath = null }
+                )
+            }
+        }
+        
         when {
             isLoading -> {
                 item {
@@ -75,7 +98,7 @@ fun FoldersScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Folder,
-                                contentDescription = null,
+                                contentDescription = "No folders",
                                 modifier = Modifier.size(NeoDimens.IconHero),
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                             )
@@ -153,7 +176,7 @@ private fun FolderListItem(
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                          Icon(
                             imageVector = Icons.Default.Folder,
-                            contentDescription = null,
+                            contentDescription = "Folder",
                             modifier = Modifier.size(NeoDimens.IconMedium),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -181,10 +204,59 @@ private fun FolderListItem(
 
             Icon(
                 imageVector = Icons.Default.ChevronRight,
-                contentDescription = null,
+                contentDescription = "View folder",
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(NeoDimens.IconMedium)
             )
+        }
+    }
+}
+
+/**
+ * Breadcrumb navigation bar for folder hierarchy.
+ */
+@Composable
+private fun BreadcrumbNavigation(
+    parts: List<String>,
+    onPartClick: (Int) -> Unit,
+    onRootClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = NeoDimens.ScreenPadding, vertical = NeoDimens.SpacingS),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // Root button
+        TextButton(onClick = onRootClick) {
+            Icon(
+                imageVector = Icons.Default.Home,
+                contentDescription = "Root",
+                modifier = Modifier.size(18.dp)
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Text("Root", style = MaterialTheme.typography.labelMedium)
+        }
+
+        // Breadcrumb parts
+        parts.forEachIndexed { index, part ->
+            Icon(
+                imageVector = Icons.Default.ChevronRight,
+                contentDescription = null,
+                modifier = Modifier.size(16.dp),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            TextButton(
+                onClick = { onPartClick(index) },
+                contentPadding = PaddingValues(horizontal = 4.dp, vertical = 0.dp)
+            ) {
+                Text(
+                    text = part,
+                    style = MaterialTheme.typography.labelMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         }
     }
 }

@@ -34,9 +34,14 @@ class LibraryViewModel @Inject constructor(
     private val musicDao: MusicDao
 ) : ViewModel() {
 
-    // Paging for UI List (Scalability)
+    // Paging for UI List (Scalability) - optimized with larger page size
     val pagedSongs: Flow<PagingData<Song>> = Pager(
-        config = PagingConfig(pageSize = 50, enablePlaceholders = false),
+        config = PagingConfig(
+            pageSize = 30,
+            enablePlaceholders = false,
+            prefetchDistance = 10,
+            initialLoadSize = 60
+        ),
         pagingSourceFactory = { SongsPagingSource(repository) }
     ).flow.cachedIn(viewModelScope)
 
@@ -62,7 +67,7 @@ class LibraryViewModel @Inject constructor(
     
     // Playlists
     val playlists = musicDao.getAllPlaylists()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(3000), emptyList())
 
     init {
         playerController.connect()
@@ -231,6 +236,16 @@ class LibraryViewModel @Inject constructor(
      */
     suspend fun getAllSongIds(): List<Long> {
         return repository.getAllSongIds()
+    }
+    
+    override fun onCleared() {
+        super.onCleared()
+        // Clear large data structures on ViewModel destruction
+        _songs.value = emptyList()
+        _albums.value = emptyList()
+        _artists.value = emptyList()
+        _folders.value = emptyList()
+        _selectedSongs.value = emptySet()
     }
 }
 

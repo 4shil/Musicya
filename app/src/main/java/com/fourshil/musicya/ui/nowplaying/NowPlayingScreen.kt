@@ -1,5 +1,6 @@
 package com.fourshil.musicya.ui.nowplaying
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
@@ -29,7 +30,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
-// import coil.request.Precision (Removed)
 import com.fourshil.musicya.ui.components.LyricsBottomSheet
 import com.fourshil.musicya.ui.components.NeoButton
 import com.fourshil.musicya.ui.components.NeoProgressBar
@@ -54,6 +54,9 @@ fun NowPlayingScreen(
     var showLyrics by remember { mutableStateOf(false) }
     var showMenu by remember { mutableStateOf(false) }
     var showDetails by remember { mutableStateOf(false) }
+    
+    // Handle back press to minimize player
+    BackHandler { onBack() }
  
     // Colors from HTML spec
     val bgLight = NeoBackground
@@ -70,7 +73,6 @@ fun NowPlayingScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
                 .padding(padding)
                 .padding(horizontal = NeoDimens.SpacingXXL), // px-8 equivalent
             horizontalAlignment = Alignment.CenterHorizontally
@@ -93,7 +95,7 @@ fun NowPlayingScreen(
                     shadowSize = 2.dp
                 ) {
                     // Use ExpandMore to match specific design request "Expand" button looks like "down" usually for sheet-like player
-                    Icon(Icons.Default.ExpandMore, null, tint = MaterialTheme.colorScheme.onSurface)
+                    Icon(Icons.Default.ExpandMore, contentDescription = "Minimize player", tint = MaterialTheme.colorScheme.onSurface)
                 }
                 
                 Text(
@@ -115,7 +117,7 @@ fun NowPlayingScreen(
                         shape = RoundedCornerShape(NeoDimens.CornerLarge),
                         shadowSize = NeoDimens.ShadowSubtle
                     ) {
-                        Icon(Icons.Default.MoreHoriz, null, tint = MaterialTheme.colorScheme.onSurface)
+Icon(Icons.Default.MoreHoriz, contentDescription = "More options", tint = MaterialTheme.colorScheme.onSurface)
                     }
 
                     MaterialTheme(
@@ -134,7 +136,7 @@ fun NowPlayingScreen(
                                     showMenu = false
                                     showDetails = true
                                 },
-                                leadingIcon = { Icon(Icons.Default.Info, null, tint = MaterialTheme.colorScheme.onSurface) }
+                                leadingIcon = { Icon(Icons.Default.Info, contentDescription = "Song details", tint = MaterialTheme.colorScheme.onSurface) }
                             )
                         }
                     }
@@ -244,9 +246,9 @@ fun NowPlayingScreen(
                 ) {
                     Icon(
                         if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                        null,
+                        contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites",
                         // Tint needs to be visible against default button bg (Surface)
-                        tint = if (isFavorite) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface 
+                        tint = if (isFavorite) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
                     )
                 }
             }
@@ -313,8 +315,8 @@ fun NowPlayingScreen(
                     borderWidth = NeoDimens.BorderBold
                 ) {
                     Icon(
-                        Icons.Default.Shuffle, 
-                        null, 
+                        Icons.Default.Shuffle,
+                        contentDescription = "Shuffle",
                         modifier = Modifier.size(NeoDimens.IconMedium),
                         tint = if (shuffleEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                     )
@@ -329,9 +331,9 @@ fun NowPlayingScreen(
                     shadowSize = NeoDimens.ShadowProminent
                 ) {
                     Icon(
-                        Icons.Default.SkipPrevious, 
-                        null, 
-                        modifier = Modifier.size(36.dp), 
+                        Icons.Default.SkipPrevious,
+                        contentDescription = "Previous track",
+                        modifier = Modifier.size(36.dp),
                         tint = MaterialTheme.colorScheme.onSurface
                     )
                 }
@@ -346,7 +348,7 @@ fun NowPlayingScreen(
                 ) {
                     Icon(
                         if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
-                        null,
+                        contentDescription = if (isPlaying) "Pause" else "Play",
                         tint = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier.size(60.dp) // text-6xl
                     )
@@ -361,9 +363,9 @@ fun NowPlayingScreen(
                     shadowSize = NeoDimens.ShadowProminent
                 ) {
                     Icon(
-                        Icons.Default.SkipNext, 
-                        null, 
-                        modifier = Modifier.size(36.dp), 
+                        Icons.Default.SkipNext,
+                        contentDescription = "Next track",
+                        modifier = Modifier.size(36.dp),
                         tint = MaterialTheme.colorScheme.onSurface
                     )
                 }
@@ -378,7 +380,7 @@ fun NowPlayingScreen(
                 ) {
                      Icon(
                          if (repeatMode == 1) Icons.Default.RepeatOne else Icons.Default.Repeat,
-                         null, 
+                         contentDescription = "Repeat",
                          modifier = Modifier.size(24.dp),
                          tint = if (repeatMode != 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                      )
@@ -392,14 +394,23 @@ fun NowPlayingScreen(
                 modifier = Modifier.fillMaxWidth().padding(horizontal = NeoDimens.SpacingL),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
+                // Crossfade toggle
+                var crossfadeEnabled by remember { mutableStateOf(viewModel.crossfadeEnabled.value) }
+                ActionItem(
+                    icon = Icons.Default.Transition,
+                    label = "CROSSFADE",
+                    onClick = {
+                        viewModel.toggleCrossfade()
+                        crossfadeEnabled = !crossfadeEnabled
+                    },
+                    isActive = crossfadeEnabled
+                )
                 ActionItem(icon = Icons.Default.Lyrics, label = "LYRICS", onClick = { showLyrics = true })
                 ActionItem(icon = Icons.Default.QueueMusic, label = "QUEUE", onClick = onQueueClick)
-                
-                 val context = LocalContext.current
-                 ActionItem(
-                     icon = Icons.Default.Share, 
-                     label = "SHARE", 
-                     onClick = {
+                ActionItem(
+                    icon = Icons.Default.Share, 
+                    label = "SHARE", 
+                    onClick = {
                         currentSong?.let { song ->
                             val sendIntent: android.content.Intent = android.content.Intent().apply {
                                 action = android.content.Intent.ACTION_SEND
@@ -409,8 +420,8 @@ fun NowPlayingScreen(
                             val shareIntent = android.content.Intent.createChooser(sendIntent, null)
                             context.startActivity(shareIntent)
                         }
-                     }
-                 )
+                    }
+                )
             }
             
             Spacer(modifier = Modifier.height(NeoDimens.SpacingXXL))
@@ -451,26 +462,25 @@ fun NowPlayingScreen(
 
 
 @Composable
-fun ActionItem(icon: ImageVector, label: String, onClick: () -> Unit) {
+fun ActionItem(icon: ImageVector, label: String, onClick: () -> Unit, isActive: Boolean = false) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.clickable(onClick = onClick, indication = null, interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() })
     ) {
-        NeoButton(
-            onClick = onClick,
-            modifier = Modifier.size(NeoDimens.TouchTargetMin),
-            shape = RoundedCornerShape(NeoDimens.CornerMedium),
-            shadowSize = NeoDimens.ShadowSubtle
-        ) {
-            Icon(icon, contentDescription = label, modifier = Modifier.size(NeoDimens.IconMedium))
-        }
-        Spacer(modifier = Modifier.height(NeoDimens.SpacingS))
+        Icon(
+            icon,
+            contentDescription = label,
+            modifier = Modifier.size(24.dp),
+            tint = if (isActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Spacer(modifier = Modifier.height(4.dp))
         Text(
-            text = label,
+            label,
             style = MaterialTheme.typography.labelSmall.copy(
-                fontWeight = FontWeight.Medium,
-                letterSpacing = 0.sp
-            )
+                fontWeight = if (isActive) FontWeight.Bold else FontWeight.Medium,
+                fontSize = 10.sp
+            ),
+            color = if (isActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }

@@ -47,6 +47,10 @@ class MusicRepository @Inject constructor(
     
     private var cachedSongs: List<Song>? = null
     private var cachedFolders: List<Folder>? = null
+    private var cacheTimestamp: Long = 0
+    private val cacheTtlMs = 60_000 // 60 second TTL to balance freshness vs performance
+    
+    private val songCacheLock = Any()
     
     /**
      * Clear the song cache to force refresh on next load.
@@ -54,10 +58,20 @@ class MusicRepository @Inject constructor(
     override fun clearCache() {
         cachedSongs = null
         cachedFolders = null
+        cacheTimestamp = 0
+    }
+    
+    /**
+     * Check if cache is still valid (within TTL).
+     */
+    private fun isCacheValid(): Boolean {
+        return cachedSongs != null && (System.currentTimeMillis() - cacheTimestamp) < cacheTtlMs
     }
 
     override suspend fun getAllSongs(): List<Song> = withContext(Dispatchers.IO) {
-        if (cachedSongs != null) return@withContext cachedSongs!!
+        synchronized(songCacheLock) {
+            if (isCacheValid()) return@withContext cachedSongs!!
+        }
 
         val songs = mutableListOf<Song>()
         
@@ -121,7 +135,10 @@ class MusicRepository @Inject constructor(
             Log.e(TAG, "getAllSongs: Error querying MediaStore", e)
         }
         
-        cachedSongs = songs
+        synchronized(songCacheLock) {
+            cachedSongs = songs
+            cacheTimestamp = System.currentTimeMillis()
+        }
         songs
     }
     

@@ -50,14 +50,13 @@ fun SongListItem(
     isFavorite: Boolean = false,
     isSelected: Boolean = false,
     isSelectionMode: Boolean = false,
-    inSelectionMode: Boolean = false,
     showTrackNumber: Boolean = false,
     isScrolling: Boolean = false,
     onClick: () -> Unit,
     onLongClick: () -> Unit = {},
     onMoreClick: () -> Unit = {}
 ) {
-    val selectionActive = isSelectionMode || inSelectionMode
+    val selectionActive = isSelectionMode
     
     // Determine background color based on state
     val backgroundColor = when {
